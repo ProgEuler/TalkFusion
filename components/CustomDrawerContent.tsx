@@ -60,7 +60,7 @@ const mainMenuItems: MenuItem[] = [
     },
     {
         id: "appointments",
-        label: "Agenda Integration",
+        label: "Agenda",
         icon: Calendar,
         route: "/(dashboard)/appointments",
     },

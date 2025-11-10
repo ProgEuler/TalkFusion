@@ -1,9 +1,11 @@
 import colors from "@/constants/colors";
 import { useRouter } from "expo-router";
 import {
+   ArrowLeft,
   Bell,
   Briefcase,
   Calendar as CalendarIcon,
+  ChevronLeft,
   Clock,
   MapPin,
   Send,
@@ -67,6 +69,16 @@ export default function AddAppointmentScreen() {
       >
         {/* <Text style={styles.title}>Add Appointments</Text> */}
 
+         {/* back */}
+         <TouchableOpacity
+            onPress={() => router.replace("/(dashboard)/appointments")}
+            style={{ marginBottom: 24 }}
+         >
+            <View style={{ flexDirection: "row", alignItems: "center", gap: 8, position: "fixed" }}>
+               <ChevronLeft color={colors.dark.textSecondary} size={20}/>
+               <Text style={{ color: colors.dark.text, fontSize: 16 }}>{"Back"}</Text>
+            </View>
+         </TouchableOpacity>
         {/* Title */}
         <View style={styles.fieldContainer}>
           <Text style={styles.label}>Title</Text>

@@ -37,7 +37,7 @@ const SupportPage = () => {
             <TextInput
               style={styles.input}
               placeholder="Describe the issue..."
-              placeholderTextColor="#666"
+              placeholderTextColor="#fff"
               value={message}
               onChangeText={setMessage}
               multiline
@@ -88,7 +88,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   messageBox: {
-    backgroundColor: colors.dark.card,
+    backgroundColor: colors.dark.cardBackground,
     borderRadius: 8,
     padding: 12,
     marginBottom: 16,
@@ -96,7 +96,7 @@ const styles = StyleSheet.create({
   },
   input: {
     fontSize: 14,
-    color: '#000',
+    color: '#fff',
     flex: 1,
   },
   inviteButton: {

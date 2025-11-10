@@ -14,6 +14,7 @@ import {
     View,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import Google from "@/assets/svgs/google.svg";
 
 // Get days in a month
 const getDaysInMonth = (year: number, month: number) => {
@@ -354,17 +355,6 @@ export default function AppointmentsScreen() {
                                     >
                                         {dayNumber}
                                     </Text>
-                                    {hasAppointmentDay && (
-                                        <View
-                                            style={
-                                                styles.appointmentProfileIndicator
-                                            }
-                                        >
-                                            <View
-                                                style={styles.profileAvatar}
-                                            />
-                                        </View>
-                                    )}
                                 </TouchableOpacity>
                             );
                         })}
@@ -422,9 +412,7 @@ export default function AppointmentsScreen() {
                         </Text>
                     </View>
                     <View style={styles.integrationCard}>
-                        <View style={styles.googleLogo}>
-                            <Text style={styles.googleLogoText}>G</Text>
-                        </View>
+                           <Google width={48} height={48}/>
                         <View style={styles.integrationInfo}>
                             <Text style={styles.integrationName}>
                                 Google Calendars
@@ -508,7 +496,7 @@ const styles = StyleSheet.create({
     addButton: {
         marginLeft: "auto",
         paddingVertical: 8,
-        paddingHorizontal: 16,
+        paddingHorizontal: 8,
         borderRadius: 8,
         backgroundColor: colors.dark.primary,
     },
@@ -610,14 +598,6 @@ const styles = StyleSheet.create({
         bottom: 2,
         right: 2,
     },
-    profileAvatar: {
-        width: 16,
-        height: 16,
-        borderRadius: 8,
-        backgroundColor: colors.dark.primary,
-        borderWidth: 1.5,
-        borderColor: colors.dark.cardBackground,
-    },
     emptyAppointments: {
         alignItems: "center",
         justifyContent: "center",
@@ -667,14 +647,6 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: colors.dark.border,
         gap: 16,
-    },
-    googleLogo: {
-        width: 48,
-        height: 48,
-        borderRadius: 24,
-        backgroundColor: "#4285F4",
-        alignItems: "center",
-        justifyContent: "center",
     },
     googleLogoText: {
         fontSize: 24,
