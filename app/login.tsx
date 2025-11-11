@@ -21,7 +21,8 @@ export default function LoginScreen() {
 
   const handleLogin = () => {
     console.log("Login pressed", { email, password });
-    router.replace("/(dashboard)/home");
+   //  router.replace("/(dashboard)/home");
+    router.push("/public/welcome");
   };
 
   return (

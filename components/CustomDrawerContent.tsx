@@ -9,14 +9,12 @@ import {
     Calendar,
     HelpCircle,
     LayoutDashboard,
-    Link2,
     LogOut,
     MessageCircle,
     MessageSquare,
     Plug,
     Settings,
     Sparkles,
-    User2,
     Users,
 } from "lucide-react-native";
 import React from "react";

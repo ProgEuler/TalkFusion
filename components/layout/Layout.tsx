@@ -34,7 +34,7 @@ function Layout({
     top: edges.toString().includes("top") ? 0 : noPadding ? 0 : 24,
     horizontal: noPadding ? 0 : 12,
     bottom: noPadding ? 0 : 24,
-    tabbarOffset: 100,
+    tabbarOffset: 24,
     keyboardBottomOffset: 20,
   };
 

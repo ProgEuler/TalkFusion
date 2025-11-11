@@ -1,8 +1,9 @@
 import CustomDrawerContent from "@/components/CustomDrawerContent";
 import colors from "@/constants/colors";
 import { Drawer } from "expo-router/drawer";
+import { Menu } from "lucide-react-native";
 import React from "react";
-import { useWindowDimensions } from "react-native";
+import { TouchableOpacity, useWindowDimensions, View } from "react-native";
 
 export default function DashboardLayout() {
     const dimensions = useWindowDimensions();
@@ -11,7 +12,7 @@ export default function DashboardLayout() {
     return (
         <Drawer
             drawerContent={(props: any) => <CustomDrawerContent {...props} />}
-            screenOptions={{
+            screenOptions={({ navigation}) => ({
                 headerShown: true,
                 headerStyle: {
                     backgroundColor: colors.dark.cardBackground,
@@ -23,7 +24,19 @@ export default function DashboardLayout() {
                 },
                 overlayColor: "rgba(0,0,0,0.5)",
                 drawerType: isLargeScreen ? "permanent" : "front",
-            }}
+                gestureEnabled: true,
+                  swipeEdgeWidth: 50,
+                  headerLeft: () => (
+                     <TouchableOpacity
+                         onPress={() => navigation.toggleDrawer()}
+                         style={{ marginLeft: 16 }}
+                     >
+                        <View style={{ padding: 8, borderRadius: 8, borderColor: "red"}}>
+                         <Menu color={colors.dark.primary} size={24} />
+                        </View>
+                     </TouchableOpacity>
+                  )
+            })}
         >
             <Drawer.Screen
                 name="home"
