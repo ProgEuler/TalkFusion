@@ -115,7 +115,7 @@ const TeamPermissionsPage = () => {
   };
 
   return (
-    <Layout scrollable avoidTabbar>
+    <Layout scrollable>
       <View style={styles.container}>
         {/* Team & Permissions Section */}
         <View style={styles.section}>
@@ -288,7 +288,6 @@ const styles = StyleSheet.create({
   colCheck: { width: 64, alignItems: "center", justifyContent: "center" },
 
   // Admin Table
-  adminContainer: { marginBottom: 32 },
   adminTitle: {
     color: "#FFFFFF",
     fontSize: 18,
@@ -299,7 +298,6 @@ const styles = StyleSheet.create({
   adminCard: {
     backgroundColor: "#111111",
     borderRadius: 8,
-    padding: 16,
     marginBottom: 12,
   },
   adminRow: {
