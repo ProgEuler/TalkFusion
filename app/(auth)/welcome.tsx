@@ -111,7 +111,7 @@ function WelcomeScreen() {
   };
 
   return (
-    <Layout scrollable>
+    <Layout>
       <View style={styles.header}>
         <Text style={styles.welcomeTitle}>
           Welcome to the Future of AI Automation!
@@ -124,8 +124,12 @@ function WelcomeScreen() {
       </View>
 
       <Carousel
+        onConfigurePanGesture={(panGesture) =>
+          panGesture.activeOffsetX([-5, 5]).failOffsetY([-5, 5])
+        }
         width={viewportWidth}
         height={600}
+        vertical={false}
         data={plans}
         scrollAnimationDuration={800}
         renderItem={({ item }) => (
@@ -144,7 +148,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#000",
   },
   header: {
-    paddingHorizontal: 30,
+    paddingHorizontal: 20,
     paddingTop: 40,
     paddingBottom: 30,
   },
@@ -167,7 +171,7 @@ const styles = StyleSheet.create({
     padding: 24,
     marginHorizontal: 10,
     width: viewportWidth - 60,
-    height: 560,
+    height: 450,
     justifyContent: "flex-start",
     borderWidth: 1,
     borderColor: "#333",
@@ -183,7 +187,7 @@ const styles = StyleSheet.create({
   },
   popularBadge: {
     position: "absolute",
-    top: -12,
+    top: -10,
     alignSelf: "center",
     backgroundColor: colors.dark.primary,
     paddingHorizontal: 16,
@@ -192,6 +196,8 @@ const styles = StyleSheet.create({
     zIndex: 1,
   },
   popularText: {
+    position: "relative",
+    top: 2,
     color: "#000",
     fontWeight: "bold",
     fontSize: 12,
@@ -224,16 +230,16 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: "#ccc",
     textAlign: "center",
-    marginBottom: 24,
+    marginBottom: 16,
   },
   featuresContainer: {
     flex: 1,
-    marginBottom: 24,
+    marginBottom: 12,
   },
   feature: {
-    fontSize: 15,
+    fontSize: 14,
     color: "#ddd",
-    marginVertical: 6,
+    marginVertical: 2,
   },
   button: {
     backgroundColor: colors.dark.primary,

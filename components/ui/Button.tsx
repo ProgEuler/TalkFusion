@@ -130,7 +130,6 @@ const sizeStyles: Record<Size, ViewStyle> = {
   },
 };
 
-// ---- Component ---- //
 export const Button = ({
   children,
   variant = "primary",
@@ -144,8 +143,8 @@ export const Button = ({
     sizeStyles[size],
     {
       opacity: isLoading || props.disabled ? 0.5 : 1,
-      justifyContent: "center",
-      alignItems: "center",
+      justifyContent: "center" as ViewStyle["justifyContent"],
+      alignItems: "center" as ViewStyle["alignItems"],
     },
     props.style,
   ];
@@ -171,12 +170,11 @@ export const Button = ({
   );
 };
 
-// ---- Extra Styles ---- //
 const styles = StyleSheet.create({
   loadingContainer: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    gap: 8, // requires RN 0.71+, else use marginRight
+    gap: 8,
   },
 });

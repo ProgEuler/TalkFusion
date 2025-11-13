@@ -12,11 +12,14 @@ export default function KeyboardAvoidingScrollView({
 }: Props) {
   return (
     <KeyboardAwareScrollView
-      showsVerticalScrollIndicator={false}
-      keyboardDismissMode="on-drag"
-      {...props}
-    >
-      {children}
-    </KeyboardAwareScrollView>
+  showsVerticalScrollIndicator={false}
+  keyboardDismissMode="on-drag"
+  nestedScrollEnabled
+  keyboardShouldPersistTaps="handled"
+  scrollEnabled={props.scrollEnabled !== false} // allows turning off scroll for specific screens
+  {...props}
+>
+  {children}
+</KeyboardAwareScrollView>
   );
 }

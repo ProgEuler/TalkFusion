@@ -19,8 +19,9 @@ export default function Layout({
       <SafeArea>
         <KeyboardAvoidingScrollView
           contentContainerStyle={{
-            padding: noPadding ? 0 : 16,
+            padding: noPadding ? 0 : 18,
           }}
+          nestedScrollEnabled
         >
           {children}
         </KeyboardAvoidingScrollView>
