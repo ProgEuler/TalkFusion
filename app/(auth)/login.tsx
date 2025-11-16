@@ -1,4 +1,4 @@
-import Layout from "@/components/layout/Layout";
+import { Layout } from "@/components/layout/Layout";
 import { useRouter } from "expo-router";
 import { Eye, EyeOff } from "lucide-react-native";
 import React, { useState } from "react";
@@ -23,7 +23,7 @@ export default function LoginScreen() {
   };
 
   return (
-    <Layout scrollable>
+    <Layout>
       <View style={styles.scrollContent}>
         <Text style={styles.title}>Welcome Back!</Text>
 

@@ -1,4 +1,4 @@
-import Layout from "@/components/layout/Layout";
+import { Layout } from "@/components/layout/Layout";
 import { Button } from "@/components/ui/Button";
 import colors from "@/constants/colors";
 import { useRouter } from "expo-router";
@@ -19,10 +19,8 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function AddAppointmentScreen() {
-  const insets = useSafeAreaInsets();
   const router = useRouter();
 
   const [title, setTitle] = useState("");
@@ -60,7 +58,7 @@ export default function AddAppointmentScreen() {
   };
 
   return (
-    <Layout scrollable>
+    <Layout>
       {/* <Text style={styles.title}>Add Appointments</Text> */}
 
       {/* back */}

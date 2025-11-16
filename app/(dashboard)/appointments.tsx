@@ -1,5 +1,5 @@
 import Google from "@/assets/svgs/google.svg";
-import Layout from "@/components/layout/Layout";
+import { Layout } from "@/components/layout/Layout";
 import { Button } from "@/components/ui/Button";
 import colors from "@/constants/colors";
 import { useRouter } from "expo-router";
@@ -10,7 +10,6 @@ import {
 } from "lucide-react-native";
 import React, { useState } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const getDaysInMonth = (year: number, month: number) => {
   return new Date(year, month + 1, 0).getDate();
@@ -48,7 +47,6 @@ const generateCalendarDays = (year: number, month: number) => {
 };
 
 export default function AppointmentsScreen() {
-  const insets = useSafeAreaInsets();
   const router = useRouter();
   // Set initial date to October 2025 to match the design
   const [currentDate, setCurrentDate] = useState(new Date(2025, 9, 1)); // October 2025
@@ -168,7 +166,7 @@ export default function AppointmentsScreen() {
   const todayAppointments: any[] = [];
 
   return (
-    <Layout scrollable>
+    <Layout>
       {/* add appointment */}
       <View style={{ marginBottom: 20 }}>
         <Button

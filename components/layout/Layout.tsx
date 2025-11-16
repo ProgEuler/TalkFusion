@@ -1,43 +1,41 @@
-import React, { ReactNode } from "react";
-import { View } from "react-native";
-import SafeArea from "./SafeArea";
-import KeyboardAvoidingScrollView from "./KeyboardAvoidingScrollView";
+import colors from "@/constants/colors";
+import { ReactNode } from "react";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import {
+    SafeAreaView,
+    SafeAreaViewProps,
+} from "react-native-safe-area-context";
 
 type Props = {
-  children: ReactNode;
-  scrollable?: boolean;
-  noPadding?: boolean;
-};
+    children?: ReactNode;
+    stickyHeaderIndices?: number[];
+} & SafeAreaViewProps;
 
-export default function Layout({
-  children,
-  scrollable = false,
-  noPadding = false,
-}: Props) {
-  if (scrollable) {
+export function Layout({ children, style, ...props }: Props) {
+    const padding = 12;
+
     return (
-      <SafeArea>
-        <KeyboardAvoidingScrollView
-          contentContainerStyle={{
-            padding: noPadding ? 0 : 18,
-          }}
+        <SafeAreaView
+            edges={props.edges || []}
+            style={{ flex: 1, backgroundColor: colors.dark.background, padding }}
+            {...props}
         >
-          {children}
-        </KeyboardAvoidingScrollView>
-      </SafeArea>
+            <KeyboardAwareScrollView
+                stickyHeaderIndices={props.stickyHeaderIndices}
+                showsVerticalScrollIndicator={false}
+                showsHorizontalScrollIndicator={false}
+                keyboardDismissMode="interactive"
+                bottomOffset={20}
+                contentContainerStyle={[
+                    {
+                        flexGrow: 1,
+                        gap: 8,
+                    },
+                    style,
+                ]}
+            >
+                {children}
+            </KeyboardAwareScrollView>
+        </SafeAreaView>
     );
-  }
-
-  return (
-    <SafeArea>
-      <View
-        style={{
-          flex: 1,
-          padding: noPadding ? 0 : 18,
-        }}
-      >
-        {children}
-      </View>
-    </SafeArea>
-  );
 }

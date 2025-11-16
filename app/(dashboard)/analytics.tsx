@@ -1,4 +1,5 @@
-import Layout from "@/components/layout/Layout";
+import { Layout } from "@/components/layout/Layout";
+import { Button } from "@/components/ui/Button";
 import { RNPicker } from "@/components/ui/picker";
 import colors from "@/constants/colors";
 import {
@@ -9,10 +10,8 @@ import {
   TrendingUp,
 } from "lucide-react-native";
 import React, { useState } from "react";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { StyleSheet, Text, View } from "react-native";
 import Svg, { G, Path, Text as SvgText } from "react-native-svg";
-// Simple Pie Chart Component
 interface PieChartData {
   label: string;
   value: number;
@@ -89,16 +88,28 @@ const PieChart: React.FC<PieChartProps> = ({ data, size = 200 }) => {
 };
 
 export default function AnalyticsScreen() {
-  const insets = useSafeAreaInsets();
   const [timeRange, setTimeRange] = useState("Today");
   const [channel, setChannel] = useState("All Channel");
   const [messageType, setMessageType] = useState("All Message");
-  const [showTimeRangePicker, setShowTimeRangePicker] = useState(false);
-  const [showChannelPicker, setShowChannelPicker] = useState(false);
-  const [showMessageTypePicker, setShowMessageTypePicker] = useState(false);
-  const [selectedLanguage, setSelectedLanguage] = useState();
+  const timeRangeLabelMap: Record<string, string> = {
+    today: "Today",
+    this_week: "This Week",
+    this_month: "This Month",
+    this_year: "This Year",
+  };
+  const channelLabelMap = {
+    all_channel: "All Channel",
+    facebook: "Facebook",
+    whatsapp: "WhatsApp",
+    instagram: "Instagram",
+  };
 
-  // Mock data - values represent percentages
+  const messageTypeLabelMap = {
+    all_message: "All Message",
+    incoming: "Incoming",
+    outgoing: "Outgoing",
+  };
+
   const channelData: PieChartData[] = [
     { label: "WhatsApp", value: 45, color: "#FBBF24" }, // Yellow
     { label: "Facebook", value: 30, color: "#1877F2" }, // Blue
@@ -114,22 +125,17 @@ export default function AnalyticsScreen() {
     { question: "Where is your location?", count: 12 },
   ];
 
+  const handleFilter = () => {
+   console.log("start filtering...")
+  }
   return (
-    <Layout scrollable>
-      {/* <Text style={styles.pageTitle}>Business Analytics</Text> */}
+    <Layout>
 
       {/* Filters Section */}
       <View style={styles.filtersContainer}>
         <View style={styles.filterRow}>
           <View style={styles.filterItem}>
-            <Text style={styles.filterLabel}>Time Range</Text>
-            {/* <TouchableOpacity
-              style={styles.filterDropdown}
-              onPress={() => setShowTimeRangePicker(!showTimeRangePicker)}
-            >
-              <Text style={styles.filterValue}>{timeRange}</Text>
-              <ChevronDown color={colors.dark.textSecondary} size={20} />
-            </TouchableOpacity> */}
+            {/* <Text style={styles.filterLabel}>Time Range</Text> */}
             <RNPicker
               items={[
                 { value: "today", label: "Today" },
@@ -137,19 +143,17 @@ export default function AnalyticsScreen() {
                 { value: "this_month", label: "This Month" },
                 { value: "this_year", label: "This Year" },
               ]}
-              label="Today"
+              label={"Time Range"}
+              value={timeRangeLabelMap[timeRange] || ""}
+              onSelectItem={(item) => {
+                console.log("selected range: ", item);
+                setTimeRange(item);
+              }}
+              key={timeRange}
             />
           </View>
 
           <View style={styles.filterItem}>
-            <Text style={styles.filterLabel}>Channel</Text>
-            {/* <TouchableOpacity
-              style={styles.filterDropdown}
-              onPress={() => setShowChannelPicker(!showChannelPicker)}
-            >
-              <Text style={styles.filterValue}>{channel}</Text>
-              <ChevronDown color={colors.dark.textSecondary} size={20} />
-            </TouchableOpacity> */}
             <RNPicker
               items={[
                 { value: "all_channel", label: "All Channel" },
@@ -157,12 +161,17 @@ export default function AnalyticsScreen() {
                 { value: "whatsapp", label: "WhatsApp" },
                 { value: "instagram", label: "Instagram" },
               ]}
-              label="All Channel"
+              label="Channel"
+              value={channelLabelMap[channel] || ""}
+              onSelectItem={(item) => {
+                console.log("selected channel: ", item);
+                setChannel(item);
+              }}
+              key={channel}
             />
           </View>
 
           <View style={styles.filterItem}>
-            <Text style={styles.filterLabel}>Message Type</Text>
             <RNPicker
               items={[
                 { value: "all_message", label: "All Message" },
@@ -170,13 +179,17 @@ export default function AnalyticsScreen() {
                 { value: "outgoing", label: "Outgoing" },
               ]}
               label="All Message"
+              value={messageTypeLabelMap[messageType] || ""}
+              onSelectItem={(item) => {
+                console.log("selected messageType: ", item);
+                setMessageType(item);
+              }}
+              key={messageType}
             />
           </View>
         </View>
 
-        <TouchableOpacity style={styles.applyButton}>
-          <Text style={styles.applyButtonText}>Apply Filters</Text>
-        </TouchableOpacity>
+        <Button onPress={handleFilter}>Aplly Filters</Button>
       </View>
 
       {/* Key Metrics */}
@@ -322,16 +335,6 @@ export default function AnalyticsScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.dark.background,
-  },
-  scrollView: {
-    flex: 1,
-  },
-  scrollContent: {
-    padding: 16,
-  },
   pageTitle: {
     fontSize: 24,
     fontWeight: "700",
@@ -343,7 +346,7 @@ const styles = StyleSheet.create({
   },
   filterRow: {
     flexDirection: "row",
-    gap: 12,
+    gap: 6,
     marginBottom: 16,
   },
   filterItem: {
@@ -370,18 +373,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: colors.dark.text,
     fontWeight: "500",
-  },
-  applyButton: {
-    backgroundColor: colors.dark.primary,
-    borderRadius: 8,
-    paddingVertical: 12,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  applyButtonText: {
-    fontSize: 14,
-    color: colors.dark.text,
-    fontWeight: "600",
   },
   metricsRow: {
     flexDirection: "row",

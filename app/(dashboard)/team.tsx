@@ -1,4 +1,4 @@
-import Layout from "@/components/layout/Layout";
+import { Layout } from "@/components/layout/Layout";
 import colors from "@/constants/colors";
 import { Check, ChevronDown, X } from "lucide-react-native";
 import React, { useState } from "react";
@@ -115,7 +115,7 @@ const TeamPermissionsPage = () => {
   };
 
   return (
-    <Layout scrollable>
+    <Layout>
       <View style={styles.container}>
         {/* Team & Permissions Section */}
         <View style={styles.section}>

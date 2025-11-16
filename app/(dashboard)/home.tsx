@@ -5,10 +5,10 @@ import {
   MessageCircle,
 } from "lucide-react-native";
 import React from "react";
-import { ScrollView, StyleSheet, Text, View } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { StyleSheet, Text, View } from "react-native";
 import WhatsApp from "@/assets/svgs/whatsapp.svg";
 import Facebook from "@/assets/svgs/facebook.svg";
+import { Layout } from "@/components/layout/Layout";
 interface Appointment {
   id: string;
   time: string;
@@ -81,15 +81,9 @@ const paymentsToday: Payment[] = [
 ];
 
 export default function DashboardScreen() {
-  const insets = useSafeAreaInsets();
 
   return (
-    <View style={[styles.container, { paddingBottom: insets.bottom }]}>
-      <ScrollView
-        style={styles.scrollView}
-        contentContainerStyle={styles.scrollContent}
-        showsVerticalScrollIndicator={false}
-      >
+   <Layout>
         <View style={styles.statsRow}>
           <View style={[styles.statCard, { flex: 1 }]}>
             <View style={styles.statIconContainer}>
@@ -231,8 +225,7 @@ export default function DashboardScreen() {
             </Text>
           </View>
         </View>
-      </ScrollView>
-    </View>
+        </Layout>
   );
 }
 

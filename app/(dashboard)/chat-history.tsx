@@ -1,5 +1,6 @@
 import Facebook from "@/assets/svgs/facebook.svg";
 import WhatsApp from "@/assets/svgs/whatsapp.svg";
+import { Layout } from "@/components/layout/Layout";
 import colors from "@/constants/colors";
 import { useRouter } from "expo-router";
 import {
@@ -215,12 +216,7 @@ export default function ChatHistoryScreen() {
                     />
                 </TouchableOpacity>
             </View>
-
-            <ScrollView
-                style={styles.scrollView}
-                contentContainerStyle={styles.scrollContent}
-                showsVerticalScrollIndicator={false}
-            >
+               <Layout>
                 <Text style={styles.pageTitle}>Messages History</Text>
 
                 {/* Search Bar */}
@@ -365,7 +361,7 @@ export default function ChatHistoryScreen() {
                         );
                     })}
                 </View>
-            </ScrollView>
+                </Layout>
         </View>
     );
 }

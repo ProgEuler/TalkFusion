@@ -10,7 +10,6 @@ export default function SafeArea({ children, ...props }: Props) {
   return (
     <SafeAreaView
       style={{
-        flex: 1,
         backgroundColor: colors.dark.background,
       }}
       {...props}

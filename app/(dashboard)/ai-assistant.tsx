@@ -12,7 +12,7 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ChevronDown, Clock, MapPin, Plus, X, Upload } from 'lucide-react-native';
 import colors from '@/constants/colors';
-import Layout from '@/components/layout/Layout';
+import { Layout } from '@/components/layout/Layout';
 
 type DayOfWeek = 'Monday' | 'Tuesday' | 'Wednesday' | 'Thursday' | 'Friday' | 'Saturday' | 'Sunday';
 
@@ -89,7 +89,7 @@ export default function AIAssistantScreen() {
 
   return (
    <>
-   <Layout scrollable>
+   <Layout>
 
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Company Name</Text>
@@ -340,7 +340,7 @@ export default function AIAssistantScreen() {
           </TouchableOpacity>
         </View>
 
-        <View style={styles.section}>
+        <View style={[styles.section, { marginBottom: 120}]}>
           <Text style={styles.sectionTitle}>Add Your Website</Text>
           <Text style={styles.sectionSubtitle}>Add Your Website — Scan Automatically</Text>
 
@@ -354,7 +354,6 @@ export default function AIAssistantScreen() {
             autoCapitalize="none"
           />
         </View>
-
          </Layout>
       <View style={[styles.footer, { paddingBottom: insets.bottom + 20 }]}>
         <TouchableOpacity style={styles.updateButton} onPress={handleUpdate}>
@@ -489,9 +488,6 @@ const styles = StyleSheet.create({
   openToggle: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: colors.dark.cardBackground,
-    borderRadius: 8,
-    paddingHorizontal: 12,
     gap: 8,
   },
   openText: {

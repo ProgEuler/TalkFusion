@@ -1,9 +1,8 @@
-import Layout from "@/components/layout/Layout";
+import { Layout } from "@/components/layout/Layout";
 import colors from "@/constants/colors";
 import { useRouter } from "expo-router";
 import {
   Dimensions,
-  Linking,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -11,7 +10,8 @@ import {
 } from "react-native";
 import Carousel from "react-native-reanimated-carousel";
 
-const { width: viewportWidth } = Dimensions.get("window");
+const { height: viewportHeight, width: viewportWidth } =
+  Dimensions.get("window");
 
 const plans = [
   {
@@ -106,40 +106,41 @@ const PricingCard = ({
 
 function WelcomeScreen() {
   const router = useRouter();
-
   const handleGetStarted = () => {
-     router.replace("/(dashboard)/home");
-   //  Linking.openURL(
-   //    "https://ape-in-eft.ngrok-free.app/api/finance/create-checkout/1/1/"
-   //  );
+    router.replace("/(dashboard)/home");
+    //  Linking.openURL(
+    //    "https://ape-in-eft.ngrok-free.app/api/finance/create-checkout/1/1/"
+    //  );
   };
 
   return (
     <Layout>
-      <View style={styles.header}>
-        <Text style={styles.welcomeTitle}>
-          Welcome to the Future of AI Automation!
-        </Text>
-        <Text style={styles.subtitle}>
-          Empower your business with intelligent tools designed to streamline
-          operations and boost productivity. Pick your plan and start innovating
-          today.
-        </Text>
-      </View>
+      <View style={styles.scrollContent}>
+        <View style={styles.header}>
+          <Text style={styles.welcomeTitle}>
+            Welcome to the Future of AI Automation!
+          </Text>
+          <Text style={styles.subtitle}>
+            Empower your business with intelligent tools designed to streamline
+            operations and boost productivity. Pick your plan and start
+            innovating today.
+          </Text>
+        </View>
 
-      <Carousel
-        onConfigurePanGesture={(panGesture) =>
-          panGesture.activeOffsetX([-5, 5]).failOffsetY([-5, 5])
-        }
-        width={viewportWidth}
-        height={600}
-        vertical={false}
-        data={plans}
-        scrollAnimationDuration={800}
-        renderItem={({ item }) => (
-          <PricingCard item={item} onGetStarted={handleGetStarted} />
-        )}
-      />
+        <Carousel
+          onConfigurePanGesture={(panGesture) =>
+            panGesture.activeOffsetX([-5, 5]).failOffsetY([-5, 5])
+          }
+          width={viewportWidth}
+          height={viewportHeight * 0.75}
+          vertical={false}
+          data={plans}
+          scrollAnimationDuration={800}
+          renderItem={({ item }) => (
+            <PricingCard item={item} onGetStarted={handleGetStarted} />
+          )}
+        />
+      </View>
     </Layout>
   );
 }
@@ -147,6 +148,12 @@ function WelcomeScreen() {
 export default WelcomeScreen;
 
 const styles = StyleSheet.create({
+  scrollContent: {
+    flexGrow: 1,
+    paddingHorizontal: 12,
+    paddingTop: 80,
+    paddingBottom: 0,
+  },
   container: {
     flex: 1,
     backgroundColor: "#000",

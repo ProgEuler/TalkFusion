@@ -1,6 +1,6 @@
 import React, { ReactNode } from "react";
-import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { ScrollViewProps } from "react-native";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
 type Props = {
   children: ReactNode;
@@ -12,14 +12,14 @@ export default function KeyboardAvoidingScrollView({
 }: Props) {
   return (
     <KeyboardAwareScrollView
-  showsVerticalScrollIndicator={false}
-  keyboardDismissMode="on-drag"
-  nestedScrollEnabled
-  keyboardShouldPersistTaps="handled"
-  scrollEnabled={props.scrollEnabled !== false} // allows turning off scroll for specific screens
-  {...props}
->
-  {children}
-</KeyboardAwareScrollView>
+      showsVerticalScrollIndicator={false}
+      keyboardDismissMode="on-drag"
+      nestedScrollEnabled
+      keyboardShouldPersistTaps="handled"
+      scrollEnabled={props.scrollEnabled !== false} // allows turning off scroll for specific screens
+      {...props}
+    >
+      {children}
+    </KeyboardAwareScrollView>
   );
 }

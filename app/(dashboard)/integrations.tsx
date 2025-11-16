@@ -1,4 +1,4 @@
-import Layout from "@/components/layout/Layout";
+import { Layout } from "@/components/layout/Layout";
 import colors from "@/constants/colors";
 import {
   Calendar,
@@ -14,7 +14,6 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 interface Integration {
   id: string;
@@ -25,7 +24,6 @@ interface Integration {
 }
 
 export default function IntegrationsScreen() {
-  const insets = useSafeAreaInsets();
 
   const integrations: Integration[] = [
     {
@@ -70,7 +68,7 @@ export default function IntegrationsScreen() {
   };
 
   return (
-   <Layout scrollable avoidTabbar>
+   <Layout>
         <View style={styles.grid}>
           {integrations.map((integration) => (
             <View key={integration.id} style={styles.card}>
