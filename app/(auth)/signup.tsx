@@ -1,14 +1,17 @@
+import { useSignupMutation } from "@/api/auth.api";
 import { Layout } from "@/components/layout/Layout";
 import { Button } from "@/components/ui/Button";
+import { Toast } from "@/components/ui/Toast";
+import { isValidEmail } from "@/utils/validation";
 import { useRouter } from "expo-router";
 import { Eye, EyeOff } from "lucide-react-native";
 import React, { useState } from "react";
 import {
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
+    StyleSheet,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    View,
 } from "react-native";
 
 export default function SignupScreen() {
@@ -17,14 +20,49 @@ export default function SignupScreen() {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [showPassword, setShowPassword] = useState<boolean>(false);
+  const [toastVisible, setToastVisible] = useState<boolean>(false);
+  const [toastMessage, setToastMessage] = useState<string>("");
+  const [toastType, setToastType] = useState<"success" | "error">("success");
 
-  const handleSignup = () => {
+  const [signup, { isLoading }] = useSignupMutation(undefined);
+
+  const showToast = (message: string, type: "success" | "error") => {
+    setToastMessage(message);
+    setToastType(type);
+    setToastVisible(true);
+  };
+
+  const handleSignup = async () => {
     console.log("Signup pressed", { name, email, password });
-    router.replace("/(dashboard)/home");
+
+    if (!isValidEmail(email)) {
+      showToast("Please enter a valid email address.", "error");
+      return;
+    }
+
+    try {
+      const res = await signup({ name, email, password });
+      console.log(res);
+      showToast("Login successful!", "success");
+      setTimeout(() => {
+        router.replace("/(auth)/login");
+      }, 1000);
+    } catch (error) {
+      console.error("Error:", error);
+      const message = (error as any)?.data;
+      showToast(message, "error");
+    }
+    router.replace("/(auth)/login");
   };
 
   return (
     <Layout>
+      <Toast
+        visible={toastVisible}
+        message={toastMessage}
+        type={toastType}
+        onHide={() => setToastVisible(false)}
+      />
       <View style={styles.scrollContent}>
         <Text style={styles.title}>Welcome Back!</Text>
 

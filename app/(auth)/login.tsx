@@ -1,38 +1,66 @@
+import { useLoginMutation } from "@/api/auth.api";
 import { Layout } from "@/components/layout/Layout";
 import { Button } from "@/components/ui/Button";
+import { Toast } from "@/components/ui/Toast";
+import { isValidEmail } from "@/utils/validation";
 import { useRouter } from "expo-router";
 import { Eye, EyeOff } from "lucide-react-native";
 import React, { useState } from "react";
 import {
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
+   StyleSheet,
+   Text,
+   TextInput,
+   TouchableOpacity,
+   View,
 } from "react-native";
-import axios from 'axios'
 
 export default function LoginScreen() {
   const router = useRouter();
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [showPassword, setShowPassword] = useState<boolean>(false);
+  const [toastVisible, setToastVisible] = useState<boolean>(false);
+  const [toastMessage, setToastMessage] = useState<string>("");
+  const [toastType, setToastType] = useState<"success" | "error">("success");
+
+  const [login, { isLoading: loading }] = useLoginMutation();
+
+  const showToast = (message: string, type: "success" | "error") => {
+    setToastMessage(message);
+    setToastType(type);
+    setToastVisible(true);
+  };
 
   const handleLogin = async () => {
-   const apiUrl = process.env.EXPO_PUBLIC_API_URL;
-   console.log(apiUrl + '/login/')
-     try {
-    const res = await axios.post( apiUrl + '/login/', { email, password })
-    console.log(res.data)
-  } catch (error) {
-    console.error('Error:', error);
-  }
-     router.replace("/(user_dashboard)/home");
-   //  router.push("/(auth)/welcome");
+    if (loading) return;
+
+    if (!isValidEmail(email)) {
+      showToast("Please enter a valid email address.", "error");
+      return;
+    }
+
+    try {
+      const res = await login({ email, password }).unwrap();
+      console.log(res);
+      showToast("Login successful!", "success");
+      setTimeout(() => {
+        router.replace("/(user_dashboard)/home");
+      }, 1000);
+    } catch (error: any) {
+      console.error("Error:", error.data);
+      const message = error?.data?.non_field_errors[0] || "Login failed. Please try again.";
+      showToast(message, "error");
+    }
   };
 
   return (
     <Layout>
+      <Toast
+        visible={toastVisible}
+        message={toastMessage}
+        type={toastType}
+        onHide={() => setToastVisible(false)}
+      />
       <View style={styles.scrollContent}>
         <Text style={styles.title}>Welcome Back!</Text>
 
@@ -84,6 +112,17 @@ export default function LoginScreen() {
             <Text style={styles.forgotPasswordText}>Forgot password?</Text>
           </TouchableOpacity>
 
+          <Button onPress={handleLogin} isLoading={loading}>
+            Login
+          </Button>
+
+          <View style={styles.footer}>
+            <Text style={styles.footerText}>Don&apos;t have an account? </Text>
+            <TouchableOpacity onPress={() => router.push("/(auth)/signup")}>
+              <Text style={styles.signupLink}>Signup</Text>
+            </TouchableOpacity>
+          </View>
+
           <View style={styles.dividerContainer}>
             <View style={styles.dividerLine} />
             <Text style={styles.dividerText}>or</Text>
@@ -93,15 +132,6 @@ export default function LoginScreen() {
           <View style={styles.socialButtons}>
             <Button variant="outline">Continue with Google</Button>
             <Button variant="outline">Continue with Apple</Button>
-          </View>
-
-          <Button onPress={handleLogin}>Login</Button>
-
-          <View style={styles.footer}>
-            <Text style={styles.footerText}>Don&apos;t have an account? </Text>
-            <TouchableOpacity onPress={() => router.push("/(auth)/signup")}>
-              <Text style={styles.signupLink}>Signup</Text>
-            </TouchableOpacity>
           </View>
         </View>
       </View>
@@ -183,6 +213,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     marginBottom: 24,
+    marginTop: 40,
   },
   dividerLine: {
     flex: 1,
