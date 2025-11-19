@@ -39,6 +39,10 @@ export default function Settings() {
           </Text>
         </ModalView>
       </Modal>
+
+      <View>
+
+      </View>
       {/* Security Section */}
       <Text style={styles.sectionTitle}>Security</Text>
 
@@ -118,9 +122,7 @@ export default function Settings() {
               Download a copy of all your data
             </Text>
           </View>
-          <TouchableOpacity style={styles.primaryButton}>
-            <Text style={styles.primaryButtonText}>Export</Text>
-          </TouchableOpacity>
+          <Button size="sm">Export</Button>
         </View>
       </View>
 

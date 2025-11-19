@@ -108,7 +108,7 @@ const PricingCard = ({
 function WelcomeScreen() {
   const router = useRouter();
   const handleGetStarted = () => {
-    router.replace("/(dashboard)/home");
+    router.replace("/(admin_dashboard)/home");
     //  Linking.openURL(
     //    "https://ape-in-eft.ngrok-free.app/api/finance/create-checkout/1/1/"
     //  );

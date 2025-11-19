@@ -10,6 +10,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import axios from 'axios'
 
 export default function LoginScreen() {
   const router = useRouter();
@@ -17,10 +18,17 @@ export default function LoginScreen() {
   const [password, setPassword] = useState<string>("");
   const [showPassword, setShowPassword] = useState<boolean>(false);
 
-  const handleLogin = () => {
-    console.log("Login pressed", { email, password });
-    //  router.replace("/(dashboard)/home");
-    router.push("/(auth)/welcome");
+  const handleLogin = async () => {
+   const apiUrl = process.env.EXPO_PUBLIC_API_URL;
+   console.log(apiUrl + '/login/')
+     try {
+    const res = await axios.post( apiUrl + '/login/', { email, password })
+    console.log(res.data)
+  } catch (error) {
+    console.error('Error:', error);
+  }
+     router.replace("/(user_dashboard)/home");
+   //  router.push("/(auth)/welcome");
   };
 
   return (

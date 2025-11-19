@@ -2,14 +2,13 @@ import { Button } from "@/components/ui/Button";
 import { OTPFields } from "@/components/ui/otp-input";
 import colors from "@/constants/colors";
 import { useRouter } from "expo-router";
-import React, { useRef, useState } from "react";
+import React from "react";
 import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
   StyleSheet,
   Text,
-  TextInput,
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
