@@ -1,20 +1,18 @@
 {
-    "extends": "./node_modules/expo/tsconfig.base",
-    "compilerOptions": {
-        "strict": true,
-        "skipLibCheck": true,
-        "noImplicitAny": false,
-        "paths": {
-            "@/*": [
-                "./*"
-            ]
-        }
-    },
-    "include": [
-        "**/*.ts",
-        "**/*.tsx",
-        ".expo/types/**/*.ts",
-        "declarations.d.ts",
-        "expo-env.d.ts",
-    ]
+  "extends": "./node_modules/expo/tsconfig.base",
+  "compilerOptions": {
+    "strict": true,
+    "skipLibCheck": true,
+    "noImplicitAny": false,
+    "paths": {
+      "@/*": [
+        "./*"
+      ]
+    }
+  },
+  "include": [
+    "**/*.ts",
+    "**/*.tsx",
+    "declarations.d.ts"
+  ]
 }

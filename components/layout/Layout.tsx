@@ -1,6 +1,6 @@
 import colors from "@/constants/colors";
 import { ReactNode } from "react";
-import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
 import {
     SafeAreaView,
     SafeAreaViewProps,

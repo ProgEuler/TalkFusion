@@ -2,6 +2,7 @@ import { useSignupMutation } from "@/api/auth.api";
 import { Layout } from "@/components/layout/Layout";
 import { Button } from "@/components/ui/Button";
 import { Toast } from "@/components/ui/Toast";
+import { useSignIn } from "@/hooks/use-google-signin";
 import { isValidEmail } from "@/utils/validation";
 import { useRouter } from "expo-router";
 import { Eye, EyeOff } from "lucide-react-native";
@@ -26,6 +27,7 @@ export default function SignupScreen() {
   const [emailError, setEmailError] = useState<string | null>(null);
 
   const [signup, { isLoading }] = useSignupMutation(undefined);
+    const { signIn } = useSignIn();
 
   const showToast = (message: string, type: "success" | "error") => {
     setToastMessage(message);
@@ -44,7 +46,7 @@ export default function SignupScreen() {
     try {
       const res = await signup({ name, email, password });
       console.log(res);
-      showToast("Singup successful!", "success");
+      // showToast("Singup successful!", "success");
 
       setTimeout(() => {
         router.push({
@@ -59,6 +61,9 @@ export default function SignupScreen() {
     }
   };
 
+  const handleGoogleSignup = () => {
+      signIn("signin")
+  }
   return (
     <Layout>
       <Toast
@@ -143,9 +148,10 @@ export default function SignupScreen() {
           </View>
 
           <View style={styles.socialButtons}>
-            <Button variant="outline">Continue with Google</Button>
-            <Button variant="outline">Continue with Apple</Button>
+            <Button onPress={handleGoogleSignup} variant="outline">Continue with Google</Button>
+            <Button onPress={() => signIn("signout")} variant="outline">Continue with Apple</Button>
           </View>
+
         </View>
       </View>
     </Layout>

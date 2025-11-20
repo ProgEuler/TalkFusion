@@ -2,20 +2,30 @@ import { useLoginMutation } from "@/api/auth.api";
 import { Layout } from "@/components/layout/Layout";
 import { Button } from "@/components/ui/Button";
 import { Toast } from "@/components/ui/Toast";
+import { useSignIn } from "@/hooks/use-google-signin";
 import { isValidEmail } from "@/utils/validation";
+import { GoogleSignin } from "@react-native-google-signin/google-signin";
 import { useRouter } from "expo-router";
 import { Eye, EyeOff } from "lucide-react-native";
 import React, { useState } from "react";
 import {
-   StyleSheet,
-   Text,
-   TextInput,
-   TouchableOpacity,
-   View,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from "react-native";
+
+GoogleSignin.configure({
+  scopes: [],
+  offlineAccess: false,
+  iosClientId: process.env.EXPO_PUBLIC_IOS_OAUTH_TOKEN,
+  forceCodeForRefreshToken: true,
+});
 
 export default function LoginScreen() {
   const router = useRouter();
+  const { signIn, name } = useSignIn();
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [showPassword, setShowPassword] = useState<boolean>(false);
@@ -39,9 +49,12 @@ export default function LoginScreen() {
       setEmailError("Please enter a valid email address.");
       return;
     }
-    setEmailError(null)
+    setEmailError(null);
     try {
-      const res = await login({ email: email.toLowerCase(), password }).unwrap();
+      const res = await login({
+        email: email.toLowerCase(),
+        password,
+      }).unwrap();
       // console.log(res);
       showToast("Login successful!", "success");
       setTimeout(() => {
@@ -49,9 +62,15 @@ export default function LoginScreen() {
       }, 1000);
     } catch (error: any) {
       // console.error("Error:", error.data);
-      const message = error?.data?.non_field_errors[0] || "Login failed. Please try again.";
+      const message =
+        error?.data?.non_field_errors[0] || "Login failed. Please try again.";
       showToast(message, "error");
     }
+  };
+
+  const handleGoogleLogin = () => {
+    console.log("google signin clicked");
+    signIn("signin");
   };
 
   return (
@@ -78,7 +97,9 @@ export default function LoginScreen() {
               autoCapitalize="none"
               autoComplete="email"
             />
-         { emailError && <Text style={{ color: 'red', padding: 4 }}>{emailError}</Text>}
+            {emailError && (
+              <Text style={{ color: "red", padding: 4 }}>{emailError}</Text>
+            )}
           </View>
 
           <View style={styles.inputGroup}>
@@ -132,7 +153,9 @@ export default function LoginScreen() {
           </View>
 
           <View style={styles.socialButtons}>
-            <Button variant="outline">Continue with Google</Button>
+            <Button variant="outline" onPress={handleGoogleLogin}>
+              Continue with Google
+            </Button>
             <Button variant="outline">Continue with Apple</Button>
           </View>
         </View>

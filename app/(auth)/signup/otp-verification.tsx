@@ -32,7 +32,10 @@ export default function OtpVerificationScreen() {
   const [getOtp, { isLoading: sendingOTP }] = useGetOtpMutation(undefined);
 
   React.useEffect(() => {
-    getOtp(email);
+    getOtp({ email });
+  }, []);
+
+  React.useEffect(() => {
     let interval: NodeJS.Timeout;
     if (timer > 0) {
       interval = setInterval(() => {
@@ -64,7 +67,7 @@ export default function OtpVerificationScreen() {
       await verifyOtp({ email, otp }).unwrap();
       showToast("OTP Verified Successfully!", "success");
       setTimeout(() => {
-         router.replace("/(auth)/login");
+        router.replace("/(auth)/login");
       }, 1000);
       // Navigate to next screen or dashboard
       // router.push("/(auth)/create-new-password");
