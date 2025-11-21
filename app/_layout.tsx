@@ -6,7 +6,6 @@ import * as SplashScreen from "expo-splash-screen";
 import React, { useEffect } from "react";
 import { StatusBar } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import { Provider } from "react-redux";
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -35,19 +34,12 @@ export default function RootLayout() {
     <Provider store={store}>
       <QueryClientProvider client={queryClient}>
         <GestureHandlerRootView>
-          <SafeAreaProvider>
-            <SafeAreaView
-              style={{ flex: 1 }}
-              edges={["bottom", "left", "right"]}
-            >
-              <StatusBar
-                animated
-                backgroundColor={colors.dark.background}
-                barStyle="light-content"
-              />
-              <RootLayoutNav />
-            </SafeAreaView>
-          </SafeAreaProvider>
+          <StatusBar
+            animated
+            backgroundColor={colors.dark.background}
+            barStyle="light-content"
+          />
+          <RootLayoutNav />
         </GestureHandlerRootView>
       </QueryClientProvider>
     </Provider>

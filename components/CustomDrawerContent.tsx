@@ -1,12 +1,18 @@
 import Logo from "@/assets/svgs/logo.svg";
 import colors from "@/constants/colors";
+import { useSignIn } from "@/hooks/use-google-signin";
+import { selectCurrentUser } from "@/store/authSlice";
 import { LinearGradient } from "expo-linear-gradient";
 import { usePathname, useRouter } from "expo-router";
 import {
     BarChart3,
     BookOpen,
     Bot,
+    Building,
     Calendar,
+    CreditCard,
+    FileText,
+    Grid,
     HelpCircle,
     LayoutDashboard,
     LogOut,
@@ -15,7 +21,9 @@ import {
     Plug,
     Settings,
     Sparkles,
+    User,
     Users,
+    Wallet,
 } from "lucide-react-native";
 import React from "react";
 import {
@@ -25,6 +33,7 @@ import {
     TouchableOpacity,
     View,
 } from "react-native";
+import { useSelector } from "react-redux";
 
 interface MenuItem {
     id: string;
@@ -33,66 +42,123 @@ interface MenuItem {
     route: string;
 }
 
-const mainMenuItems: MenuItem[] = [
+const userMenuItems: MenuItem[] = [
     {
         id: "dashboard",
         label: "Dashboard",
         icon: LayoutDashboard,
-        route: "/(dashboard)/home",
+        route: "/(user_dashboard)/home",
     },
     {
         id: "ai-assistant",
         label: "AI Assistant",
         icon: Bot,
-        route: "/(dashboard)/ai-assistant",
+        route: "/(user_dashboard)/ai-assistant",
     },
     {
         id: "knowledge-base",
         label: "Knowledge Base",
         icon: BookOpen,
-        route: "/(dashboard)/knowledge-base",
+        route: "/(user_dashboard)/knowledge-base",
     },
     {
         id: "integrations",
         label: "Integrations",
         icon: Plug,
-        route: "/(dashboard)/integrations",
+        route: "/(user_dashboard)/integrations",
     },
     {
         id: "appointments",
         label: "Agenda",
         icon: Calendar,
-        route: "/(dashboard)/appointments",
+        route: "/(user_dashboard)/appointments",
     },
     {
         id: "analytics",
         label: "Analytics",
         icon: BarChart3,
-        route: "/(dashboard)/analytics",
+        route: "/(user_dashboard)/analytics",
     },
     {
         id: "chat-history",
         label: "Chat History",
         icon: MessageSquare,
-        route: "/(dashboard)/chat-history",
+        route: "/(user_dashboard)/chat-history",
     },
     {
         id: "support",
         label: "Support",
         icon: HelpCircle,
-        route: "/(dashboard)/support",
+        route: "/(user_dashboard)/support",
     },
     {
          id: "team",
          label: "Team",
          icon: Users,
-         route: "/(dashboard)/team",
+         route: "/(user_dashboard)/team",
     },
     {
         id: "settings",
         label: "Settings",
         icon: Settings,
-        route: "/(dashboard)/settings",
+        route: "/(user_dashboard)/settings",
+    },
+];
+
+const adminMenuItems: MenuItem[] = [
+    {
+        id: "dashboard",
+        label: "Dashboard",
+        icon: Grid,
+        route: "/(admin_dashboard)/home",
+    },
+    {
+        id: "users",
+        label: "Users",
+        icon: User,
+        route: "/(admin_dashboard)/users",
+    },
+    {
+        id: "integrations",
+        label: "Integrations",
+        icon: Plug,
+        route: "/(admin_dashboard)/integrations",
+    },
+    {
+        id: "company-profile",
+        label: "Company Profile",
+        icon: Building,
+        route: "/(admin_dashboard)/company-profile",
+    },
+    {
+        id: "performance",
+        label: "Performance & Analytics",
+        icon: BarChart3,
+        route: "/(admin_dashboard)/performance",
+    },
+    {
+        id: "subscription",
+        label: "Subscription Management",
+        icon: CreditCard,
+        route: "/(admin_dashboard)/subscription",
+    },
+    {
+        id: "team",
+        label: "Team",
+        icon: Users,
+        route: "/(admin_dashboard)/team",
+    },
+    {
+        id: "overview",
+        label: "Overview",
+        icon: FileText,
+        route: "/(admin_dashboard)/overview",
+    },
+    {
+        id: "payment",
+        label: "Payment & Report",
+        icon: Wallet,
+        route: "/(admin_dashboard)/payment",
     },
 ];
 
@@ -119,13 +185,17 @@ const quickActions: MenuItem[] = [
 
 export default function CustomDrawerContent() {
     const router = useRouter();
+    const { signIn, name } = useSignIn()
     const pathname = usePathname();
+    const user = useSelector(selectCurrentUser);
+    const menuItems = user?.role === "admin" ? adminMenuItems : userMenuItems;
 
     const handleNavigation = (route: string) => {
         router.push(route as any);
     };
 
     const handleLogout = () => {
+      // signIn("signout")
         router.replace("/login");
     };
 
@@ -163,7 +233,7 @@ export default function CustomDrawerContent() {
                 showsVerticalScrollIndicator={false}
             >
                 <View style={styles.section}>
-                    {mainMenuItems.map((item) => {
+                    {menuItems.map((item) => {
                         const Icon = item.icon;
                         const isActive = isRouteActive(item.route);
 
@@ -199,6 +269,7 @@ export default function CustomDrawerContent() {
 
                 <View style={styles.divider} />
 
+                  {/* quick actions */}
                 <View style={styles.section}>
                     <Text style={styles.sectionTitle}>Quick Actions</Text>
                     {quickActions.map((item) => {

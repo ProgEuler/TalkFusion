@@ -3,19 +3,19 @@ import { Layout } from "@/components/layout/Layout";
 import { Button } from "@/components/ui/Button";
 import { Toast } from "@/components/ui/Toast";
 import { useSignIn } from "@/hooks/use-google-signin";
+import { setCredentials } from "@/store/authSlice";
 import { isValidEmail } from "@/utils/validation";
 import { GoogleSignin } from "@react-native-google-signin/google-signin";
 import { useRouter } from "expo-router";
 import { Eye, EyeOff } from "lucide-react-native";
 import React, { useState } from "react";
 import {
-   StyleSheet,
-   Text,
-   TextInput,
-   TouchableOpacity,
-   View,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from "react-native";
-import { setCredentials } from "@/store/authSlice";
 import { useDispatch } from "react-redux";
 
 GoogleSignin.configure({
@@ -59,7 +59,7 @@ export default function LoginScreen() {
         password,
       }).unwrap();
       // console.log(res);
-      dispatch(setCredentials({ user: res.user, token: res.token }))
+      dispatch(setCredentials({ user: res.user, token: res.token }));
       showToast("Login successful!", "success");
       setTimeout(() => {
         router.replace("/(user_dashboard)/home");

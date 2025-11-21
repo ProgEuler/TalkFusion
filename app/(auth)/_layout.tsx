@@ -1,12 +1,12 @@
-import React from "react";
-import { Stack } from "expo-router";
 import colors from "@/constants/colors";
+import { Stack } from "expo-router";
+import React from "react";
 
 const Layout = () => {
   return (
     <Stack
-       screenOptions={{
-         headerShown: true,
+      screenOptions={{
+        headerShown: true,
         headerStyle: {
           backgroundColor: colors.dark.background,
         },
@@ -15,7 +15,7 @@ const Layout = () => {
         headerTitleStyle: {
           fontWeight: "bold",
         },
-        headerShadowVisible: false,     // Removes bottom border on iOSr
+        headerShadowVisible: false, // Removes bottom border on iOSr
       }}
     >
       <Stack.Screen name="welcome" options={{ headerShown: false }} />
