@@ -17,7 +17,7 @@ function RootLayoutNav() {
     <Stack screenOptions={{ headerBackTitle: "Back", headerShown: false }}>
       <Stack.Screen name="index" />
       <Stack.Screen name="(auth)" />
-      <Stack.Screen name="(dashboard)" />
+      {/* <Stack.Screen name="(dashboard)" /> */}
       <Stack.Screen name="(admin_dashboard)" />
       <Stack.Screen name="(user_dashboard)" />
       <Stack.Screen name="+not-found" />

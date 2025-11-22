@@ -132,13 +132,13 @@ const adminMenuItems: MenuItem[] = [
   },
   {
     id: "performance",
-    label: "Performance & Analytics",
+    label: "Analytics",
     icon: BarChart3,
     route: "/(admin_dashboard)/performance",
   },
   {
     id: "subscription",
-    label: "Subscription Management",
+    label: "Subscription",
     icon: CreditCard,
     route: "/(admin_dashboard)/subscription",
   },
