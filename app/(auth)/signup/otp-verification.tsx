@@ -3,23 +3,23 @@ import { Button } from "@/components/ui/Button";
 import { OTPFields } from "@/components/ui/otp-input";
 import { Toast } from "@/components/ui/Toast";
 import colors from "@/constants/colors";
+import { setCredentials } from "@/store/authSlice";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import React, { useState } from "react";
 import {
-   KeyboardAvoidingView,
-   Platform,
-   ScrollView,
-   StyleSheet,
-   Text,
-   View,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { setCredentials } from "@/store/authSlice";
 import { useDispatch } from "react-redux";
 
 export default function OtpVerificationScreen() {
   const router = useRouter();
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
   const { email } = useLocalSearchParams<{ email: string }>();
   const [otp, setOtp] = useState("");
   const [verifyOtp, { isLoading: verifyingOTP }] =
@@ -68,9 +68,10 @@ export default function OtpVerificationScreen() {
     console.log(otp);
     try {
       const res = await verifyOtp({ email, otp }).unwrap();
-      dispatch(setCredentials({ user: res.user, token: res.token }))
+      dispatch(setCredentials({ user: res.user, token: res.token }));
       showToast("OTP Verified Successfully!", "success");
       setTimeout(() => {
+        router.replace("/(auth)/login");
         router.replace("/(auth)/login");
       }, 1000);
       // Navigate to next screen or dashboard
@@ -116,7 +117,8 @@ export default function OtpVerificationScreen() {
           >
             <Text style={styles.title}>OTP Verification</Text>
             <Text style={styles.subtitle}>
-              Enter the 4-digit code sent to {email || "your email address"}.
+              Enter the 4-digit code sent to{" "}
+              {"\n" + email || "your email address"}
             </Text>
 
             <OTPFields
