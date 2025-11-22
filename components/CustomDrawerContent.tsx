@@ -169,12 +169,12 @@ const quickActions: MenuItem[] = [
   //      icon: Link2,
   //      route: "/(dashboard)/integrations",
   //  },
-  {
-    id: "train-ai",
-    label: "Train AI",
-    icon: Sparkles,
-    route: "/(dashboard)/knowledge-base",
-  },
+//   {
+//     id: "train-ai",
+//     label: "Train AI",
+//     icon: Sparkles,
+//     route: "/(dashboard)/knowledge-base",
+//   },
   {
     id: "test-chat",
     label: "Test Chat",
@@ -199,19 +199,21 @@ export default function CustomDrawerContent() {
     router.replace("/login");
   };
 
-  const isRouteActive = (route: string) => {
-    if (route === "/(dashboard)/home") {
-      return pathname === "/(dashboard)/home" || pathname === "/(dashboard)/";
-    }
-    // For appointments route, also check for add-appointment
-    if (route === "/(dashboard)/appointments") {
-      return (
-        pathname === "/(dashboard)/appointments" ||
-        pathname.includes("/(dashboard)/add-appointment")
-      );
-    }
-    return pathname === route || pathname.startsWith(route + "/");
-  };
+    const isRouteActive = (route: string) => {
+        // Exact match
+        if (pathname === route) return true;
+
+        // Check if pathname matches the route without the group
+        // e.g. route = "/(admin_dashboard)/users", pathname = "/users"
+        const routeWithoutGroup = route.replace(/\/\([^)]+\)/, "");
+        if (pathname === routeWithoutGroup) return true;
+
+        // Check for sub-routes
+        if (pathname.startsWith(route + "/")) return true;
+        if (pathname.startsWith(routeWithoutGroup + "/")) return true;
+
+        return false;
+    };
 
   return (
     <View style={styles.container}>
@@ -243,7 +245,7 @@ export default function CustomDrawerContent() {
               >
                 <Icon
                   color={
-                    isActive ? colors.dark.primary : colors.dark.textSecondary
+                    isActive ? 'white' : colors.dark.textSecondary
                   }
                   size={20}
                 />

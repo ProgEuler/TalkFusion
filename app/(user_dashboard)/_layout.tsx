@@ -20,7 +20,7 @@ export default function DashboardLayout() {
                 headerTintColor: colors.dark.text,
                 drawerStyle: {
                     backgroundColor: colors.dark.sidebarBackground,
-                    width: 280,
+                    width: 248,
                 },
                 drawerActiveTintColor: colors.dark.primary,
                 drawerInactiveTintColor: colors.dark.primary,

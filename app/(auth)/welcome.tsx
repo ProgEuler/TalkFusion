@@ -107,6 +107,7 @@ const PricingCard = ({
 
 function WelcomeScreen() {
   const router = useRouter();
+
   const handleGetStarted = () => {
     router.replace("/(admin_dashboard)/home");
     //  Linking.openURL(
