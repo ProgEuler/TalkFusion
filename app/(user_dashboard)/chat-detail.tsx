@@ -202,7 +202,7 @@ export default function ChatDetailScreen() {
             >
                 <View style={styles.headerLeft}>
                     <TouchableOpacity
-                        onPress={() => router.replace("/(dashboard)/chat-history")}
+                        onPress={() => router.replace("/(user_dashboard)/chat-history")}
                         style={styles.backButton}
                     >
                         <ArrowLeft color={colors.dark.text} size={24} />

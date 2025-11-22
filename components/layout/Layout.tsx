@@ -17,7 +17,7 @@ export function Layout({ children, style, ...props }: Props) {
   return (
     <SafeAreaView
       edges={props.edges || []}
-      style={{ flex: 1, backgroundColor: colors.dark.background, padding }}
+      style={{ flex: 1, backgroundColor: colors.dark.background, paddingHorizontal: padding }}
       {...props}
     >
       <KeyboardAwareScrollView
@@ -30,6 +30,7 @@ export function Layout({ children, style, ...props }: Props) {
           {
             flexGrow: 1,
             gap: 8,
+            paddingVertical: padding
           },
           style,
         ]}

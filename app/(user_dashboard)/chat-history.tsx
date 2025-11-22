@@ -13,7 +13,6 @@ import {
 } from "lucide-react-native";
 import React, { useState } from "react";
 import {
-    ScrollView,
     StyleSheet,
     Text,
     TextInput,
@@ -133,7 +132,7 @@ export default function ChatHistoryScreen() {
     const handleChatSelect = (chatId: string) => {
         // Navigate to chat detail screen
         router.push({
-            pathname: "/(dashboard)/chat-detail",
+            pathname: "/(user_dashboard)/chat-detail",
             params: { chatId },
         });
     };

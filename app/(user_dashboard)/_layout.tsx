@@ -120,6 +120,13 @@ export default function DashboardLayout() {
                     drawerIcon: ({ color, size }) => <Wallet color={color} size={size} />,
                 }}
             />
+            <Drawer.Screen
+                name="chat-detail"
+                options={{
+                  headerShown: false,
+                  drawerItemStyle: { display: "none" }
+                }}
+            />
         </Drawer>
     );
 }

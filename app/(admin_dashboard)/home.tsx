@@ -1,125 +1,240 @@
-import CustomDrawerContent from "@/components/CustomDrawerContent";
+import { Layout } from "@/components/layout/Layout";
 import colors from "@/constants/colors";
-import { Drawer } from "expo-router/drawer";
-import { Menu, Grid, User, Plug, Building, BarChart3, CreditCard, Users, FileText, Wallet } from "lucide-react-native";
 import React from "react";
-import { TouchableOpacity, useWindowDimensions, View } from "react-native";
+import { StyleSheet, Text, View, useWindowDimensions } from "react-native";
+import { LineChart } from "react-native-gifted-charts";
 
-export default function DashboardLayout() {
-    const dimensions = useWindowDimensions();
-    const isLargeScreen = dimensions.width >= 768;
+const StatsCard = ({
+  title,
+  value,
+  color,
+}: {
+  title: string;
+  value: string;
+  color: string;
+}) => (
+  <View style={styles.card}>
+    <Text style={styles.cardTitle}>{title}</Text>
+    <Text style={[styles.cardValue, { color }]}>{value}</Text>
+  </View>
+);
 
-    return (
-        <Drawer
-            drawerContent={(props: any) => <CustomDrawerContent {...props} />}
-            screenOptions={({ navigation }) => ({
-                headerShown: true,
-                headerStyle: {
-                    backgroundColor: colors.dark.cardBackground,
-                },
-                headerTintColor: colors.dark.text,
-                drawerStyle: {
-                    backgroundColor: colors.dark.sidebarBackground,
-                    width: 280,
-                },
-                drawerActiveTintColor: colors.dark.primary,
-                drawerInactiveTintColor: colors.dark.primary,
-                overlayColor: "rgba(0,0,0,0.5)",
-                drawerType: isLargeScreen ? "permanent" : "front",
-                gestureEnabled: true,
-                swipeEdgeWidth: 50,
-                headerLeft: () => (
-                    <TouchableOpacity
-                        onPress={() => navigation.toggleDrawer()}
-                        style={{ marginLeft: 16 }}
-                    >
-                        <View style={{ padding: 8, borderRadius: 8 }}>
-                            <Menu color={colors.dark.primary} size={24} />
-                        </View>
-                    </TouchableOpacity>
-                )
-            })}
-        >
-            <Drawer.Screen
-                name="home"
-                options={{
-                    drawerLabel: "Dashboard",
-                    title: "Dashboard",
-                    drawerIcon: ({ color, size }) => <Grid color={color} size={size} />,
-                }}
-            />
+const TicketItem = ({ id, subject }: { id: string; subject: string }) => (
+  <View style={styles.ticketRow}>
+    <Text style={styles.ticketId}>{id}</Text>
+    <Text style={styles.ticketSubject} numberOfLines={1}>
+      {subject}
+    </Text>
+  </View>
+);
 
-            <Drawer.Screen
-                name="users"
-                options={{
-                    drawerLabel: "Users",
-                    title: "Users",
-                    drawerIcon: ({ color, size }) => <User color={color} size={size} />,
-                }}
-            />
+export default function AdminDashboard() {
+  const { width } = useWindowDimensions();
+  const isSmallScreen = width < 380;
 
-            <Drawer.Screen
-                name="integrations"
-                options={{
-                    drawerLabel: "Integrations",
-                    title: "Integrations",
-                    drawerIcon: ({ color, size }) => <Plug color={color} size={size} />,
-                }}
-            />
+  // Chart Data
+  const lineData1 = [
+    { value: 2000, label: "Jan" },
+    { value: 5000, label: "Feb" },
+    { value: 8000, label: "Mar" },
+    { value: 10000, label: "Apr" },
+  ];
+  const lineData2 = [
+    { value: 0, label: "Jan" },
+    { value: 1500, label: "Feb" },
+    { value: 2500, label: "Mar" },
+    { value: 3800, label: "Apr" },
+  ];
 
-            <Drawer.Screen
-                name="company-profile"
-                options={{
-                    drawerLabel: "Company Profile",
-                    title: "Company Profile",
-                    drawerIcon: ({ color, size }) => <Building color={color} size={size} />,
-                }}
-            />
+  return (
+    <Layout>
+      <Text style={styles.headerTitle}>Admin control center</Text>
 
-            <Drawer.Screen
-                name="performance"
-                options={{
-                    drawerLabel: "Performance & Analytics",
-                    title: "Performance & Analytics",
-                    drawerIcon: ({ color, size }) => <BarChart3 color={color} size={size} />,
-                }}
-            />
+      {/* Stats Grid */}
+      <View style={styles.gridContainer}>
+        <View style={styles.row}>
+          <StatsCard
+            title="Total Users"
+            value="10,23"
+            color={colors.dark.primary}
+          />
+          <StatsCard
+            title="Active Integrations"
+            value="20"
+            color={colors.dark.primary}
+          />
+        </View>
+        <View style={styles.row}>
+          <StatsCard
+            title="Net Profit this month"
+            value="$ 99.99"
+            color={colors.dark.primary}
+          />
+          <StatsCard
+            title="New companies"
+            value="513"
+            color={colors.dark.primary}
+          />
+        </View>
+      </View>
 
-            <Drawer.Screen
-                name="subscription"
-                options={{
-                    drawerLabel: "Subscription Management",
-                    title: "Subscription Management",
-                    drawerIcon: ({ color, size }) => <CreditCard color={color} size={size} />,
-                }}
-            />
+      {/* Chart Section */}
+      <View style={styles.chartCard}>
+        <LineChart
+          data={lineData1}
+          data2={lineData2}
+          height={220}
+          width={width - 80} // Adjust based on padding
+          initialSpacing={20}
+          color1="#F59E0B" // Yellow/Orange
+          color2="#06B6D4" // Cyan
+          textColor1="white"
+          dataPointsColor1="#F59E0B"
+          dataPointsColor2="#06B6D4"
+          startFillColor1="#F59E0B"
+          startFillColor2="#06B6D4"
+          startOpacity={0.1}
+          endOpacity={0.1}
+          noOfSections={7}
+          maxValue={14000}
+          yAxisTextStyle={{ color: colors.dark.textSecondary, fontSize: 12 }}
+          xAxisLabelTextStyle={{
+            color: colors.dark.textSecondary,
+            fontSize: 12,
+          }}
+          yAxisColor={colors.dark.border}
+          xAxisColor={colors.dark.border}
+          rulesColor={colors.dark.border}
+          rulesType="solid"
+          yAxisThickness={0}
+          xAxisThickness={0}
+          curved
+          hideDataPoints={false}
+          dataPointsRadius={4}
+        />
+        {/* Custom Legend/Tooltip overlay could be added here if needed,
+                    but gifted-charts has built-in tooltip support which is complex to customize exactly like mockup without more code.
+                    For now, the basic chart conveys the data. */}
+      </View>
 
-            <Drawer.Screen
-                name="team"
-                options={{
-                    drawerLabel: "Team",
-                    title: "Team",
-                    drawerIcon: ({ color, size }) => <Users color={color} size={size} />,
-                }}
-            />
+      {/* Support Tickets */}
+      <View style={styles.ticketsContainer}>
+        <Text style={styles.sectionTitle}>Open Support Tickets</Text>
 
-            <Drawer.Screen
-                name="overview"
-                options={{
-                    drawerLabel: "Overview",
-                    title: "Overview",
-                    drawerIcon: ({ color, size }) => <FileText color={color} size={size} />,
-                }}
-            />
+        <View style={styles.ticketHeader}>
+          <Text style={styles.ticketHeaderId}>ID</Text>
+          <Text style={styles.ticketHeaderSubject}>Subject</Text>
+        </View>
 
-            <Drawer.Screen
-                name="payment"
-                options={{
-                    drawerLabel: "Payment & Report",
-                    title: "Payment & Report",
-                    drawerIcon: ({ color, size }) => <Wallet color={color} size={size} />,
-                }}
-            />
-        </Drawer>
-    );
+        <TicketItem
+          id="#TK-4821"
+          subject="Payment gateway not processing transactions"
+        />
+        <TicketItem
+          id="#TK-4819"
+          subject="User login issues after system update"
+        />
+        <TicketItem
+          id="#TK-4821"
+          subject="Dashboard charts not loading correctly"
+        />
+        <TicketItem id="#TK-4821" subject="Email notifications delayed" />
+      </View>
+    </Layout>
+  );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: colors.dark.background,
+  },
+  contentContainer: {
+    padding: 20,
+    paddingBottom: 40,
+  },
+  headerTitle: {
+    fontSize: 20,
+    fontWeight: "600",
+    color: colors.dark.text,
+    marginBottom: 20,
+  },
+  gridContainer: {
+    gap: 16,
+    marginBottom: 24,
+  },
+  row: {
+    flexDirection: "row",
+    gap: 16,
+  },
+  card: {
+    flex: 1,
+    backgroundColor: colors.dark.cardBackground,
+    padding: 20,
+    borderRadius: 12,
+    alignItems: "center",
+    justifyContent: "center",
+    minHeight: 120,
+  },
+  cardTitle: {
+    fontSize: 14,
+    color: colors.dark.textSecondary,
+    marginBottom: 8,
+    textAlign: "center",
+  },
+  cardValue: {
+    fontSize: 24,
+    fontWeight: "700",
+  },
+  chartCard: {
+    backgroundColor: colors.dark.cardBackground,
+    padding: 20,
+    borderRadius: 12,
+    marginBottom: 24,
+    alignItems: "center", // Center the chart
+    overflow: "hidden", // Prevent overflow
+  },
+  ticketsContainer: {
+    backgroundColor: colors.dark.cardBackground,
+    padding: 20,
+    borderRadius: 12,
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: "600",
+    color: colors.dark.text,
+    marginBottom: 20,
+  },
+  ticketHeader: {
+    flexDirection: "row",
+    marginBottom: 16,
+  },
+  ticketHeaderId: {
+    width: 100,
+    fontSize: 14,
+    fontWeight: "600",
+    color: colors.dark.primary,
+  },
+  ticketHeaderSubject: {
+    flex: 1,
+    fontSize: 14,
+    fontWeight: "600",
+    color: colors.dark.primary,
+  },
+  ticketRow: {
+    flexDirection: "row",
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.dark.border,
+  },
+  ticketId: {
+    width: 100,
+    fontSize: 14,
+    color: colors.dark.textSecondary,
+  },
+  ticketSubject: {
+    flex: 1,
+    fontSize: 14,
+    color: colors.dark.text,
+  },
+});
