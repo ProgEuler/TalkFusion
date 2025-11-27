@@ -1,5 +1,7 @@
+import { useGetAnalyticsDataQuery } from "@/api/user-api/analytics.api";
 import { Layout } from "@/components/layout/Layout";
 import { Button } from "@/components/ui/Button";
+import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
 import { RNPicker } from "@/components/ui/picker";
 import colors from "@/constants/colors";
 import {
@@ -91,6 +93,19 @@ export default function AnalyticsScreen() {
   const [timeRange, setTimeRange] = useState("Today");
   const [channel, setChannel] = useState("All Channel");
   const [messageType, setMessageType] = useState("All Message");
+  const [filters, setFilters] = useState({
+    time: "",
+    channel: "",
+    type: "",
+  });
+  const {data, isLoading} = useGetAnalyticsDataQuery({
+    time: timeRange,
+    channel: channel,
+    type: messageType,
+  })
+
+  if(isLoading) return <LoadingSpinner />
+  console.log("analytics data: ", data)
   const timeRangeLabelMap: Record<string, string> = {
     today: "Today",
     this_week: "This Week",

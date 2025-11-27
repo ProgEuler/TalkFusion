@@ -1,91 +1,27 @@
-import { useGetDashboardDataQuery } from "@/api/dashboard.api";
+import { useGetDashboardDataQuery } from "@/api/user-api/dashboard.api";
 import Facebook from "@/assets/svgs/facebook.svg";
 import WhatsApp from "@/assets/svgs/whatsapp.svg";
 import { Layout } from "@/components/layout/Layout";
 import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
 import colors from "@/constants/colors";
 import { selectCurrentToken, selectCurrentUser } from "@/store/authSlice";
-import { Calendar, CheckCircle, Instagram, MessageCircle } from "lucide-react-native";
+import {
+  Calendar,
+  CheckCircle,
+  DollarSign,
+  ExternalLink,
+  Instagram,
+  MessageCircle,
+} from "lucide-react-native";
 import React from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { useSelector } from "react-redux";
-interface Appointment {
-  id: string;
-  time: string;
-  name: string;
-  status: "confirm" | "pending";
-}
-
-interface Payment {
-  id: string;
-  name: string;
-  type: string;
-  amount: string;
-  status: "confirm" | "pending";
-}
-
-const appointmentsToday: Appointment[] = [
-  { id: "1", time: "11:23 pm", name: "Courtney", status: "confirm" },
-  { id: "2", time: "11:23 pm", name: "Tanya", status: "confirm" },
-  { id: "3", time: "10:41 pm", name: "Savannah", status: "pending" },
-  { id: "4", time: "08:20 pm", name: "Gloria", status: "pending" },
-  { id: "5", time: "06:41 pm", name: "Colleen", status: "confirm" },
-  { id: "6", time: "02:40 pm", name: "Kristen", status: "confirm" },
-  { id: "7", time: "01:49 pm", name: "Bayside", status: "confirm" },
-  { id: "8", time: "10:41 pm", name: "Jane", status: "confirm" },
-];
-
-const paymentsToday: Payment[] = [
-  {
-    id: "1",
-    name: "Cody",
-    type: "Consultation",
-    amount: "$120.00",
-    status: "confirm",
-  },
-  {
-    id: "2",
-    name: "Jacob",
-    type: "Initial Visit",
-    amount: "$100.00",
-    status: "confirm",
-  },
-  {
-    id: "3",
-    name: "Shawn",
-    type: "Consultation",
-    amount: "$100.00",
-    status: "pending",
-  },
-  {
-    id: "4",
-    name: "Ronald",
-    type: "Service Package",
-    amount: "$120.00",
-    status: "confirm",
-  },
-  {
-    id: "5",
-    name: "Brandon",
-    type: "Initial Visit",
-    amount: "$120.00",
-    status: "pending",
-  },
-  {
-    id: "6",
-    name: "Leslie",
-    type: "Consultation",
-    amount: "$120.00",
-    status: "confirm",
-  },
-];
 
 export default function DashboardScreen() {
   const user = useSelector(selectCurrentUser);
   const token = useSelector(selectCurrentToken);
   const { data, isLoading } = useGetDashboardDataQuery(undefined);
-  if (isLoading)
-    return <LoadingSpinner />
+  if (isLoading) return <LoadingSpinner />;
   console.log("data ->", data);
   //   useEffect(() => {
   //   const fetchData = async () => {
@@ -112,17 +48,34 @@ export default function DashboardScreen() {
 
   //   fetchData();
   //   }, []);
-
+  function formatTime(dateString: string) {
+    const date = new Date(dateString.replace(" ", "T")); // Fix for iOS
+    return date.toLocaleTimeString("en-US", {
+      hour: "numeric",
+      minute: "2-digit",
+      hour12: true,
+    });
+  }
   return (
     <Layout>
+      {/* stat */}
       <View style={styles.statsRow}>
-        <View style={[styles.statCard, { flex: 1 }]}>
+        <View style={styles.statCard}>
           <View style={styles.statIconContainer}>
             <MessageCircle color="#F59E0B" size={24} />
           </View>
           <Text style={styles.statLabel}>Open Chats</Text>
-          <Text style={styles.statSubLabel}>All caught up</Text>
           <Text style={styles.statValue}>{data.open_chat}</Text>
+        </View>
+
+        <View style={styles.statCard}>
+          <View
+            style={[styles.statIconContainer, { backgroundColor: "#10B98120" }]}
+          >
+            <Calendar color="#10B981" size={24} />
+          </View>
+          <Text style={styles.statLabel}>Appointments Today</Text>
+          <Text style={styles.statValue}>{data.today_meetings.count}</Text>
         </View>
 
         <View style={[styles.statCard, { flex: 1 }]}>
@@ -131,87 +84,98 @@ export default function DashboardScreen() {
           >
             <Calendar color="#10B981" size={24} />
           </View>
-          <Text style={styles.statLabel}>Appointments Today</Text>
-          <Text style={styles.statSubLabel}>Upcoming {data.today_meetings.remaining}</Text>
+          <Text style={[styles.statLabel, { textAlign: "center" }]}>Remaining Appointments</Text>
+          <Text style={styles.statValue}>{data.today_meetings.count}</Text>
+        </View>
+
+        <View style={styles.statCard}>
+          <View
+            style={[styles.statIconContainer, { backgroundColor: "#10B98120" }]}
+          >
+            <DollarSign color="#10B981" size={24} />
+          </View>
+          <Text style={styles.statLabel}>Payments Today</Text>
           <Text style={styles.statValue}>{data.today_meetings.count}</Text>
         </View>
       </View>
 
+      {/* appointments */}
       <View style={styles.card}>
         <View style={styles.cardHeader}>
           <Text style={styles.cardTitle}>Appointments Today</Text>
-          <Text style={styles.cardBadge}>{data.today_meetings.count} appointments</Text>
+          <Text style={styles.cardBadge}>
+            {data.today_meetings.count} appointments
+          </Text>
         </View>
         <View style={styles.appointmentsList}>
-          { data.today_meetings.list.length > 0 ? (
+          {data.today_meetings.list.length > 0 ? (
             data.today_meetings.list.map((appointment) => (
-            <View key={appointment.id} style={styles.listItem}>
-              <Text style={styles.listItemTime}>{appointment.time}</Text>
-              <Text style={styles.listItemName}>{appointment.name}</Text>
-              <View
-                style={[
-                  styles.statusBadge,
-                  appointment.status === "confirm"
-                    ? styles.statusConfirm
-                    : styles.statusPending,
-                ]}
-              >
-                <Text
-                  style={[
-                    styles.statusText,
-                    appointment.status === "confirm"
-                      ? styles.statusTextConfirm
-                      : styles.statusTextPending,
-                  ]}
-                >
-                  {appointment.status === "confirm" ? "Confirm" : "Pending"}
+              <View key={appointment.id} style={styles.listItem}>
+                <Text style={styles.listItemTime}>
+                  {formatTime(appointment.start_time)}
                 </Text>
+                <Text style={styles.listItemName}>{appointment.title}</Text>
+                <Text style={styles.listItemName}>{appointment.client}</Text>
+                <TouchableOpacity>
+                  <Text style={{ color: "#fff", fontSize: 12 }}>{appointment.location}</Text>
+                  <ExternalLink color={"#fff"} size={16} />
+                </TouchableOpacity>
               </View>
-            </View>
-          ))) : (
-            <Text style={{ color: colors.dark.text }}>No appointments today</Text>
+            ))
+          ) : (
+            <Text style={{ color: colors.dark.text }}>
+              No appointments today
+            </Text>
           )}
         </View>
       </View>
 
+      {/* payments */}
       <View style={styles.card}>
         <View style={styles.cardHeader}>
           <Text style={styles.cardTitle}>Payments Today</Text>
-          <Text style={styles.cardBadge}>{data.today_payments.total} Paid</Text>
+          <Text style={styles.cardBadge}>
+            {data.today_payments.list.length} Paid
+          </Text>
         </View>
         <View style={styles.paymentsList}>
           {data.today_payments.list.length > 0 ? (
             data.today_payments.list.map((payment) => (
-            <View key={payment.id} style={styles.listItem}>
-              <Text style={styles.paymentName}>{payment.name}</Text>
-              <Text style={styles.paymentType}>{payment.type}</Text>
-              <Text style={styles.paymentAmount}>{payment.amount}</Text>
-              <View
-                style={[
-                  styles.statusBadge,
-                  payment.status === "confirm"
-                    ? styles.statusConfirm
-                    : styles.statusPending,
-                ]}
-              >
-                <Text
+              <View key={payment.transaction_id} style={styles.listItem}>
+                <Text style={styles.paymentName}>{payment.reason}</Text>
+                <Text style={styles.paymentType}>{payment.type}</Text>
+                <Text style={styles.paymentType}>
+                  {formatTime(payment.payment_date)}
+                </Text>
+                <Text style={styles.paymentAmount}>{payment.amount}</Text>
+                <View
                   style={[
-                    styles.statusText,
-                    payment.status === "confirm"
-                      ? styles.statusTextConfirm
-                      : styles.statusTextPending,
+                    styles.statusBadge,
+                    payment.status === "success"
+                      ? styles.statusConfirm
+                      : styles.statusPending,
                   ]}
                 >
-                  {payment.status === "confirm" ? "Confirm" : "Pending"}
-                </Text>
+                  <Text
+                    style={[
+                      styles.statusText,
+                      payment.status === "success"
+                        ? styles.statusTextConfirm
+                        : styles.statusTextPending,
+                    ]}
+                  >
+                    {payment.status === "success" ? "Confirm" : "Pending"}
+                  </Text>
+                </View>
               </View>
-            </View>
-          ))) : (
+            ))
+          ) : (
             <Text style={{ color: colors.dark.text }}>No payments today</Text>
           )}
         </View>
       </View>
 
+      {/* channel */}
       <View style={styles.card}>
         <View style={styles.cardHeader}>
           <Text style={styles.cardTitle}>Channel Status</Text>
@@ -223,7 +187,7 @@ export default function DashboardScreen() {
             </View>
             <View style={styles.channelInfo}>
               <Text style={styles.channelName}>WhatsApp</Text>
-              <Text style={styles.channelStatus}>
+              <Text style={{ color: data.channel_status.whatsapp ? colors.dark.success : colors.dark.danger}}>
                 {data.channel_status.whatsapp ? "Active" : "Inactive"}
               </Text>
             </View>
@@ -234,8 +198,8 @@ export default function DashboardScreen() {
             </View>
             <View style={styles.channelInfo}>
               <Text style={styles.channelName}>Instagram</Text>
-              <Text style={styles.channelStatus}>
-               {data.channel_status.instagram ? "Active" : "Inactive"}
+              <Text style={{ color: data.channel_status.instagram ? colors.dark.success : colors.dark.danger}}>
+                {data.channel_status.instagram ? "Active" : "Inactive"}
               </Text>
             </View>
           </View>
@@ -245,14 +209,15 @@ export default function DashboardScreen() {
             </View>
             <View style={styles.channelInfo}>
               <Text style={styles.channelName}>Facebook</Text>
-              <Text style={styles.channelStatus}>
-               {data.channel_status.instagram ? "Active" : "Inactive"}
+              <Text style={{ color: data.channel_status.facebook ? colors.dark.success : colors.dark.danger}}>
+                {data.channel_status.facebook ? "Active" : "Inactive"}
               </Text>
             </View>
           </View>
         </View>
       </View>
 
+      {/* notifications */}
       <View style={styles.card}>
         <View style={styles.cardHeader}>
           <Text style={styles.cardTitle}>Notifications/Alerts</Text>
@@ -290,10 +255,13 @@ const styles = StyleSheet.create({
   },
   statsRow: {
     flexDirection: "row",
+    flexWrap: "wrap",
     gap: 12,
     marginBottom: 16,
+    justifyContent: "space-between"
   },
   statCard: {
+    width: "48%",
     backgroundColor: colors.dark.cardBackground,
     borderRadius: 12,
     padding: 16,
@@ -301,7 +269,6 @@ const styles = StyleSheet.create({
     borderColor: colors.dark.border,
     alignItems: "center",
     justifyContent: "center",
-    flex: 1,
   },
   statIconContainer: {
     width: 48,
@@ -329,9 +296,9 @@ const styles = StyleSheet.create({
     fontWeight: "700" as const,
   },
   card: {
-    backgroundColor: colors.dark.cardBackground,
+    //  backgroundColor: colors.dark.cardBackground,
     borderRadius: 12,
-    padding: 16,
+    padding: 10,
     marginBottom: 16,
     borderWidth: 1,
     borderColor: colors.dark.border,
@@ -366,7 +333,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     backgroundColor: colors.dark.background,
     borderRadius: 8,
-    gap: 12,
+    gap: 0,
   },
   listItemTime: {
     fontSize: 13,
@@ -374,10 +341,10 @@ const styles = StyleSheet.create({
     width: 70,
   },
   listItemName: {
-    fontSize: 14,
+    fontSize: 12,
     color: colors.dark.text,
     flex: 1,
-    fontWeight: "500" as const,
+    //  fontWeight: "500" as const,
   },
   statusBadge: {
     paddingHorizontal: 12,
@@ -452,11 +419,6 @@ const styles = StyleSheet.create({
     color: colors.dark.text,
     fontWeight: "600" as const,
     marginBottom: 4,
-  },
-  channelStatus: {
-    fontSize: 13,
-    color: colors.dark.success,
-    fontWeight: "500" as const,
   },
   alertContainer: {
     alignItems: "center",
