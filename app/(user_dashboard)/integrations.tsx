@@ -1,4 +1,7 @@
+import { useGetCalendarUrlMutation } from "@/api/user-api/integrations.api";
 import { Layout } from "@/components/layout/Layout";
+import { Button } from "@/components/ui/Button";
+import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
 import colors from "@/constants/colors";
 import {
   Calendar,
@@ -9,6 +12,7 @@ import {
 } from "lucide-react-native";
 import React from "react";
 import {
+   Linking,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -25,6 +29,9 @@ interface Integration {
 
 export default function IntegrationsScreen() {
 
+   const [ getUrl, {isLoading, error} ] = useGetCalendarUrlMutation({});
+   if(isLoading) return <LoadingSpinner />
+   if(error) console.log("Error fetching calendar URL:", error);
   const integrations: Integration[] = [
     {
       id: "facebook",
@@ -63,12 +70,20 @@ export default function IntegrationsScreen() {
     },
   ];
 
-  const handleConnect = (integrationId: string) => {
+  const handleConnect = async (integrationId: string) => {
     console.log("Connecting to:", integrationId);
+    const res = await getUrl("");
+    console.log("Integration response:", res);
+
+      if (integrationId === "calendar" && res?.data?.auth_url) {
+         // Open the calendar connection URL
+         // window.open(res.data.auth_url, "_blank");
+         await Linking.openURL(res.data.auth_url);
+      }
   };
 
   return (
-   <Layout>
+   <Layout edges={["bottom"]}>
         <View style={styles.grid}>
           {integrations.map((integration) => (
             <View key={integration.id} style={styles.card}>
@@ -79,13 +94,14 @@ export default function IntegrationsScreen() {
               <Text style={styles.cardDescription}>
                 {integration.description}
               </Text>
-              <TouchableOpacity
-                style={styles.connectButton}
+
+              <Button
+                size="sm"
                 onPress={() => handleConnect(integration.id)}
                 testID={`connect-${integration.id}`}
               >
-                <Text style={styles.connectButtonText}>Connect</Text>
-              </TouchableOpacity>
+                Connect
+              </Button>
             </View>
           ))}
         </View>
@@ -109,7 +125,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between" as const,
   },
   card: {
-    width: "100%",
+    width: "48%",
     display: "flex",
     flexDirection: "column" as const,
     justifyContent: "space-between" as const,

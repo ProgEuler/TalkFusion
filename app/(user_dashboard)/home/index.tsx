@@ -4,50 +4,31 @@ import WhatsApp from "@/assets/svgs/whatsapp.svg";
 import { Layout } from "@/components/layout/Layout";
 import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
 import colors from "@/constants/colors";
-import { selectCurrentToken, selectCurrentUser } from "@/store/authSlice";
 import {
   Calendar,
+  CalendarIcon,
   CheckCircle,
+  CreditCard,
   DollarSign,
-  ExternalLink,
   Instagram,
   MessageCircle,
 } from "lucide-react-native";
 import React from "react";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { useSelector } from "react-redux";
+import { StyleSheet, Text, View } from "react-native";
+import { AppointmentItem } from "./appoinment";
+import { Button } from "@/components/ui/Button";
 
 export default function DashboardScreen() {
-  const user = useSelector(selectCurrentUser);
-  const token = useSelector(selectCurrentToken);
-  const { data, isLoading } = useGetDashboardDataQuery(undefined);
+  //   const user = useSelector(selectCurrentUser);
+  //   const token = useSelector(selectCurrentToken);
+  const { data, isLoading, refetch } = useGetDashboardDataQuery(undefined);
   if (isLoading) return <LoadingSpinner />;
   console.log("data ->", data);
-  //   useEffect(() => {
-  //   const fetchData = async () => {
-  //     try {
-  //       const res = await fetch(
-  //         "https://ape-in-eft.ngrok-free.app/api/dashboard/?timezone=Asia/Dhaka",
-  //         {
-  //           method: "GET",
-  //           headers: {
-  //             "Content-Type": "application/json",
-  //             Authorization: "Bearer " + token,
-  //           },
-  //         }
-  //       );
-  //       console.log("token from home ->", token)
-  //       console.log("Status:", res.status);
 
-  //       const data = await res.json();
-  //       console.log("Data:", data);
-  //     } catch (error) {
-  //       console.error("ERROR:", error);
-  //     }
-  //   };
+  function refetchData() {
+    refetch();
+  }
 
-  //   fetchData();
-  //   }, []);
   function formatTime(dateString: string) {
     const date = new Date(dateString.replace(" ", "T")); // Fix for iOS
     return date.toLocaleTimeString("en-US", {
@@ -56,8 +37,12 @@ export default function DashboardScreen() {
       hour12: true,
     });
   }
+
   return (
     <Layout>
+      <View>
+         <Button onPress={refetchData}>Refresh</Button>
+      </View>
       {/* stat */}
       <View style={styles.statsRow}>
         <View style={styles.statCard}>
@@ -84,7 +69,9 @@ export default function DashboardScreen() {
           >
             <Calendar color="#10B981" size={24} />
           </View>
-          <Text style={[styles.statLabel, { textAlign: "center" }]}>Remaining Appointments</Text>
+          <Text style={[styles.statLabel, { textAlign: "center" }]}>
+            Remaining Appointments
+          </Text>
           <Text style={styles.statValue}>{data.today_meetings.count}</Text>
         </View>
 
@@ -110,22 +97,23 @@ export default function DashboardScreen() {
         <View style={styles.appointmentsList}>
           {data.today_meetings.list.length > 0 ? (
             data.today_meetings.list.map((appointment, index) => (
-              <View key={index} style={styles.listItem}>
-                <Text style={styles.listItemTime}>
-                  {formatTime(appointment.start_time)}
-                </Text>
-                <Text style={styles.listItemName}>{appointment.title}</Text>
-                <Text style={styles.listItemName}>{appointment.client}</Text>
-                <TouchableOpacity>
-                  <Text style={{ color: "#fff", fontSize: 12 }}>{appointment.location}</Text>
-                  <ExternalLink color={"#fff"} size={16} />
-                </TouchableOpacity>
-              </View>
+              <AppointmentItem
+                key={index}
+                appointment={appointment}
+                index={index}
+              />
             ))
           ) : (
-            <Text style={{ color: colors.dark.text }}>
-              No appointments today
-            </Text>
+            <View style={styles.emptyAppointments}>
+              <CalendarIcon
+                color={colors.dark.textSecondary}
+                size={48}
+                style={styles.emptyIcon}
+              />
+              <Text style={styles.emptyText}>
+                No appointments scheduled for today
+              </Text>
+            </View>
           )}
         </View>
       </View>
@@ -170,7 +158,16 @@ export default function DashboardScreen() {
               </View>
             ))
           ) : (
-            <Text style={{ color: colors.dark.text }}>No payments today</Text>
+           <View style={styles.emptyAppointments}>
+              <CreditCard
+                color={colors.dark.textSecondary}
+                size={48}
+                style={styles.emptyIcon}
+              />
+              <Text style={styles.emptyText}>
+                No appointments scheduled for today
+              </Text>
+            </View>
           )}
         </View>
       </View>
@@ -187,7 +184,13 @@ export default function DashboardScreen() {
             </View>
             <View style={styles.channelInfo}>
               <Text style={styles.channelName}>WhatsApp</Text>
-              <Text style={{ color: data.channel_status.whatsapp ? colors.dark.success : colors.dark.danger}}>
+              <Text
+                style={{
+                  color: data.channel_status.whatsapp
+                    ? colors.dark.success
+                    : colors.dark.danger,
+                }}
+              >
                 {data.channel_status.whatsapp ? "Active" : "Inactive"}
               </Text>
             </View>
@@ -198,7 +201,13 @@ export default function DashboardScreen() {
             </View>
             <View style={styles.channelInfo}>
               <Text style={styles.channelName}>Instagram</Text>
-              <Text style={{ color: data.channel_status.instagram ? colors.dark.success : colors.dark.danger}}>
+              <Text
+                style={{
+                  color: data.channel_status.instagram
+                    ? colors.dark.success
+                    : colors.dark.danger,
+                }}
+              >
                 {data.channel_status.instagram ? "Active" : "Inactive"}
               </Text>
             </View>
@@ -209,7 +218,13 @@ export default function DashboardScreen() {
             </View>
             <View style={styles.channelInfo}>
               <Text style={styles.channelName}>Facebook</Text>
-              <Text style={{ color: data.channel_status.facebook ? colors.dark.success : colors.dark.danger}}>
+              <Text
+                style={{
+                  color: data.channel_status.facebook
+                    ? colors.dark.success
+                    : colors.dark.danger,
+                }}
+              >
                 {data.channel_status.facebook ? "Active" : "Inactive"}
               </Text>
             </View>
@@ -258,7 +273,7 @@ const styles = StyleSheet.create({
     flexWrap: "wrap",
     gap: 12,
     marginBottom: 16,
-    justifyContent: "space-between"
+    justifyContent: "space-between",
   },
   statCard: {
     width: "48%",
@@ -313,6 +328,19 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "600" as const,
     color: colors.dark.text,
+  },
+  emptyAppointments: {
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: 32,
+  },
+  emptyIcon: {
+    marginBottom: 12,
+  },
+  emptyText: {
+    fontSize: 14,
+    color: colors.dark.textSecondary,
+    textAlign: "center",
   },
   cardBadge: {
     fontSize: 12,
