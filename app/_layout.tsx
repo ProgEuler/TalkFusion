@@ -4,14 +4,27 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import React, { useEffect } from "react";
-import { StatusBar } from "react-native";
+import { StatusBar, Text, View } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { KeyboardProvider } from "react-native-keyboard-controller";
 import { Provider } from "react-redux";
+import ToastManager from 'toastify-react-native'
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 
 const queryClient = new QueryClient();
+
+// Custom toast configuration
+const toastConfig = {
+  success: (props) => (
+    <View style={{ backgroundColor: colors.dark.primary, padding: 16, borderRadius: 10 }}>
+      <Text style={{ color: 'white', fontWeight: 'bold' }}>{props.text1}</Text>
+      {props.text2 && <Text style={{ color: 'white' }}>{props.text2}</Text>}
+    </View>
+  ),
+  // Override other toast types as needed
+}
+
 
 function RootLayoutNav() {
   return (
@@ -42,6 +55,7 @@ export default function RootLayout() {
             barStyle="light-content"
           />
           <RootLayoutNav />
+                <ToastManager config={toastConfig} />
         </GestureHandlerRootView>
         </KeyboardProvider>
       </QueryClientProvider>

@@ -2,7 +2,6 @@ import { useLoginMutation } from "@/api/auth.api";
 import { Layout } from "@/components/layout/Layout";
 import { Button } from "@/components/ui/Button";
 import { ModalView } from "@/components/ui/modal-view";
-import { Toast } from "@/components/ui/Toast";
 import { useSignIn } from "@/hooks/use-google-signin";
 import { setCredentials } from "@/store/authSlice";
 import { isValidEmail } from "@/utils/validation";
@@ -11,14 +10,15 @@ import { useRouter } from "expo-router";
 import { Eye, EyeOff } from "lucide-react-native";
 import React, { useState } from "react";
 import {
-    Modal,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
+  Modal,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from "react-native";
 import { useDispatch } from "react-redux";
+import { Toast } from "toastify-react-native";
 
 GoogleSignin.configure({
   scopes: [],
@@ -34,19 +34,10 @@ export default function LoginScreen() {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [showPassword, setShowPassword] = useState<boolean>(false);
-  const [toastVisible, setToastVisible] = useState<boolean>(false);
-  const [toastMessage, setToastMessage] = useState<string>("");
-  const [toastType, setToastType] = useState<"success" | "error">("success");
   const [emailError, setEmailError] = useState<string | null>(null);
   const [showActiveModal, setShowActiveModal] = useState<boolean>(false);
 
   const [login, { isLoading: loading }] = useLoginMutation();
-
-  const showToast = (message: string, type: "success" | "error") => {
-    setToastMessage(message);
-    setToastType(type);
-    setToastVisible(true);
-  };
 
   const handleLogin = async () => {
     if (loading) return;
@@ -63,17 +54,17 @@ export default function LoginScreen() {
       }).unwrap();
       console.log("Login response:", res);
       dispatch(setCredentials({ user: res.user, token: res.access }));
-      showToast("Login successful!", "success");
-        if (res.user.role === "admin") {
-          router.replace("/(admin_dashboard)/home");
-        } else {
-          router.replace("/(user_dashboard)/home");
-        }
+      Toast.success("Login successful!");
+      if (res.user.role === "admin") {
+        router.replace("/(admin_dashboard)/home");
+      } else {
+        router.replace("/(user_dashboard)/home");
+      }
     } catch (error: any) {
       console.error("Login Error:", error);
       const message =
         error?.data?.non_field_errors?.[0] || "Login failed. Please try again.";
-      showToast(message, "error");
+      Toast.error(message);
       console.log(message);
       if (
         message ===
@@ -93,15 +84,6 @@ export default function LoginScreen() {
 
   return (
     <Layout>
-      <View style={{ flex: 1, alignItems: "center"}}>
-
-      <Toast
-        visible={toastVisible}
-        message={toastMessage}
-        type={toastType}
-        onHide={() => setToastVisible(false)}
-        />
-        </View>
       <Modal
         animationType="slide"
         transparent={true}
@@ -113,7 +95,7 @@ export default function LoginScreen() {
         <ModalView
           visible={showActiveModal}
           onClose={() => {
-            setShowActiveModal(false)
+            setShowActiveModal(false);
             router.push({
               pathname: "/(auth)/signup/otp-verification",
               params: { email },

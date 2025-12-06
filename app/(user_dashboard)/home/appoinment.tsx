@@ -1,12 +1,20 @@
-import { View, Text, StyleSheet, TouchableOpacity, Dimensions, Linking } from 'react-native';
-import { ExternalLink } from 'lucide-react-native';
-
-const { width } = Dimensions.get('window');
+import { ExternalLink } from "lucide-react-native";
+import {
+  Linking,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 
 export const AppointmentItem = ({ appointment, index }) => {
-   console.log('Appointment Data:', appointment);
+  console.log("Appointment Data:", appointment);
   const formatTime = (dateString) => {
-    return new Date(dateString).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+    return new Date(dateString).toLocaleTimeString("en-US", {
+      hour: "numeric",
+      minute: "2-digit",
+      hour12: true,
+    });
   };
   async function openCalendarLink() {
     console.log("Opening calendar link:", appointment.event_link);
@@ -35,13 +43,16 @@ export const AppointmentItem = ({ appointment, index }) => {
           </Text>
           {appointment.email && (
             <Text style={styles.emailText} numberOfLines={1}>
-              {' • '} {appointment.email}
+              {" • "} {appointment.email}
             </Text>
           )}
         </View>
 
         {/* Clickable link with icon */}
-        <TouchableOpacity style={styles.linkContainer} onPress={openCalendarLink}>
+        <TouchableOpacity
+          style={styles.linkContainer}
+          onPress={openCalendarLink}
+        >
           <Text style={styles.linkText} numberOfLines={1}>
             Open in Calendar
           </Text>
@@ -54,56 +65,53 @@ export const AppointmentItem = ({ appointment, index }) => {
 
 const styles = StyleSheet.create({
   container: {
-    flexDirection: 'row',
+    flexDirection: "row",
     padding: 16,
-    backgroundColor: '#1a1a1a',
-    borderBottomWidth: 1,
-    borderBottomColor: '#333',
     minHeight: 80,
-    alignItems: 'center',
+    alignItems: "center",
   },
   time: {
-    color: '#4A90E2',
+    color: "#4A90E2",
     fontSize: 14,
-    fontWeight: '600',
+    fontWeight: "600",
     width: 75,
-    textAlign: 'left',
+    textAlign: "left",
   },
   content: {
     flex: 1,
     marginLeft: 16,
-    justifyContent: 'center',
+    justifyContent: "center",
   },
   title: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: "600",
   },
   client: {
-    color: '#aaa',
+    color: "#aaa",
     fontSize: 14,
     marginTop: 2,
   },
   locationRow: {
-    flexDirection: 'row',
+    flexDirection: "row",
     marginTop: 6,
-    flexWrap: 'wrap',
+    flexWrap: "wrap",
   },
   locationText: {
-    color: '#999',
+    color: "#999",
     fontSize: 13,
   },
   emailText: {
-    color: '#999',
+    color: "#999",
     fontSize: 13,
   },
   linkContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     marginTop: 8,
   },
   linkText: {
-    color: '#4A90E2',
+    color: "#4A90E2",
     fontSize: 13,
     marginRight: 6,
   },

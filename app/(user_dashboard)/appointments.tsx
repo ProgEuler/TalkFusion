@@ -1,4 +1,3 @@
-import Google from "@/assets/svgs/google.svg";
 import { Layout } from "@/components/layout/Layout";
 import { Button } from "@/components/ui/Button";
 import colors from "@/constants/colors";
@@ -10,6 +9,7 @@ import {
 } from "lucide-react-native";
 import React, { useState } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import GoogleCalendar from "./integrations/google-calendar";
 
 const getDaysInMonth = (year: number, month: number) => {
   return new Date(year, month + 1, 0).getDate();
@@ -320,7 +320,7 @@ export default function AppointmentsScreen() {
       {/* Today's Appointments Section */}
       <View style={styles.section}>
         <View style={styles.sectionHeader}>
-          <Text style={styles.sectionTitle}>Today's Appointments</Text>
+          <Text style={styles.sectionTitle}>Today&apos;s Appointments</Text>
           <Text style={styles.sectionDate}>{formatDate(selectedDate)}</Text>
         </View>
         {todayAppointments.length === 0 ? (
@@ -347,7 +347,7 @@ export default function AppointmentsScreen() {
       </View>
 
       {/* Calendar Integration Section */}
-      <View style={styles.section}>
+      {/* <View style={styles.section}>
         <View style={styles.sectionHeader}>
           <Text style={styles.sectionTitle}>Calendar Integration</Text>
           <Text style={styles.autoSyncText}>Auto-sync enabled</Text>
@@ -355,13 +355,14 @@ export default function AppointmentsScreen() {
         <View style={styles.integrationCard}>
           <Google width={48} height={48} />
           <View style={styles.integrationInfo}>
-            <Text style={styles.integrationName}>Google Calendars</Text>
+            <Text style={styles.integrationName}>Google Calendar</Text>
             <TouchableOpacity style={styles.connectButton}>
               <Text style={styles.connectButtonText}>Connect</Text>
             </TouchableOpacity>
           </View>
         </View>
-      </View>
+      </View> */}
+      <GoogleCalendar />
 
       {/* Sync Information Section */}
       <View style={styles.section}>
@@ -407,7 +408,7 @@ const styles = StyleSheet.create({
     gap: 8,
     marginBottom: 24,
     alignItems: "center",
-    justifyContent: "center"
+    justifyContent: "center",
   },
   viewModeButton: {
     paddingVertical: 8,
@@ -451,11 +452,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: 16,
   },
-  sectionTitle: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: colors.dark.text,
-  },
+  sectionTitle: {},
   sectionDate: {
     fontSize: 14,
     color: colors.dark.textSecondary,

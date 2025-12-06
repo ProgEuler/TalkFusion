@@ -1,7 +1,5 @@
-import { useGetCalendarUrlMutation } from "@/api/user-api/integrations.api";
 import { Layout } from "@/components/layout/Layout";
 import { Button } from "@/components/ui/Button";
-import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
 import colors from "@/constants/colors";
 import {
   Calendar,
@@ -18,7 +16,6 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-
 interface Integration {
   id: string;
   name: string;
@@ -28,10 +25,6 @@ interface Integration {
 }
 
 export default function IntegrationsScreen() {
-
-   const [ getUrl, {isLoading, error} ] = useGetCalendarUrlMutation({});
-   if(isLoading) return <LoadingSpinner />
-   if(error) console.log("Error fetching calendar URL:", error);
   const integrations: Integration[] = [
     {
       id: "facebook",
@@ -72,14 +65,6 @@ export default function IntegrationsScreen() {
 
   const handleConnect = async (integrationId: string) => {
     console.log("Connecting to:", integrationId);
-    const res = await getUrl("");
-    console.log("Integration response:", res);
-
-      if (integrationId === "calendar" && res?.data?.auth_url) {
-         // Open the calendar connection URL
-         // window.open(res.data.auth_url, "_blank");
-         await Linking.openURL(res.data.auth_url);
-      }
   };
 
   return (
