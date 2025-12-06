@@ -6,19 +6,17 @@ import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
 import { RNPicker } from "@/components/ui/picker";
 import colors from "@/constants/colors";
 import {
-  Calendar,
-  Camera,
-  DollarSign,
-  FileText,
-  Instagram,
-  MessageCircle,
-  TrendingUp,
-  User2,
+   Calendar,
+   DollarSign,
+   Instagram,
+   MessageCircle,
+   User2
 } from "lucide-react-native";
 import React, { useState } from "react";
 import { RefreshControl, StyleSheet, Text, View } from "react-native";
 import PieChart from "react-native-pie-chart";
 import Finance from "./analytics/finance";
+import TopQuestions from "./analytics/top-questions";
 interface PieChartData {
   label: string;
   value: number;
@@ -30,8 +28,8 @@ const widthAndHeight = 200;
 
 export default function AnalyticsScreen() {
   const [timeRange, setTimeRange] = useState("all");
-  const [channel, setChannel] = useState("all_channel");
-  const [messageType, setMessageType] = useState("all_message");
+  const [channel, setChannel] = useState("");
+  const [messageType, setMessageType] = useState("all");
 
   const { data, isLoading, refetch } = useGetAnalyticsDataQuery({
     time: timeRange,
@@ -50,14 +48,14 @@ export default function AnalyticsScreen() {
     this_year: "This Year",
   };
   const channelLabelMap = {
-    all_channel: "All Channel",
+    "": "All Channel",
     facebook: "Facebook",
     whatsapp: "WhatsApp",
     instagram: "Instagram",
   };
 
   const messageTypeLabelMap = {
-    all_message: "All Message",
+    all: "All Message",
     incoming: "Incoming",
     outgoing: "Outgoing",
   };
@@ -66,8 +64,6 @@ export default function AnalyticsScreen() {
     (data?.message_count?.platforms?.facebook ?? 0) +
     (data?.message_count?.platforms?.instagram ?? 0) +
     (data?.message_count?.platforms?.whatsapp ?? 0);
-
-    console.log("whatsapp:", data?.message_count?.platforms?.whatsapp);
 
   const series =
     totalMessages === 0
@@ -130,14 +126,6 @@ export default function AnalyticsScreen() {
     },
   ];
 
-  const topQuestions = [
-    { question: "What are your business hours?", count: 142 },
-    { question: "Do you offer refunds?", count: 98 },
-    { question: "How do I schedule an appointment?", count: 190 },
-    { question: "What payment methods do you accept?", count: 52 },
-    { question: "Where is your location?", count: 12 },
-  ];
-
   return (
     <Layout refreshControl={ <RefreshControl refreshing={isLoading} onRefresh={refetch} /> }>
       {/* Filters Section */}
@@ -166,7 +154,7 @@ export default function AnalyticsScreen() {
           <View style={styles.filterItem}>
             <RNPicker
               items={[
-                { value: "all_channel", label: "All Channel" },
+                { value: "", label: "All Channel" },
                 { value: "facebook", label: "Facebook" },
                 { value: "whatsapp", label: "WhatsApp" },
                 { value: "instagram", label: "Instagram" },
@@ -184,7 +172,7 @@ export default function AnalyticsScreen() {
           <View style={styles.filterItem}>
             <RNPicker
               items={[
-                { value: "all_message", label: "All Message" },
+                { value: "all", label: "All Message" },
                 { value: "incoming", label: "Incoming" },
                 { value: "outgoing", label: "Outgoing" },
               ]}
@@ -200,6 +188,7 @@ export default function AnalyticsScreen() {
         </View>
       </View>
 
+      {/* stats */}
       <View style={styles.statsRow}>
         {/* Messages Received */}
         <View style={styles.statCard}>
@@ -286,33 +275,7 @@ export default function AnalyticsScreen() {
       <Finance />
 
       {/* Top AI Questions */}
-      <View style={styles.section}>
-        <View style={styles.sectionHeader}>
-          <View>
-            <Text style={styles.sectionTitle}>Top AI Questions</Text>
-            <Text style={styles.sectionSubtitle}>Most common queries</Text>
-          </View>
-        </View>
-
-        <View style={styles.questionsList}>
-          {topQuestions.map((item, index) => (
-            <View
-              key={index}
-              style={[
-                styles.questionItem,
-                index === topQuestions.length - 1 && styles.questionItemLast,
-              ]}
-            >
-              <View style={styles.questionContent}>
-                <Text style={styles.questionText}>{item.question}</Text>
-                <Text style={styles.questionCount}>
-                  Asked {item.count} times
-                </Text>
-              </View>
-            </View>
-          ))}
-        </View>
-      </View>
+      <TopQuestions />
     </Layout>
   );
 }

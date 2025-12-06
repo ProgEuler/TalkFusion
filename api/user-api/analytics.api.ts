@@ -27,7 +27,16 @@ export const analyticsApi = baseApi.injectEndpoints({
       // return "analytics/?timezone=Asia/Dhaka"
       },
     }),
+    getQuerriesData: builder.query({
+      query: () => {
+        return "/chat/question-leaderboard/";
+      }
+    })
   }),
 });
 
-export const { useGetAnalyticsDataQuery, useGetFinanceDataQuery } = analyticsApi;
+export const {
+   useGetAnalyticsDataQuery,
+   useGetFinanceDataQuery,
+   useGetQuerriesDataQuery 
+} = analyticsApi;
