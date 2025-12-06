@@ -2,21 +2,20 @@ import { useGetDashboardDataQuery } from "@/api/user-api/dashboard.api";
 import Facebook from "@/assets/svgs/facebook.svg";
 import WhatsApp from "@/assets/svgs/whatsapp.svg";
 import { Layout } from "@/components/layout/Layout";
+import { Button } from "@/components/ui/Button";
 import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
 import colors from "@/constants/colors";
 import {
-  Calendar,
-  CalendarIcon,
-  CheckCircle,
-  CreditCard,
-  DollarSign,
-  Instagram,
-  MessageCircle,
+    Calendar,
+    CheckCircle,
+    CreditCard,
+    DollarSign,
+    Instagram,
+    MessageCircle,
 } from "lucide-react-native";
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
-import { AppointmentItem } from "./appoinment";
-import { Button } from "@/components/ui/Button";
+import { AppointmentsList } from "./appointments-list";
 
 export default function DashboardScreen() {
   //   const user = useSelector(selectCurrentUser);
@@ -95,26 +94,7 @@ export default function DashboardScreen() {
           </Text>
         </View>
         <View style={styles.appointmentsList}>
-          {data.today_meetings.list.length > 0 ? (
-            data.today_meetings.list.map((appointment, index) => (
-              <AppointmentItem
-                key={index}
-                appointment={appointment}
-                index={index}
-              />
-            ))
-          ) : (
-            <View style={styles.emptyAppointments}>
-              <CalendarIcon
-                color={colors.dark.textSecondary}
-                size={48}
-                style={styles.emptyIcon}
-              />
-              <Text style={styles.emptyText}>
-                No appointments scheduled for today
-              </Text>
-            </View>
-          )}
+            <AppointmentsList appointments={data.today_meetings.list} />
         </View>
       </View>
 

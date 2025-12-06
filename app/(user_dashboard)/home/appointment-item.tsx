@@ -7,8 +7,9 @@ import {
   View,
 } from "react-native";
 
-export const AppointmentItem = ({ appointment, index }) => {
+export const AppointmentItem = ({ appointment, index, isLast }) => {
   console.log("Appointment Data:", appointment);
+
   const formatTime = (dateString) => {
     return new Date(dateString).toLocaleTimeString("en-US", {
       hour: "numeric",
@@ -22,7 +23,13 @@ export const AppointmentItem = ({ appointment, index }) => {
   }
 
   return (
-    <View key={index} style={styles.container}>
+    <View
+		key={index}
+		style={[
+			styles.container,
+			{ borderBottomColor: isLast ? "transparent" : "#333" },
+		]}
+    >
       {/* Time on the left */}
       <Text style={styles.time}>{formatTime(appointment.start_time)}</Text>
 
@@ -69,6 +76,7 @@ const styles = StyleSheet.create({
     padding: 16,
     minHeight: 80,
     alignItems: "center",
+    borderBottomWidth: 1,
   },
   time: {
     color: "#4A90E2",
