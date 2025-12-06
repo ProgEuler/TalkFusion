@@ -44,8 +44,8 @@ export default function DashboardScreen() {
           <View style={styles.statIconContainer}>
             <MessageCircle color="#F59E0B" size={24} />
           </View>
-          <Text style={styles.statLabel}>Open Chats</Text>
           <Text style={styles.statValue}>{data.open_chat}</Text>
+          <Text style={styles.statLabel}>Open Chats</Text>
         </View>
 
         <View style={styles.statCard}>
@@ -54,20 +54,20 @@ export default function DashboardScreen() {
           >
             <Calendar color="#10B981" size={24} />
           </View>
-          <Text style={styles.statLabel}>Appointments Today</Text>
           <Text style={styles.statValue}>{data.today_meetings.count}</Text>
+          <Text style={styles.statLabel}>Appointments Today</Text>
         </View>
 
-        <View style={[styles.statCard, { flex: 1 }]}>
+        <View style={styles.statCard}>
           <View
             style={[styles.statIconContainer, { backgroundColor: "#10B98120" }]}
           >
             <Calendar color="#10B981" size={24} />
           </View>
+          <Text style={styles.statValue}>{data.today_meetings.count}</Text>
           <Text style={[styles.statLabel, { textAlign: "center" }]}>
             Remaining Appointments
           </Text>
-          <Text style={styles.statValue}>{data.today_meetings.count}</Text>
         </View>
 
         <View style={styles.statCard}>
@@ -76,8 +76,8 @@ export default function DashboardScreen() {
           >
             <DollarSign color="#10B981" size={24} />
           </View>
+          <Text style={styles.statValue}>{data.today_payments.list.length}</Text>
           <Text style={styles.statLabel}>Payments Today</Text>
-          <Text style={styles.statValue}>{data.today_meetings.count}</Text>
         </View>
       </View>
 
@@ -247,7 +247,7 @@ const styles = StyleSheet.create({
   statsRow: {
     flexDirection: "row",
     flexWrap: "wrap",
-    gap: 12,
+    // gap: 12,
     marginBottom: 16,
     justifyContent: "space-between",
   },
@@ -255,11 +255,12 @@ const styles = StyleSheet.create({
     width: "48%",
     backgroundColor: colors.dark.cardBackground,
     borderRadius: 12,
-    padding: 16,
+    padding: 12,
     borderWidth: 1,
     borderColor: colors.dark.border,
     alignItems: "center",
     justifyContent: "center",
+    marginBottom: 12,
   },
   statIconContainer: {
     width: 48,
@@ -272,7 +273,7 @@ const styles = StyleSheet.create({
   },
   statLabel: {
     fontSize: 14,
-    color: colors.dark.text,
+    color: colors.dark.textSecondary,
     fontWeight: "600" as const,
     marginBottom: 4,
   },

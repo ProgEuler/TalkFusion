@@ -16,8 +16,9 @@ import {
   User2,
 } from "lucide-react-native";
 import React, { useState } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { RefreshControl, StyleSheet, Text, View } from "react-native";
 import PieChart from "react-native-pie-chart";
+import Finance from "./analytics/finance";
 interface PieChartData {
   label: string;
   value: number;
@@ -32,7 +33,7 @@ export default function AnalyticsScreen() {
   const [channel, setChannel] = useState("all_channel");
   const [messageType, setMessageType] = useState("all_message");
 
-  const { data, isLoading } = useGetAnalyticsDataQuery({
+  const { data, isLoading, refetch } = useGetAnalyticsDataQuery({
     time: timeRange,
     channel: channel,
     type: messageType,
@@ -65,6 +66,8 @@ export default function AnalyticsScreen() {
     (data?.message_count?.platforms?.facebook ?? 0) +
     (data?.message_count?.platforms?.instagram ?? 0) +
     (data?.message_count?.platforms?.whatsapp ?? 0);
+
+    console.log("whatsapp:", data?.message_count?.platforms?.whatsapp);
 
   const series =
     totalMessages === 0
@@ -136,7 +139,7 @@ export default function AnalyticsScreen() {
   ];
 
   return (
-    <Layout>
+    <Layout refreshControl={ <RefreshControl refreshing={isLoading} onRefresh={refetch} /> }>
       {/* Filters Section */}
       <View>
         <View style={styles.filterRow}>
@@ -197,65 +200,58 @@ export default function AnalyticsScreen() {
         </View>
       </View>
 
-      {/* stat */}
-<View className="mb-6">
-  <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
-    {/* Messages Received */}
-    <View style={{ width: 240, paddingHorizontal: 8, marginBottom: 16 }}>
-      <View style={styles.metricCard}>
-        <MessageCircle color={colors.dark.primary} size={24} />
-        <Text style={styles.metricValue}>
-          {data?.message_count?.total || 0}
-        </Text>
-        <Text style={styles.metricLabel}>Messages Received</Text>
-      </View>
-    </View>
+      <View style={styles.statsRow}>
+        {/* Messages Received */}
+        <View style={styles.statCard}>
+          <View>
+            <MessageCircle color={colors.dark.primary} size={24} />
+          <Text style={styles.metricValue}>
+            {data?.message_count?.total || 0}
+          </Text>
+          </View>
+          <Text style={styles.metricLabel}>Messages Received</Text>
+        </View>
 
-    {/* Appointments Booked */}
-    <View style={{ width: 240, paddingHorizontal: 8, marginBottom: 16 }}>
-      <View style={styles.metricCard}>
-        <Calendar color={colors.dark.success} size={24} />
-        <Text style={styles.metricValue}>
-          {data?.booking_count || 0}
-        </Text>
-        <Text style={styles.metricLabel}>Appointments Booked</Text>
-      </View>
-    </View>
+        {/* Appointments Booked */}
+        <View style={styles.statCard}>
+          <View>
+            <Calendar color={colors.dark.success} size={24} />
+          </View>
+          <Text style={styles.metricValue}>{data?.booking_count || 0}</Text>
+          <Text style={styles.metricLabel}>Appointments Booked</Text>
+        </View>
 
-    {/* Total Revenue */}
-    <View style={{ width: 240, paddingHorizontal: 8, marginBottom: 16 }}>
-      <View style={styles.metricCard}>
-        <DollarSign color={colors.dark.primaryLight} size={24} />
-        <Text style={styles.metricValue}>
-          ${data?.total_revenue?.total?.toLocaleString() || 0}
-        </Text>
-        <Text style={styles.metricLabel}>Total Revenue</Text>
-      </View>
-    </View>
+        {/* Total Revenue */}
+        <View style={styles.statCard}>
+          <View>
+            <DollarSign color={colors.dark.primaryLight} size={24} />
+          </View>
+          <Text style={styles.metricValue}>
+            ${data?.total_revenue?.total?.toLocaleString() || 0}
+          </Text>
+          <Text style={styles.metricLabel}>Total Revenue</Text>
+        </View>
 
-    {/* New Customers */}
-    <View style={{ width: 240, paddingHorizontal: 8, marginBottom: 16 }}>
-      <View style={styles.metricCard}>
-        <User2 color={colors.dark.warning} size={24} />
-        <Text style={styles.metricValue}>
-          {data?.new_customers || 0}
-        </Text>
-        <Text style={styles.metricLabel}>New Customers</Text>
-      </View>
-    </View>
+        {/* New Customers */}
+        <View style={styles.statCard}>
+          <View>
+            <User2 color={colors.dark.warning} size={24} />
+          </View>
+          <Text style={styles.metricValue}>{data?.new_customers || 0}</Text>
+          <Text style={styles.metricLabel}>New Customers</Text>
+        </View>
 
-    {/* Unanswered Messages */}
-    <View style={{ width: 240, paddingHorizontal: 8, marginBottom: 16 }}>
-      <View style={styles.metricCard}>
-        <MessageCircle color={colors.dark.danger} size={24} />
-        <Text style={styles.metricValue}>
-          {data?.unanswered_messages || 0}
-        </Text>
-        <Text style={styles.metricLabel}>Unanswered Messages</Text>
+        {/* Unanswered Messages */}
+        <View style={styles.statCard}>
+          <View>
+            <MessageCircle color={colors.dark.danger} size={24} />
+          </View>
+          <Text style={styles.metricValue}>
+            {data?.unanswered_messages || 0}
+          </Text>
+          <Text style={styles.metricLabel}>Unanswered Messages</Text>
+        </View>
       </View>
-    </View>
-  </View>
-</View>
 
       {/* Channel Distribution */}
       <View style={styles.section}>
@@ -287,78 +283,7 @@ export default function AnalyticsScreen() {
         </View>
       </View>
 
-{/* Financial Insights - 2 Columns */}
-<View className="flex-row flex-wrap -mx-2 mb-6">
-  <View className="w-1/2 px-2 mb-4">
-    <View style={styles.financialCard}>
-      <View style={styles.financialHeader}>
-        <View style={[styles.financialIconContainer, { backgroundColor: colors.dark.primary + "20" }]}>
-          <Camera color={colors.dark.primary} size={20} />
-        </View>
-        <Text style={styles.financialLabel}>Total Payments</Text>
-      </View>
-      <Text style={styles.financialValue}>$24,580</Text>
-      <View style={styles.financialChange}>
-        <TrendingUp color={colors.dark.success} size={14} />
-        <Text style={[styles.financialChangeText, { color: colors.dark.success }]}>
-          +15% from last month
-        </Text>
-      </View>
-    </View>
-  </View>
-
-  <View className="w-1/2 px-2 mb-4">
-    <View style={styles.financialCard}>
-      <View style={styles.financialHeader}>
-        <View style={[styles.financialIconContainer, { backgroundColor: colors.dark.warning + "20" }]}>
-          <FileText color={colors.dark.warning} size={20} />
-        </View>
-        <Text style={styles.financialLabel}>Average Order Value</Text>
-      </View>
-      <Text style={styles.financialValue}>$142</Text>
-      <View style={styles.financialChange}>
-        <TrendingUp color={colors.dark.success} size={14} />
-        <Text style={[styles.financialChangeText, { color: colors.dark.success }]}>
-          +8.2% from last month
-        </Text>
-      </View>
-    </View>
-  </View>
-  <View className="w-1/2 px-2 mb-4">
-    <View style={styles.financialCard}>
-      <View style={styles.financialHeader}>
-        <View style={[styles.financialIconContainer, { backgroundColor: colors.dark.warning + "20" }]}>
-          <FileText color={colors.dark.warning} size={20} />
-        </View>
-        <Text style={styles.financialLabel}>Average Order Value</Text>
-      </View>
-      <Text style={styles.financialValue}>$142</Text>
-      <View style={styles.financialChange}>
-        <TrendingUp color={colors.dark.success} size={14} />
-        <Text style={[styles.financialChangeText, { color: colors.dark.success }]}>
-          +8.2% from last month
-        </Text>
-      </View>
-    </View>
-  </View>
-  <View className="w-1/2 px-2 mb-4">
-    <View style={styles.financialCard}>
-      <View style={styles.financialHeader}>
-        <View style={[styles.financialIconContainer, { backgroundColor: colors.dark.warning + "20" }]}>
-          <FileText color={colors.dark.warning} size={20} />
-        </View>
-        <Text style={styles.financialLabel}>Average Order Value</Text>
-      </View>
-      <Text style={styles.financialValue}>$142</Text>
-      <View style={styles.financialChange}>
-        <TrendingUp color={colors.dark.success} size={14} />
-        <Text style={[styles.financialChangeText, { color: colors.dark.success }]}>
-          +8.2% from last month
-        </Text>
-      </View>
-    </View>
-  </View>
-</View>
+      <Finance />
 
       {/* Top AI Questions */}
       <View style={styles.section}>
@@ -393,6 +318,39 @@ export default function AnalyticsScreen() {
 }
 
 const styles = StyleSheet.create({
+  statsRow: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    marginBottom: 16,
+    justifyContent: "space-between",
+  },
+  statCard: {
+    width: "48%",
+    backgroundColor: colors.dark.cardBackground,
+    borderRadius: 12,
+    padding: 12,
+    borderWidth: 1,
+    borderColor: colors.dark.border,
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: 12,
+  },
+  statLabel: {
+    fontSize: 14,
+    color: colors.dark.textSecondary,
+    fontWeight: "600" as const,
+    marginBottom: 4,
+  },
+  statSubLabel: {
+    fontSize: 12,
+    color: colors.dark.textSecondary,
+    marginBottom: 8,
+  },
+  statValue: {
+    fontSize: 32,
+    color: colors.dark.text,
+    fontWeight: "700" as const,
+  },
   filterRow: {
     flexDirection: "row",
     gap: 6,
@@ -400,27 +358,6 @@ const styles = StyleSheet.create({
   },
   filterItem: {
     flex: 1,
-  },
-  metricCard: {
-    width: "48%",
-    backgroundColor: colors.dark.cardBackground,
-    borderRadius: 12,
-    padding: 10,
-    borderWidth: 1,
-    borderColor: colors.dark.border,
-    alignItems: "center",
-    flex: 1,
-  },
-  profileAvatarSmall: {
-    position: "absolute",
-    bottom: -2,
-    right: -2,
-    width: 20,
-    height: 20,
-    borderRadius: 10,
-    backgroundColor: colors.dark.primary,
-    borderWidth: 2,
-    borderColor: colors.dark.cardBackground,
   },
   metricValue: {
     fontSize: 28,
