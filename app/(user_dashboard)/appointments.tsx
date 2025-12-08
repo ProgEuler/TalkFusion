@@ -8,7 +8,8 @@ import {
   ChevronRight,
 } from "lucide-react-native";
 import React, { useState } from "react";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
+import { Calendar } from "react-native-calendars";
 import GoogleCalendar from "./integrations/google-calendar";
 
 const getDaysInMonth = (year: number, month: number) => {
@@ -52,6 +53,7 @@ export default function AppointmentsScreen() {
   const [selectedDate, setSelectedDate] = useState(new Date(2025, 9, 12));
   const [viewMode, setViewMode] = useState<"today" | "week" | "month">("month");
   const mockToday = new Date(2025, 9, 7);
+  const [selected, setSelected] = useState('');
 
   const currentYear = currentDate.getFullYear();
   const currentMonth = currentDate.getMonth();
@@ -78,8 +80,6 @@ export default function AppointmentsScreen() {
     "Nov",
     "Dec",
   ];
-
-  const dayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
   const formatDate = (date: Date) => {
     return `${date.getDate()} ${
@@ -163,40 +163,13 @@ export default function AppointmentsScreen() {
 
   return (
     <Layout>
-      {/* add appointment */}
-      <View style={{ marginBottom: 20 }}>
-        <Button
-          onPress={() => router.push("/(user_dashboard)/add-appointment")}
-          variant="small"
-          size="sm"
-        >
-          + Add Appointments
-        </Button>
-      </View>
-      {/* Date Navigation */}
-      <View style={styles.dateNavigation}>
-        <TouchableOpacity
-          onPress={() => navigateDate("prev")}
-          style={styles.navButton}
-        >
-          <ChevronLeft color={colors.dark.text} size={20} />
-        </TouchableOpacity>
-        <Text style={styles.dateText}>{formatDate(selectedDate)}</Text>
-        <TouchableOpacity
-          onPress={() => navigateDate("next")}
-          style={styles.navButton}
-        >
-          <ChevronRight color={colors.dark.text} size={20} />
-        </TouchableOpacity>
-      </View>
 
       {/* View Mode Buttons */}
       <View style={styles.viewModeContainer}>
-        <TouchableOpacity
-          style={[
-            styles.viewModeButton,
-            viewMode === "today" && styles.viewModeButtonActive,
-          ]}
+        <Button
+          variant={viewMode === "today" ? "primary" : "outline"}
+          size="sm"
+          style={styles.viewModeButton}
           onPress={() => setViewMode("today")}
         >
           <Text
@@ -207,12 +180,12 @@ export default function AppointmentsScreen() {
           >
             Today
           </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[
-            styles.viewModeButton,
-            viewMode === "week" && styles.viewModeButtonActive,
-          ]}
+        </Button>
+
+        <Button
+          variant={viewMode === "week" ? "primary" : "outline"}
+          size="sm"
+          style={styles.viewModeButton}
           onPress={() => setViewMode("week")}
         >
           <Text
@@ -223,12 +196,12 @@ export default function AppointmentsScreen() {
           >
             Week
           </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[
-            styles.viewModeButton,
-            viewMode === "month" && styles.viewModeButtonActive,
-          ]}
+        </Button>
+
+        <Button
+          variant={viewMode === "month" ? "primary" : "outline"}
+          size="sm"
+          style={styles.viewModeButton}
           onPress={() => setViewMode("month")}
         >
           <Text
@@ -239,82 +212,54 @@ export default function AppointmentsScreen() {
           >
             Month
           </Text>
-        </TouchableOpacity>
+        </Button>
+
+        <Button
+          onPress={() => router.push("/(user_dashboard)/add-appointment")}
+          variant="small"
+          size="sm"
+          style={{ marginLeft: 0 }}
+        >
+          Add Appointment
+        </Button>
       </View>
 
       {/* Monthly View Section */}
       <View style={styles.section}>
-        <View style={styles.sectionHeader}>
-          <Text style={styles.sectionTitle}>Monthly View</Text>
-          <Text style={styles.sectionDate}>{formatDate(selectedDate)}</Text>
-        </View>
 
-        {/* Month Navigation */}
-        <View style={styles.monthNavigation}>
-          <TouchableOpacity
-            onPress={() => navigateMonth("prev")}
-            style={styles.monthNavButton}
-          >
-            <ChevronLeft color={colors.dark.text} size={20} />
-          </TouchableOpacity>
-          <Text style={styles.monthText}>
-            {monthNames[currentMonth]} {currentYear}
-          </Text>
-          <TouchableOpacity
-            onPress={() => navigateMonth("next")}
-            style={styles.monthNavButton}
-          >
-            <ChevronRight color={colors.dark.text} size={20} />
-          </TouchableOpacity>
-        </View>
+      <Calendar
+        onDayPress={(day) => {
+          console.log("selected day", day);
+        }}
+          markedDates={{
+    '2025-12-16': {selected: true, marked: true, selectedColor: 'blue'},
+    '2025-12-17': {marked: true},
+    '2025-12-18': {marked: true, dotColor: 'red', activeOpacity: 0},
+    '2025-12-19': {disabled: true, disableTouchEvent: true}
+  }}
+        hideExtraDays
+        enableSwipeMonths
 
-        {/* Calendar Grid */}
-        <View style={styles.calendarGrid}>
-          {/* Day Headers */}
-          {dayNames.map((day) => (
-            <View key={day} style={styles.dayHeader}>
-              <Text style={styles.dayHeaderText}>{day}</Text>
-            </View>
-          ))}
-
-          {/* Calendar Days */}
-          {days.map((dayData, index) => {
-            const { day: dayNumber, isCurrentMonth: isCurrentMonthDay } =
-              dayData;
-            const isTodayDay = isToday(dayNumber, isCurrentMonthDay);
-            const isSelectedDay = isSelected(dayNumber, isCurrentMonthDay);
-            const hasAppointmentDay = hasAppointment(
-              dayNumber,
-              isCurrentMonthDay
-            );
-
-            return (
-              <TouchableOpacity
-                key={index}
-                style={[
-                  styles.calendarDay,
-                  !isCurrentMonthDay && styles.calendarDayOtherMonth,
-                  isTodayDay && styles.calendarDayToday,
-                  isSelectedDay && styles.calendarDaySelected,
-                ]}
-                onPress={() =>
-                  handleDateSelect(dayNumber, isCurrentMonthDay, index)
-                }
-              >
-                <Text
-                  style={[
-                    styles.calendarDayText,
-                    !isCurrentMonthDay && styles.calendarDayTextOtherMonth,
-                    isTodayDay && styles.calendarDayTextToday,
-                    isSelectedDay && styles.calendarDayTextSelected,
-                  ]}
-                >
-                  {dayNumber}
-                </Text>
-              </TouchableOpacity>
-            );
-          })}
-        </View>
+        style={{
+          borderWidth: 1,
+          borderRadius: 8,
+          borderColor: colors.dark.border,
+          height: 350,
+        }}
+        theme={{
+          calendarBackground: colors.dark.cardBackground,
+          textSectionTitleColor: '#b6c1cd',
+          selectedDayBackgroundColor: colors.dark.primary,
+          selectedDayTextColor: '#ffffff',
+          todayTextColor: colors.dark.primary,
+          todayBackgroundColor: colors.dark.primary + '20',
+          todayDotColor: colors.dark.primary,
+          dayTextColor: colors.dark.text,
+          textDisabledColor: colors.dark.textSecondary,
+          monthTextColor: colors.dark.text,
+          arrowColor: colors.dark.text,
+        }}
+      />
       </View>
 
       {/* Today's Appointments Section */}
@@ -409,10 +354,11 @@ const styles = StyleSheet.create({
     marginBottom: 24,
     alignItems: "center",
     justifyContent: "center",
+    //  flexWrap: "wrap",
   },
   viewModeButton: {
     paddingVertical: 8,
-    paddingHorizontal: 16,
+    paddingHorizontal: 14,
     borderRadius: 8,
     backgroundColor: colors.dark.cardBackground,
     borderWidth: 1,

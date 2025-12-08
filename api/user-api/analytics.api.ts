@@ -23,7 +23,7 @@ export const analyticsApi = baseApi.injectEndpoints({
         if(type) params.append("type", type);
 
       //   return `analytics/?${params.toString()}&timezone=Asia/Dhaka`;
-        return "/finance-data/?timezone=Asia/Dhaka";
+        return `/finance-data/?${params.toString()}&timezone=Asia/Dhaka`;
       // return "analytics/?timezone=Asia/Dhaka"
       },
     }),
@@ -38,5 +38,5 @@ export const analyticsApi = baseApi.injectEndpoints({
 export const {
    useGetAnalyticsDataQuery,
    useGetFinanceDataQuery,
-   useGetQuerriesDataQuery 
+   useGetQuerriesDataQuery
 } = analyticsApi;

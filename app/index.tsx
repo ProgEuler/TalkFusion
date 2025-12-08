@@ -15,7 +15,7 @@ export default function IndexScreen() {
         user?.role
           ? user.role === "admin"
             ? "/(admin_dashboard)/home"
-            : "/(user_dashboard)/home"
+            : "/(user_dashboard)/appointments"
           : "/(auth)/login"
       }
     />
