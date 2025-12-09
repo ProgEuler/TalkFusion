@@ -1,3 +1,4 @@
+import { useGetFbUrlQuery } from "@/api/user-api/integrations.api";
 import { Layout } from "@/components/layout/Layout";
 import { Button } from "@/components/ui/Button";
 import colors from "@/constants/colors";
@@ -65,6 +66,7 @@ export default function IntegrationsScreen() {
 
   const handleConnect = async (integrationId: string) => {
     console.log("Connecting to:", integrationId);
+    
   };
 
   return (

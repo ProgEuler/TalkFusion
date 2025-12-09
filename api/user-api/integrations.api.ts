@@ -9,7 +9,13 @@ export const integrationsApi = baseApi.injectEndpoints({
          body,
       }),
     }),
+    getFbUrl: builder.query({
+      query: () => ({
+         url: "/connect/fb/",
+         method: "GET",
+      }),
+    }),
   }),
 });
 
-export const { useGetCalendarUrlMutation } = integrationsApi;
+export const { useGetCalendarUrlMutation, useGetFbUrlQuery } = integrationsApi;

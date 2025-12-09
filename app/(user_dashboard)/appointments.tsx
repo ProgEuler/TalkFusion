@@ -1,169 +1,62 @@
+import { useGetDaysDataQuery } from "@/api/user-api/calendar.api";
 import { Layout } from "@/components/layout/Layout";
-import { Button } from "@/components/ui/Button";
+import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
 import colors from "@/constants/colors";
 import { useRouter } from "expo-router";
-import {
-  Calendar as CalendarIcon,
-  ChevronLeft,
-  ChevronRight,
-} from "lucide-react-native";
 import React, { useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { Calendar } from "react-native-calendars";
 import GoogleCalendar from "./integrations/google-calendar";
-
-const getDaysInMonth = (year: number, month: number) => {
-  return new Date(year, month + 1, 0).getDate();
-};
-
-const getFirstDayOfMonth = (year: number, month: number) => {
-  return new Date(year, month, 1).getDay();
-};
-
-const generateCalendarDays = (year: number, month: number) => {
-  const daysInMonth = getDaysInMonth(year, month);
-  const firstDay = getFirstDayOfMonth(year, month);
-  const prevMonthDays = getDaysInMonth(year, month === 0 ? 11 : month - 1);
-  const daysToShow: { day: number; isCurrentMonth: boolean }[] = [];
-
-  // Previous month's trailing days
-  const prevMonthStart = prevMonthDays - firstDay + 1;
-  for (let i = prevMonthStart; i <= prevMonthDays; i++) {
-    daysToShow.push({ day: i, isCurrentMonth: false });
-  }
-
-  // Current month's days
-  for (let i = 1; i <= daysInMonth; i++) {
-    daysToShow.push({ day: i, isCurrentMonth: true });
-  }
-
-  // Next month's leading days (fill to 42 cells for 6 weeks)
-  const totalCells = 42;
-  const remainingCells = totalCells - daysToShow.length;
-  for (let i = 1; i <= remainingCells; i++) {
-    daysToShow.push({ day: i, isCurrentMonth: false });
-  }
-
-  return { days: daysToShow, firstDay, daysInMonth };
-};
+import AppointmentsByDay from "@/components/appointments-by-day";
+import { Button } from "@/components/ui/Button";
 
 export default function AppointmentsScreen() {
   const router = useRouter();
-  const [currentDate, setCurrentDate] = useState(new Date(2025, 9, 1));
-  const [selectedDate, setSelectedDate] = useState(new Date(2025, 9, 12));
+  const [selectedDate, setSelectedDate] = useState<number>((new Date()).getDate());
   const [viewMode, setViewMode] = useState<"today" | "week" | "month">("month");
-  const mockToday = new Date(2025, 9, 7);
-  const [selected, setSelected] = useState('');
+  const [month, setMonth] = useState<number>(12);
+  const [year, setYear] = useState<number>(2025);
 
-  const currentYear = currentDate.getFullYear();
-  const currentMonth = currentDate.getMonth();
-  const selectedYear = selectedDate.getFullYear();
-  const selectedMonth = selectedDate.getMonth();
-  const selectedDay = selectedDate.getDate();
+  const {
+    data: daysData,
+    isLoading,
+    isError,
+  } = useGetDaysDataQuery({
+    month: month,
+    year: year,
+  });
 
-  const { days, firstDay, daysInMonth } = generateCalendarDays(
-    currentYear,
-    currentMonth
-  );
+  if (isLoading) return <LoadingSpinner />;
 
-  const monthNames = [
-    "Jan",
-    "Feb",
-    "Mar",
-    "Apr",
-    "May",
-    "Jun",
-    "Jul",
-    "Aug",
-    "Sep",
-    "Oct",
-    "Nov",
-    "Dec",
-  ];
-
-  const formatDate = (date: Date) => {
-    return `${date.getDate()} ${
-      monthNames[date.getMonth()]
-    } ${date.getFullYear()}`;
+  const generateMarkedDatesFromArray = (dates, style) => {
+    return dates.reduce((acc, date) => {
+      acc[date] = style;
+      return acc;
+    }, {});
   };
 
-  const navigateMonth = (direction: "prev" | "next") => {
-    const newDate = new Date(currentDate);
-    if (direction === "prev") {
-      newDate.setMonth(currentMonth - 1);
-    } else {
-      newDate.setMonth(currentMonth + 1);
-    }
-    setCurrentDate(newDate);
+  const convertToDates = ({ days, month, year }) => {
+    return days.map((day) => {
+      const yyyy = year;
+      const mm = String(month).padStart(2, "0");
+      const dd = String(day).padStart(2, "0");
+
+      return `${yyyy}-${mm}-${dd}`;
+    });
   };
 
-  const navigateDate = (direction: "prev" | "next") => {
-    const newDate = new Date(selectedDate);
-    if (direction === "prev") {
-      newDate.setDate(selectedDate.getDate() - 1);
-    } else {
-      newDate.setDate(selectedDate.getDate() + 1);
-    }
-    setSelectedDate(newDate);
-  };
+  console.log("Selected date:", selectedDate);
+  const result = convertToDates({ days: daysData.days, month, year });
 
-  const isToday = (day: number, isCurrentMonth: boolean) => {
-    if (!isCurrentMonth) return false;
-    return (
-      day === mockToday.getDate() &&
-      currentMonth === mockToday.getMonth() &&
-      currentYear === mockToday.getFullYear()
-    );
-  };
-
-  const isSelected = (day: number, isCurrentMonth: boolean) => {
-    if (!isCurrentMonth) return false;
-    return (
-      day === selectedDay &&
-      currentMonth === selectedMonth &&
-      currentYear === selectedYear
-    );
-  };
-
-  const hasAppointment = (day: number, isCurrentMonth: boolean) => {
-    if (!isCurrentMonth) return false;
-    // Mock: check if day has appointment (e.g., day 9 in October 2025)
-    // Month 9 = October (0-indexed)
-    return day === 9 && currentMonth === 9 && currentYear === 2025;
-  };
-
-  const handleDateSelect = (
-    day: number,
-    isCurrentMonth: boolean,
-    dayIndex: number
-  ) => {
-    if (!isCurrentMonth) {
-      // Navigate to that month
-      const newDate = new Date(currentYear, currentMonth, day);
-      // Determine if it's previous or next month based on position in grid
-      // Days before firstDay are from previous month
-      // Days after firstDay + daysInMonth are from next month
-      if (dayIndex < firstDay) {
-        // Previous month
-        newDate.setMonth(currentMonth - 1);
-      } else if (dayIndex >= firstDay + daysInMonth) {
-        // Next month
-        newDate.setMonth(currentMonth + 1);
-      }
-      setCurrentDate(newDate);
-      setSelectedDate(newDate);
-    } else {
-      const newDate = new Date(currentYear, currentMonth, day);
-      setSelectedDate(newDate);
-    }
-  };
-
-  // Mock appointments data
-  const todayAppointments: any[] = [];
+  const markedDates = generateMarkedDatesFromArray(result, {
+    selected: true,
+    marked: true,
+    selectedColor: colors.dark.primary,
+    dotColor: colors.dark.primary,
+  });
 
   return (
     <Layout>
-
       {/* View Mode Buttons */}
       <View style={styles.viewModeContainer}>
         <Button
@@ -178,7 +71,7 @@ export default function AppointmentsScreen() {
               viewMode === "today" && styles.viewModeTextActive,
             ]}
           >
-            Today
+            {selectedDate}
           </Text>
         </Button>
 
@@ -194,7 +87,7 @@ export default function AppointmentsScreen() {
               viewMode === "week" && styles.viewModeTextActive,
             ]}
           >
-            Week
+            {month}
           </Text>
         </Button>
 
@@ -210,7 +103,7 @@ export default function AppointmentsScreen() {
               viewMode === "month" && styles.viewModeTextActive,
             ]}
           >
-            Month
+            {year}
           </Text>
         </Button>
 
@@ -226,88 +119,57 @@ export default function AppointmentsScreen() {
 
       {/* Monthly View Section */}
       <View style={styles.section}>
-
-      <Calendar
-        onDayPress={(day) => {
-          console.log("selected day", day);
-        }}
+        <Calendar
+          onDayPress={(day) => {
+            // console.log("selected day", day.day);
+            setSelectedDate(day.day);
+          }}
+          onMonthChange={(data) => {
+            setMonth(data.month);
+            setYear(data.year);
+          }}
           markedDates={{
-    '2025-12-16': {selected: true, marked: true, selectedColor: 'blue'},
-    '2025-12-17': {marked: true},
-    '2025-12-18': {marked: true, dotColor: 'red', activeOpacity: 0},
-    '2025-12-19': {disabled: true, disableTouchEvent: true}
-  }}
-        hideExtraDays
-        enableSwipeMonths
-
-        style={{
-          borderWidth: 1,
-          borderRadius: 8,
-          borderColor: colors.dark.border,
-          height: 350,
-        }}
-        theme={{
-          calendarBackground: colors.dark.cardBackground,
-          textSectionTitleColor: '#b6c1cd',
-          selectedDayBackgroundColor: colors.dark.primary,
-          selectedDayTextColor: '#ffffff',
-          todayTextColor: colors.dark.primary,
-          todayBackgroundColor: colors.dark.primary + '20',
-          todayDotColor: colors.dark.primary,
-          dayTextColor: colors.dark.text,
-          textDisabledColor: colors.dark.textSecondary,
-          monthTextColor: colors.dark.text,
-          arrowColor: colors.dark.text,
-        }}
-      />
+            ...markedDates,
+            [selectedDate
+              ? `${year}-${String(month).padStart(2, "0")}-${String(selectedDate).padStart(2, "0")}`
+              : ""]: {
+              selected: true,
+              selectedColor: colors.dark.success,
+            },
+          }}
+          hideExtraDays
+          enableSwipeMonths
+          style={{
+            borderWidth: 1,
+            borderRadius: 8,
+            borderColor: colors.dark.border,
+            height: 350,
+          }}
+          theme={{
+            calendarBackground: colors.dark.cardBackground,
+            textSectionTitleColor: "#b6c1cd",
+            selectedDayBackgroundColor: "#ffffff",
+            selectedDayTextColor: "#ffffff",
+            todayTextColor: colors.dark.primary,
+            todayBackgroundColor: colors.dark.primary + "20",
+            todayDotColor: colors.dark.primary,
+            dayTextColor: colors.dark.text,
+            textDisabledColor: colors.dark.textSecondary,
+            monthTextColor: colors.dark.text,
+            arrowColor: colors.dark.text,
+          }}
+        />
       </View>
+
+
+      <GoogleCalendar />
 
       {/* Today's Appointments Section */}
-      <View style={styles.section}>
-        <View style={styles.sectionHeader}>
-          <Text style={styles.sectionTitle}>Today&apos;s Appointments</Text>
-          <Text style={styles.sectionDate}>{formatDate(selectedDate)}</Text>
-        </View>
-        {todayAppointments.length === 0 ? (
-          <View style={styles.emptyAppointments}>
-            <CalendarIcon
-              color={colors.dark.textSecondary}
-              size={48}
-              style={styles.emptyIcon}
-            />
-            <Text style={styles.emptyText}>
-              No appointments scheduled for today
-            </Text>
-          </View>
-        ) : (
-          <View style={styles.appointmentsList}>
-            {todayAppointments.map((appointment) => (
-              <View key={appointment.id} style={styles.appointmentItem}>
-                <Text style={styles.appointmentTime}>{appointment.time}</Text>
-                <Text style={styles.appointmentName}>{appointment.name}</Text>
-              </View>
-            ))}
-          </View>
-        )}
-      </View>
-
-      {/* Calendar Integration Section */}
-      {/* <View style={styles.section}>
-        <View style={styles.sectionHeader}>
-          <Text style={styles.sectionTitle}>Calendar Integration</Text>
-          <Text style={styles.autoSyncText}>Auto-sync enabled</Text>
-        </View>
-        <View style={styles.integrationCard}>
-          <Google width={48} height={48} />
-          <View style={styles.integrationInfo}>
-            <Text style={styles.integrationName}>Google Calendar</Text>
-            <TouchableOpacity style={styles.connectButton}>
-              <Text style={styles.connectButtonText}>Connect</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </View> */}
-      <GoogleCalendar />
+      <AppointmentsByDay
+         day={selectedDate}
+         month={month}
+         year={year}
+      />
 
       {/* Sync Information Section */}
       <View style={styles.section}>
