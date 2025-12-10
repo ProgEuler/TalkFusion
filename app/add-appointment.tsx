@@ -108,7 +108,7 @@ export default function AddAppointmentScreen() {
       {/* Title */}
       <View style={styles.fieldContainer}>
         <Text style={styles.label}>Title</Text>
-        <View style={styles.inputWithIcon}>
+        <View style={[styles.inputWithIcon, errors.title && { borderColor: colors.dark.danger }]}>
           <Controller
             control={control}
             name="title"
@@ -257,7 +257,7 @@ export default function AddAppointmentScreen() {
       {/* Email */}
       <View style={styles.fieldContainer}>
         <Text style={styles.label}>Client Email</Text>
-        <View style={styles.inputWithIcon}>
+        <View style={[styles.inputWithIcon, errors.client_email && { borderColor: colors.dark.danger }]}>
           <Controller
             control={control}
             name="client_email"
@@ -287,7 +287,7 @@ export default function AddAppointmentScreen() {
       {/* Number */}
       <View style={styles.fieldContainer}>
         <Text style={styles.label}>Whatsapp Number</Text>
-        <View style={styles.inputWithIcon}>
+        <View style={[styles.inputWithIcon, errors.client_number && { borderColor: colors.dark.danger }]}>
           <Controller
             control={control}
             name="client_number"

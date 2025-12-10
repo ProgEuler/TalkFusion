@@ -1,10 +1,12 @@
-import { useEffect, useState } from "react";
+import colors, { COLORS } from "@/constants/colors";
+import Entypo from "@expo/vector-icons/Entypo";
+import { useState } from "react";
 import {
+    LayoutChangeEvent,
     TextInput,
     TextInputProps,
     TouchableOpacity,
     View,
-    LayoutChangeEvent,
 } from "react-native";
 import Animated, {
     useAnimatedStyle,
@@ -12,14 +14,13 @@ import Animated, {
     withTiming,
 } from "react-native-reanimated";
 import { ViewProps } from "react-native-svg/lib/typescript/fabric/utils";
-import Entypo from "@expo/vector-icons/Entypo";
-import colors, { COLORS } from "@/constants/colors";
 
 type Props = {
     label?: string;
     prefix?: string;
     marginTop?: number;
     style?: ViewProps["style"];
+    error?: boolean;
 } & TextInputProps;
 
 export function RNInput({
@@ -28,6 +29,7 @@ export function RNInput({
     label,
     placeholder,
     marginTop = 0,
+    error,
     ...props
 }: Props) {
 
@@ -51,6 +53,7 @@ export function RNInput({
         const translateY = labelPosition.value === 1 ? -10 : 12;
         const translateX = labelPosition.value === 1 ? 8 : 6;
         const fontSize = labelPosition.value === 1 ? 12 : 16;
+        const color = error ? colors.dark.danger : colors.dark.textSecondary;
 
         return {
             transform: [
@@ -58,6 +61,7 @@ export function RNInput({
                 { translateX: withTiming(translateX, { duration: 200 }) },
             ],
             fontSize,
+            color,
         };
     });
 
@@ -81,7 +85,6 @@ export function RNInput({
                             position: "absolute",
                             zIndex: 10,
                             paddingHorizontal: 8,
-                            color: colors.dark.textSecondary,
                         },
                         animatedLabelStyle,
                     ]}
@@ -96,7 +99,7 @@ export function RNInput({
                     flexDirection: "row",
                     alignItems: "center",
                     borderWidth: 2,
-                    borderColor: colors.dark.border,
+                    borderColor: error ? colors.dark.danger : colors.dark.border,
                     borderRadius: 8,
                     paddingRight: props.secureTextEntry ? 32 : 0,
                 }}

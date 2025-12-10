@@ -9,10 +9,11 @@ type Props = {
     label?: string;
     value?: Date;
     onChangeDate?: (date: Date) => void;
-    mode: "date" | "time" | "datetime"
+    mode: "date" | "time" | "datetime";
+    error?: boolean;
 };
 
-export function RNDatePicker({ label, onChangeDate, value, mode }: Props) {
+export function RNDatePicker({ label, onChangeDate, value, mode, error }: Props) {
     const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
 
     const hideDatePicker = () => {
@@ -42,6 +43,7 @@ export function RNDatePicker({ label, onChangeDate, value, mode }: Props) {
                     editable={false}
                     key={value?.toDateString()}
                     pointerEvents="none"
+                    error={error}
                 />
                 <Calendar
                   color={colors.dark.textSecondary}
