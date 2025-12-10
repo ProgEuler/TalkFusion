@@ -4,8 +4,21 @@ import React from "react";
 import { useSelector } from "react-redux";
 import "../global.css"
 import { LogBox } from "react-native";
+import { Platform } from "react-native";
+import * as Notifications from "expo-notifications";
 
 LogBox.ignoreAllLogs();
+
+
+if (Platform.OS === "android") {
+  Notifications.setNotificationChannelAsync("default", {
+    name: "default",
+    importance: Notifications.AndroidImportance.MAX,
+    vibrationPattern: [0, 250, 250, 250],
+    lightColor: "#FF231F7C",
+    //  sound: true,
+  });
+}
 
 export default function IndexScreen() {
   const user = useSelector(selectCurrentUser);

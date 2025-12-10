@@ -38,7 +38,7 @@ export default function AnalyticsScreen() {
   });
 
   if (isLoading) return <LoadingSpinner />;
-  console.log("analytics data: ", data);
+//   console.log("analytics data: ", data);
 
   const timeRangeLabelMap: Record<string, string> = {
     all: "All Time",

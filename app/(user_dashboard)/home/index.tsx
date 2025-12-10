@@ -23,7 +23,6 @@ import { scheduleNotificationHandler } from "@/utils/get-local-notification";
 
 export default function DashboardScreen() {
   const user = useSelector(selectCurrentUser);
-  console.log(user);
 
   const { data, isLoading, refetch, isFetching } =
     useGetDashboardDataQuery(undefined);

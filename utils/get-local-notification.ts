@@ -1,15 +1,4 @@
 import * as Notifications from "expo-notifications";
-import { Platform } from "react-native";
-
-if (Platform.OS === "android") {
-  Notifications.setNotificationChannelAsync("default", {
-    name: "default",
-    importance: Notifications.AndroidImportance.MAX,
-    vibrationPattern: [0, 250, 250, 250],
-    lightColor: "#FF231F7C",
-    //  sound: true,
-  });
-}
 
 export async function scheduleNotificationHandler() {
   const { status: existingStatus } = await Notifications.getPermissionsAsync();
@@ -30,6 +19,7 @@ export async function scheduleNotificationHandler() {
       title: "You've got mail!",
       body: "Hello from your dashboard!",
       sound: true, // enables default sound
+      data: { screen: "Dashboard" },
     },
     trigger: {
       type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL,

@@ -44,6 +44,9 @@ export default function GoogleCalendar() {
         <View style={styles.integrationInfo}>
           <Text style={styles.integrationName}>Google Calendar</Text>
 
+        {
+         
+        }
           <Button
             size="sm"
             onPress={handleConnect}

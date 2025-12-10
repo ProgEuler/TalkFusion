@@ -37,7 +37,7 @@ const formatDate = (date: Date, time: Date): string => {
 
 export default function AddAppointmentScreen() {
   const router = useRouter();
-  const [addBooking, { isLoading, isSuccess }] = useAddBookingMutation();
+  const [addBooking, { isLoading }] = useAddBookingMutation();
 
   const {
     control,
@@ -417,19 +417,7 @@ export default function AddAppointmentScreen() {
           </Button>
         </View>
       </Layout>
-      {(isLoading && !isSuccess) && (
-        <LoadingSpinner
-          style={{
-            position: "absolute",
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            zIndex: 1000,
-            backgroundColor: "rgba(0,0,0,0.5)",
-          }}
-        />
-      )}
+      {isLoading && <LoadingSpinner fullscreen />}
     </View>
   )}
 

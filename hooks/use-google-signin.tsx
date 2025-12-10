@@ -1,4 +1,5 @@
 import { useGoogleSigninMutation } from "@/api/auth.api";
+import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
 import {
   GoogleSignin,
   isErrorWithCode,
@@ -10,6 +11,8 @@ import { useState } from "react";
 export function useSignIn() {
   const [name, setName] = useState<string | null>(null);
   const [GoogleLogin, {isLoading}] = useGoogleSigninMutation(undefined)
+
+  if(isLoading) return <LoadingSpinner />
 
   const signIn = async (method: "signin" | "signout") => {
     try {
