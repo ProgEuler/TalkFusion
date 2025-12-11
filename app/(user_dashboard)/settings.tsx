@@ -1,15 +1,17 @@
 import { Layout } from "@/components/layout/Layout";
+import Sessions from "@/components/sesstions";
 import { Button } from "@/components/ui/Button";
 import { ModalView } from "@/components/ui/modal-view";
-import { Trash2 } from "lucide-react-native";
+import colors from "@/constants/colors";
+import { Trash2, TriangleAlert } from "lucide-react-native";
 import React, { useState } from "react";
 import {
-  Modal,
-  StyleSheet,
-  Switch,
-  Text,
-  TouchableOpacity,
-  View,
+   Modal,
+   StyleSheet,
+   Switch,
+   Text,
+   TouchableOpacity,
+   View,
 } from "react-native";
 
 export default function Settings() {
@@ -46,7 +48,7 @@ export default function Settings() {
       {/* Change Password */}
       <View style={styles.card}>
         <View style={styles.cardContent}>
-          <View style={styles.textContainer}>
+          <View>
             <Text style={styles.cardTitle}>Change Password</Text>
             <Text style={styles.cardSubtitle}>
               Update your account password
@@ -59,7 +61,7 @@ export default function Settings() {
       {/* Two-Factor Authentication */}
       <View style={styles.card}>
         <View style={styles.cardContent}>
-          <View style={styles.textContainer}>
+          <View>
             <Text style={styles.cardTitle}>Two-Factor Authentication</Text>
             <Text style={styles.cardSubtitle}>
               Add an extra layer of security to your account
@@ -75,58 +77,17 @@ export default function Settings() {
       </View>
 
       {/* Active Sessions */}
-      <View style={styles.sessionsCard}>
-        <View style={styles.sessionItem}>
-          <View style={styles.sessionInfo}>
-            <Text style={styles.sessionDevice}>MacBook Pro • Chrome</Text>
-            <View style={styles.currentBadge}>
-              <Text style={styles.currentBadgeText}>Current</Text>
-            </View>
-          </View>
-          <Text style={styles.sessionDetails}>
-            192.168.1.100 • San Francisco, CA • Current session
-          </Text>
-        </View>
-
-        <View style={styles.divider} />
-
-        <View style={styles.sessionItem}>
-          <View style={styles.sessionInfo}>
-            <Text style={styles.sessionDevice}>iPhone • Safari</Text>
-            <Button variant="destructive_outline" size="sm">
-              Logout
-            </Button>
-          </View>
-          <Text style={styles.sessionDetails}>
-            192.168.1.101 • San Francisco, CA • 2 hours ago
-          </Text>
-        </View>
-
-        <Button variant="outline">Logout from all devices</Button>
-      </View>
+        <Sessions />
 
       {/* Data & Privacy Section */}
-      <Text style={[styles.sectionTitle, styles.sectionMarginTop]}>
+      {/* <Text style={[styles.sectionTitle, styles.sectionMarginTop]}>
         Data & Privacy
-      </Text>
-
-      {/* Export My Data */}
-      <View style={styles.card}>
-        <View style={styles.cardContent}>
-          <View style={styles.textContainer}>
-            <Text style={styles.cardTitle}>Export My Data</Text>
-            <Text style={styles.cardSubtitle}>
-              Download a copy of all your data
-            </Text>
-          </View>
-          <Button size="sm">Export</Button>
-        </View>
-      </View>
+      </Text> */}
 
       {/* AI Training Data */}
       <View style={styles.card}>
         <View style={styles.cardContent}>
-          <View style={styles.textContainer}>
+          <View>
             <Text style={styles.cardTitle}>AI Training Data</Text>
             <Text style={styles.cardSubtitle}>
               Allow AI to use anonymized data for training
@@ -147,13 +108,11 @@ export default function Settings() {
       </View>
 
       {/* Delete Account */}
-      <View style={styles.deleteCard}>
+      <View style={styles.card}>
         <View style={styles.cardContent}>
           <View style={styles.deleteTextContainer}>
-            <View style={styles.warningIcon}>
-              <Text style={styles.warningIconText}>⚠</Text>
-            </View>
-            <View style={styles.textContainer}>
+              <TriangleAlert  color={colors.dark.danger} />
+            <View style={{ flex: 1 }}>
               <Text style={styles.cardTitle}>Delete Account</Text>
               <Text style={styles.cardSubtitle}>
                 Permanently delete your account and all data
@@ -164,8 +123,10 @@ export default function Settings() {
             variant="destructive"
             size="sm"
             onPress={() => setDeleteAcc(true)}
+            style={{ flexDirection: "row", gap: 6 }}
           >
-            <Trash2 size={16} color={"white"} /> Delete
+            <Trash2 size={16} color={"white"} />
+            <Text style={{ color: "white", fontWeight: "600" }}>Delete</Text>
           </Button>
         </View>
       </View>
@@ -235,10 +196,11 @@ const styles = StyleSheet.create({
     marginTop: 32,
   },
   card: {
-    backgroundColor: "#1c1c1e",
+    backgroundColor: colors.dark.cardBackground,
     borderRadius: 12,
     marginBottom: 12,
     borderWidth: 1,
+    padding: 16,
     borderColor: "#2c2c2e",
   },
   sessionsCard: {
@@ -260,28 +222,12 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    padding: 16,
-  },
-  textContainer: {
-    flex: 1,
-    marginRight: 12,
   },
   deleteTextContainer: {
     flex: 1,
     flexDirection: "row",
     alignItems: "center",
-    marginRight: 12,
-  },
-  warningIcon: {
-    width: 24,
-    height: 24,
-    marginRight: 12,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  warningIconText: {
-    fontSize: 18,
-    color: "#ff3b30",
+    gap: 12
   },
   cardTitle: {
     fontSize: 16,
@@ -292,7 +238,6 @@ const styles = StyleSheet.create({
   cardSubtitle: {
     fontSize: 13,
     color: "#8e8e93",
-    lineHeight: 18,
   },
   primaryButton: {
     backgroundColor: "#007AFF",
@@ -337,11 +282,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
     paddingVertical: 3,
     borderRadius: 4,
-  },
-  currentBadgeText: {
-    color: "#32d74b",
-    fontSize: 11,
-    fontWeight: "600",
   },
   logoutText: {
     color: "#ff3b30",
