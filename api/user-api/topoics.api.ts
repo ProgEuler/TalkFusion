@@ -15,7 +15,22 @@ export const topicsApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ['Topics'],
     }),
+    deleteTopic: builder.mutation({
+      query: (id) => ({
+        url: `/knowledge-base/${id}/`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ['Topics'],
+    }),
+    updateTopic: builder.mutation({
+      query: (body) => ({
+        url: `/knowledge-base/${body.id}/`,
+        method: "PUT",
+        body,
+      }),
+      invalidatesTags: ['Topics'],
+    }),
   }),
 });
 
-export const { useGetTopicsQuery, useCreateTopicMutation } = topicsApi;
+export const { useGetTopicsQuery, useCreateTopicMutation, useDeleteTopicMutation, useUpdateTopicMutation } = topicsApi;

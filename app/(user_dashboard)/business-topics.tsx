@@ -7,6 +7,7 @@ import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
 import colors from "@/constants/colors";
 import { FlashList } from "@shopify/flash-list";
 import React, { useState } from "react";
+import { RefreshControl } from "react-native";
 import { StyleSheet, Text, View } from "react-native";
 
 export interface TopicItem {
@@ -19,16 +20,27 @@ export interface TopicItem {
 
 export default function BusinessTopicsScreen() {
    const [isModalVisible, setIsModalVisible] = useState(false);
-   const { data, isLoading, error } = useGetTopicsQuery(undefined, {
+   const [editingTopic, setEditingTopic] = useState<TopicItem | null>(null);
+   const { data, isLoading, error, refetch } = useGetTopicsQuery(undefined, {
       skip: false,
    });
+
+   const handleEditTopic = (topic: TopicItem) => {
+      setEditingTopic(topic);
+      setIsModalVisible(true);
+   };
+
+   const handleCloseModal = () => {
+      setIsModalVisible(false);
+      setEditingTopic(null);
+   };
 
    if(isLoading){
     return <LoadingSpinner />
    }
    // console.log("topics", data);
   return (
-    <Layout>
+    <Layout refreshControl={ <RefreshControl refreshing={isLoading} onRefresh={refetch} />}>
       <View style={styles.headerContainer}>
         <View style={styles.headerContent}>
             <View>
@@ -56,14 +68,19 @@ export default function BusinessTopicsScreen() {
       <View style={styles.listContainer}>
         <FlashList
           data={data}
-          renderItem={({ item }) => <TopicCard item={item} />}
+          renderItem={({ item }) =>
+            <TopicCard
+               item={item}
+               onEdit={handleEditTopic}
+            />}
           keyExtractor={(item) => item.id}
         />
       </View>
 
       <NewTopicModal
         visible={isModalVisible}
-        onClose={() => setIsModalVisible(false)}
+        onClose={handleCloseModal}
+        editTopic={editingTopic}
       />
     </Layout>
   );

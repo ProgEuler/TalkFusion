@@ -1,9 +1,13 @@
-import { useCreateTopicMutation } from '@/api/user-api/topoics.api';
+import { useCreateTopicMutation, useUpdateTopicMutation } from '@/api/user-api/topoics.api';
+import { TopicItem } from '@/app/(user_dashboard)/business-topics';
 import colors from '@/constants/colors';
 import { Sparkles } from 'lucide-react-native';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
+    KeyboardAvoidingView,
     Modal,
+    Platform,
+    ScrollView,
     StyleSheet,
     Text,
     TextInput,
@@ -17,12 +21,28 @@ import { Button } from './ui/Button';
 interface NewTopicModalProps {
   visible: boolean;
   onClose: () => void;
+  editTopic?: TopicItem | null;
 }
 
-const NewTopicModal = ({ visible, onClose }: NewTopicModalProps) => {
+const NewTopicModal = ({ visible, onClose, editTopic }: NewTopicModalProps) => {
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
-  const [createTopic, { isLoading }] = useCreateTopicMutation();
+  const [createTopic, { isLoading: isCreating }] = useCreateTopicMutation();
+  const [updateTopic, { isLoading: isUpdating }] = useUpdateTopicMutation();
+
+  const isEditMode = !!editTopic;
+  const isLoading = isCreating || isUpdating;
+
+  // Pre-fill form when editing
+  useEffect(() => {
+    if (editTopic) {
+      setTitle(editTopic.name);
+      setContent(editTopic.details);
+    } else {
+      setTitle('');
+      setContent('');
+    }
+  }, [editTopic, visible]);
 
   const handleAddTopic = async () => {
     if (!title.trim()) {
@@ -37,82 +57,96 @@ const NewTopicModal = ({ visible, onClose }: NewTopicModalProps) => {
     const payload = {
       name: title,
       details: content,
+      ...(isEditMode && { id: editTopic.id }),
     };
 
     try {
-      await createTopic(payload).unwrap();
-      Toast.success('Topic added successfully');
+      if (isEditMode) {
+        await updateTopic(payload).unwrap();
+        Toast.success('Topic updated successfully');
+      } else {
+        await createTopic(payload).unwrap();
+        Toast.success('Topic added successfully');
+      }
       setTitle('');
       setContent('');
       onClose();
     } catch (error) {
-      console.log('Error creating topic:', error);
-      Toast.error('Failed to add topic');
+      console.log(`Error ${isEditMode ? 'updating' : 'creating'} topic:`, error);
+      Toast.error(`Failed to ${isEditMode ? 'update' : 'add'} topic`);
     }
   };
 
   return (
     <Modal visible={visible} transparent animationType="slide">
       <SafeAreaView style={styles.modalContainer}>
-        <View style={styles.modalContent}>
-          {/* Handle Bar */}
-          <View style={styles.handleBar} />
+        <KeyboardAvoidingView
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          style={styles.keyboardView}
+        >
+          <View style={styles.modalContent}>
+            {/* Handle Bar */}
+            <View style={styles.handleBar} />
 
-          {/* Header */}
-          <View style={styles.header}>
-            <TouchableOpacity onPress={onClose}>
-              <Text style={styles.cancelText}>Cancel</Text>
-            </TouchableOpacity>
-            <Text style={styles.title}>New Topic</Text>
-            <View style={{ width: 60 }} />
-          </View>
-
-          {/* Topic Title Input */}
-          <View style={styles.inputSection}>
-            <Text style={styles.label}>Topic Title</Text>
-            <View style={styles.inputContainer}>
-              <TextInput
-                style={styles.input}
-                placeholder="e.g., Refund Guidelines"
-                placeholderTextColor="rgba(255, 255, 255, 0.4)"
-                value={title}
-                onChangeText={setTitle}
-              />
-            </View>
-          </View>
-
-          {/* Knowledge Content Input */}
-          <View style={styles.inputSection}>
-            <View style={styles.labelRow}>
-              <Text style={styles.label}>Knowledge Content</Text>
-              <TouchableOpacity style={styles.aiButton}>
-                <Sparkles size={14} color={colors.dark.primary} />
-                <Text style={styles.aiButtonText}>Generate with AI</Text>
+            {/* Header */}
+            <View style={styles.header}>
+              <TouchableOpacity onPress={onClose}>
+                <Text style={styles.cancelText}>Cancel</Text>
               </TouchableOpacity>
+              <Text style={styles.title}>{isEditMode ? 'Edit Topic' : 'New Topic'}</Text>
+              <View style={{ width: 60 }} />
             </View>
-            <TextInput
-              style={styles.textArea}
-              placeholder="Paste text, guidelines, or write detailed instructions for the AI assistant here..."
-              placeholderTextColor="rgba(255, 255, 255, 0.4)"
-              value={content}
-              onChangeText={setContent}
-              multiline
-              numberOfLines={8}
-              textAlignVertical="top"
-            />
-          </View>
 
-          {/* Add Topic Button */}
-          <View style={styles.buttonContainer}>
-            <Button
-              onPress={handleAddTopic}
-              isLoading={isLoading}
-              style={styles.addButton}
+            <ScrollView
+              style={styles.scrollView}
+              contentContainerStyle={styles.scrollContent}
+              keyboardShouldPersistTaps="handled"
+              showsVerticalScrollIndicator={false}
             >
-              {isLoading ? 'Adding...' : 'Add Topic'}
-            </Button>
+              {/* Topic Title Input */}
+              <View style={styles.inputSection}>
+                <Text style={styles.label}>Topic Title</Text>
+                <View style={styles.inputContainer}>
+                  <TextInput
+                    style={styles.input}
+                    placeholder="e.g., Refund Guidelines"
+                    placeholderTextColor="rgba(255, 255, 255, 0.4)"
+                    value={title}
+                    onChangeText={setTitle}
+                  />
+                </View>
+              </View>
+
+              {/* Knowledge Content Input */}
+              <View style={styles.inputSection}>
+                <View style={styles.labelRow}>
+                  <Text style={styles.label}>Knowledge Content</Text>
+                </View>
+                <TextInput
+                  style={styles.textArea}
+                  placeholder="Paste text, guidelines, or write detailed instructions for the AI assistant here..."
+                  placeholderTextColor="rgba(255, 255, 255, 0.4)"
+                  value={content}
+                  onChangeText={setContent}
+                  multiline
+                  numberOfLines={8}
+                  textAlignVertical="top"
+                />
+              </View>
+
+              {/* Add Topic Button */}
+              <View style={styles.buttonContainer}>
+                <Button
+                  onPress={handleAddTopic}
+                  isLoading={isLoading}
+                  style={styles.addButton}
+                >
+                  {isLoading ? (isEditMode ? 'Updating...' : 'Adding...') : (isEditMode ? 'Update Topic' : 'Add Topic')}
+                </Button>
+              </View>
+            </ScrollView>
           </View>
-        </View>
+        </KeyboardAvoidingView>
       </SafeAreaView>
     </Modal>
   );
@@ -122,7 +156,10 @@ const styles = StyleSheet.create({
   modalContainer: {
     flex: 1,
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    justifyContent: 'flex-end',
+   //  justifyContent: 'flex-end',
+  },
+  keyboardView: {
+    width: '100%',
   },
   modalContent: {
     backgroundColor: colors.dark.background,
@@ -130,6 +167,12 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 20,
    //  paddingBottom: 20,
     minHeight: '65%',
+  },
+  scrollView: {
+    flex: 1,
+  },
+  scrollContent: {
+    paddingBottom: 30,
   },
   handleBar: {
     width: 40,

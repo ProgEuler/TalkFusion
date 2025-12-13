@@ -1,11 +1,25 @@
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native'
-import React from 'react'
-import { ArrowRight, Calendar, Edit3, Trash2 } from 'lucide-react-native'
-import colors from '@/constants/colors'
+import { useDeleteTopicMutation } from '@/api/user-api/topoics.api'
 import { TopicItem } from '@/app/(user_dashboard)/business-topics'
+import colors from '@/constants/colors'
 import { timeAgo } from '@/utils/helpers'
+import { Calendar, Edit3, Trash2 } from 'lucide-react-native'
+import React from 'react'
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { Toast } from 'toastify-react-native'
 
-export default function TopicCard({ item }: { item: TopicItem }) {
+export default function TopicCard({ item, onEdit }: { item: TopicItem; onEdit: (topic: TopicItem) => void }) {
+   const [deleteTopic] = useDeleteTopicMutation()
+
+   const handleDelete = async () => {
+      try {
+         await deleteTopic(item.id)
+         Toast.success("Topic deleted successfully")
+      } catch (error) {
+         Toast.error("Failed to delete topic")
+         console.log(error)
+      }
+   }
+
   return (
         <View style={styles.card}>
           <View style={styles.cardIndicator} />
@@ -13,10 +27,10 @@ export default function TopicCard({ item }: { item: TopicItem }) {
             <View style={styles.cardHeader}>
               <Text style={styles.cardTitle}>{item.name}</Text>
               <View style={styles.cardActions}>
-                <TouchableOpacity style={styles.actionButton}>
+                <TouchableOpacity onPress={() => onEdit(item)} style={styles.actionButton}>
                   <Edit3 size={16} color={colors.dark.textSecondary} />
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.actionButton}>
+                <TouchableOpacity onPress={handleDelete} style={styles.actionButton}>
                   <Trash2 size={16} color={colors.dark.danger} />
                 </TouchableOpacity>
               </View>
@@ -29,10 +43,10 @@ export default function TopicCard({ item }: { item: TopicItem }) {
 
             <Text style={styles.descriptionText}>{item.details}</Text>
 
-            <TouchableOpacity style={styles.readMoreButton}>
+            {/* <TouchableOpacity style={styles.readMoreButton}>
               <Text style={styles.readMoreText}>See full details</Text>
               <ArrowRight size={14} color={colors.dark.primary} />
-            </TouchableOpacity>
+            </TouchableOpacity> */}
           </View>
         </View>
   )
