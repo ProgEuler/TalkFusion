@@ -5,6 +5,7 @@ import { FlashList } from "@shopify/flash-list";
 import { CalendarIcon } from "lucide-react-native";
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
+import ErrorScreen from "./Error";
 
 export default function AppointmentsByDay({
   day,
@@ -15,7 +16,7 @@ export default function AppointmentsByDay({
   month: number;
   year: number;
 }) {
-  const { data, isLoading, isError } = useGetBookingsByDateQuery({
+  const { data, isLoading, isError, refetch } = useGetBookingsByDateQuery({
     day,
     month,
     year,
@@ -26,12 +27,8 @@ export default function AppointmentsByDay({
       <Text style={{ color: colors.dark.text }}>Loading appointments...</Text>
     );
   console.log("Appointments data for", day, month, year, ":", data);
-  if (isError)
-    return (
-      <Text style={{ color: colors.dark.text }}>
-        Error loading appointments.
-      </Text>
-    );
+  console.log("Appointments data for", day, month, year, ":", data);
+  if (isError) return <ErrorScreen onRetry={refetch} />;
 
   return (
     <View style={styles.section}>

@@ -1,5 +1,6 @@
 import { useGetDaysDataQuery } from "@/api/user-api/calendar.api";
 import AppointmentsByDay from "@/components/appointments-by-day";
+import ErrorScreen from "@/components/Error";
 import { Layout } from "@/components/layout/Layout";
 import { Button } from "@/components/ui/Button";
 import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
@@ -22,6 +23,7 @@ export default function AppointmentsScreen() {
   const {
     data: daysData,
     isLoading,
+    isError,
     refetch,
   } = useGetDaysDataQuery({
     month: month,
@@ -29,6 +31,7 @@ export default function AppointmentsScreen() {
   });
 
   if (isLoading) return <LoadingSpinner />;
+  if (isError) return <ErrorScreen onRetry={refetch} />;
 
   const generateMarkedDatesFromArray = (dates, style) => {
     return dates.reduce((acc, date) => {

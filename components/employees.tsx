@@ -4,6 +4,7 @@ import { FlashList } from "@shopify/flash-list";
 import { ChevronRight, User } from "lucide-react-native";
 import React from "react";
 import { ActivityIndicator, Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import ErrorScreen from "./Error";
 
 export type Employee = {
   id: number;
@@ -14,7 +15,7 @@ export type Employee = {
 };
 
 function Employees({ onEmployeePress }: { onEmployeePress?: (employee: Employee) => void }) {
-  const { data, isLoading } = useGetEmployeesQuery(undefined);
+  const { data, isLoading, isError, refetch } = useGetEmployeesQuery(undefined);
 
   if (isLoading) {
     return (
@@ -23,6 +24,8 @@ function Employees({ onEmployeePress }: { onEmployeePress?: (employee: Employee)
       </View>
     );
   }
+
+  if (isError) return <ErrorScreen onRetry={refetch} component />;
 
   const employees: Employee[] = data?.employees || [];
 

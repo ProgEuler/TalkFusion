@@ -1,13 +1,14 @@
 import { useGetSessionsQuery, useLogOutAllMutation, useLogOutOtherDeviceMutation } from "@/api/user-api/sessions.api";
 import colors from "@/constants/colors";
+import { selectSessionId } from "@/store/authSlice";
 import { timeAgo } from "@/utils/helpers";
 import { FlashList } from "@shopify/flash-list";
 import React from "react";
 import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
-import { Button } from "./ui/Button";
 import { useSelector } from "react-redux";
-import { selectCurrentUser, selectSessionId } from "@/store/authSlice";
 import { Toast } from "toastify-react-native";
+import ErrorScreen from "./Error";
+import { Button } from "./ui/Button";
 
 type Session = {
   session_id: number;
@@ -19,7 +20,7 @@ type Session = {
 };
 
 export default function Sessions() {
-  const { data: sessions = [], isLoading, isError } = useGetSessionsQuery(undefined);
+  const { data: sessions = [], isLoading, isError, refetch } = useGetSessionsQuery(undefined);
    const session_id = useSelector(selectSessionId)
    const [logoutOther, {isLoading: logginOutOther}] = useLogOutOtherDeviceMutation()
    const [logOutAll] = useLogOutAllMutation()
@@ -35,12 +36,14 @@ export default function Sessions() {
     );
   }
 
-  if (isError || !sessions?.length) {
+  if (isError) return <ErrorScreen onRetry={refetch} />;
+
+  if (!sessions?.length) {
     return (
       <View style={styles.card}>
         <View style={styles.divider} />
         <Text style={styles.emptyText}>
-          {isError ? "Failed to load sessions" : "No active sessions"}
+          No active sessions
         </Text>
       </View>
     );

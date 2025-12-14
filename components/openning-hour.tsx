@@ -116,7 +116,7 @@ const OpeningHoursManager = ({ onSuccess }: { onSuccess: () => void }) => {
             onPress={handleAdd}
             isLoading={isLoading}
             variant="outline"
-            size="sm"
+            style={{ marginTop: 8, borderWidth: 2, borderColor: colors.dark.textSecondary, borderStyle: "dashed" }}
          >
             Add Opening Hour
          </Button>

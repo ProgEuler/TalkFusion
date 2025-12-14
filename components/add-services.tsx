@@ -168,8 +168,8 @@ export default function AddServices() {
       <Button
         onPress={handleSubmit(onSubmit)}
         isLoading={isLoading}
-        size="lg"
-        style={{ marginTop: 8 }}
+        variant='outline'
+        style={{ marginTop: 8, borderWidth: 2, borderColor: colors.dark.textSecondary, borderStyle: "dashed" }}
       >
         Add Service
       </Button>

@@ -1,10 +1,11 @@
 import {
-  useGetFbUrlQuery,
-  useGetIgUrlQuery,
+    useGetFbUrlQuery,
+    useGetIgUrlQuery,
 } from "@/api/user-api/integrations.api";
 import Fb from "@/assets/svgs/facebook.svg";
 import Ig from "@/assets/svgs/instagram.svg";
 import Wp from "@/assets/svgs/whatsapp.svg";
+import ErrorScreen from "@/components/Error";
 import { Layout } from "@/components/layout/Layout";
 import { Button } from "@/components/ui/Button";
 import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
@@ -28,10 +29,13 @@ export default function IntegrationsScreen() {
   const {
     data: fbUrl,
     isLoading: fbUrlLoading,
+    error: fbError,
+    refetch: refetchFb,
   } = useGetFbUrlQuery(undefined);
-  const { data: igUrl, isLoading: igUrlLoading } = useGetIgUrlQuery(undefined);
+  const { data: igUrl, isLoading: igUrlLoading, error: igError, refetch: refetchIg } = useGetIgUrlQuery(undefined);
 
   if (fbUrlLoading || igUrlLoading) return <LoadingSpinner />;
+  if (fbError || igError) return <ErrorScreen onRetry={() => { refetchFb(); refetchIg(); }} />;
 
   const integrations: Integration[] = [
     {

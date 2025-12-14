@@ -1,4 +1,5 @@
 import { useGetTopicsQuery } from "@/api/user-api/topoics.api";
+import ErrorScreen from "@/components/Error";
 import { Layout } from "@/components/layout/Layout";
 import NewTopicModal from "@/components/new-topic-modal";
 import TopicCard from "@/components/topics";
@@ -7,8 +8,7 @@ import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
 import colors from "@/constants/colors";
 import { FlashList } from "@shopify/flash-list";
 import React, { useState } from "react";
-import { RefreshControl } from "react-native";
-import { StyleSheet, Text, View } from "react-native";
+import { RefreshControl, StyleSheet, Text, View } from "react-native";
 
 export interface TopicItem {
   id: string;
@@ -38,6 +38,7 @@ export default function BusinessTopicsScreen() {
    if(isLoading){
     return <LoadingSpinner />
    }
+   if (error) return <ErrorScreen onRetry={refetch} />;
    // console.log("topics", data);
   return (
     <Layout refreshControl={ <RefreshControl refreshing={isLoading} onRefresh={refetch} />}>

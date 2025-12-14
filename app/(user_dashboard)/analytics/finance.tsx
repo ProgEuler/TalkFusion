@@ -1,20 +1,22 @@
 import { useGetFinanceDataQuery } from "@/api/user-api/analytics.api";
+import ErrorScreen from "@/components/Error";
 import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
 import colors from "@/constants/colors";
 import {
-  BarChart2,
-  CircleAlert,
-  Clock,
-  TrendingDown,
-  TrendingUp,
-  Wallet,
+    BarChart2,
+    CircleAlert,
+    Clock,
+    TrendingDown,
+    TrendingUp,
+    Wallet,
 } from "lucide-react-native";
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 
 export default function Finance() {
-  const { data, isLoading } = useGetFinanceDataQuery({});
+  const { data, isLoading, error, refetch } = useGetFinanceDataQuery({});
   if (isLoading) return <LoadingSpinner />;
+  if (error) return <ErrorScreen onRetry={refetch} />;
 
 //   console.log("Finance Data:", data);
   return (

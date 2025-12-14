@@ -1,16 +1,17 @@
 import { useGetAnalyticsDataQuery } from "@/api/user-api/analytics.api";
 import Facebook from "@/assets/svgs/facebook.svg";
 import WhatsApp from "@/assets/svgs/whatsapp.svg";
+import ErrorScreen from "@/components/Error";
 import { Layout } from "@/components/layout/Layout";
 import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
 import { RNPicker } from "@/components/ui/picker";
 import colors from "@/constants/colors";
 import {
-   Calendar,
-   DollarSign,
-   Instagram,
-   MessageCircle,
-   User2
+    Calendar,
+    DollarSign,
+    Instagram,
+    MessageCircle,
+    User2
 } from "lucide-react-native";
 import React, { useState } from "react";
 import { RefreshControl, StyleSheet, Text, View } from "react-native";
@@ -31,13 +32,14 @@ export default function AnalyticsScreen() {
   const [channel, setChannel] = useState("");
   const [messageType, setMessageType] = useState("all");
 
-  const { data, isLoading, refetch } = useGetAnalyticsDataQuery({
+  const { data, isLoading, error, refetch } = useGetAnalyticsDataQuery({
     time: timeRange,
     channel: channel,
     type: messageType,
   });
 
   if (isLoading) return <LoadingSpinner />;
+  if (error) return <ErrorScreen onRetry={refetch} />;
 //   console.log("analytics data: ", data);
 
   const timeRangeLabelMap: Record<string, string> = {

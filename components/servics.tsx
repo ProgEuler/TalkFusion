@@ -4,11 +4,13 @@ import { FlashList } from "@shopify/flash-list";
 import { Briefcase } from "lucide-react-native";
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
+import ErrorScreen from "./Error";
 import { LoadingSpinner } from "./ui/LoadingSpinner";
 
 export default function Services() {
-  const { data: services, isLoading } = useGetServicesQuery(undefined);
+  const { data: services, isLoading, error, refetch } = useGetServicesQuery(undefined);
   if (isLoading) return <LoadingSpinner />;
+  if (error) return <ErrorScreen onRetry={refetch} component />;
 
   return (
     <View style={styles.categoryCardFull}>

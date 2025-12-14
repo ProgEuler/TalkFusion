@@ -1,13 +1,15 @@
 import { useGetQuerriesDataQuery } from "@/api/user-api/analytics.api";
+import ErrorScreen from "@/components/Error";
 import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
 import colors from "@/constants/colors";
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 
 export default function TopQuestions() {
-  const { data, isLoading } = useGetQuerriesDataQuery(undefined);
+  const { data, isLoading, error, refetch } = useGetQuerriesDataQuery(undefined);
 
   if (isLoading) return <LoadingSpinner />;
+  if (error) return <ErrorScreen onRetry={refetch} />;
 //   console.log("Top Questions Data:", data);
 
   return (

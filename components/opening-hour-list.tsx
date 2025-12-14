@@ -3,11 +3,13 @@ import colors from "@/constants/colors";
 import { Clock } from "lucide-react-native";
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
+import ErrorScreen from "./Error";
 import { LoadingSpinner } from "./ui/LoadingSpinner";
 
 export default function OpeningHourList() {
-  const { data: openingHour, isLoading } = useGetOpeningHoursQuery(undefined);
+  const { data: openingHour, isLoading, error, refetch } = useGetOpeningHoursQuery(undefined);
   if (isLoading) return <LoadingSpinner />;
+  if (error) return <ErrorScreen onRetry={refetch} component />;
 
   return (
     <View style={styles.categoryCardFull}>

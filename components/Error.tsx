@@ -1,7 +1,8 @@
-import colors from '@/constants/colors';
-import { AlertTriangle, Info, RefreshCw, WifiOff } from 'lucide-react-native';
-import React from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import colors from "@/constants/colors";
+import { AlertTriangle, Info, RefreshCw, WifiOff } from "lucide-react-native";
+import React from "react";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Button } from "./ui/Button";
 
 interface ErrorProps {
   title?: string;
@@ -9,6 +10,7 @@ interface ErrorProps {
   code?: string;
   onRetry?: () => void;
   onOfflineMode?: () => void;
+  component?: boolean;
 }
 
 export default function ErrorScreen({
@@ -16,50 +18,57 @@ export default function ErrorScreen({
   message = "We couldn't load the screen. Please check your internet connection or try again later.",
   code = "503_SERVICE_UNAVAILABLE",
   onRetry,
-  onOfflineMode
+  onOfflineMode,
+  component,
 }: ErrorProps) {
   return (
     <View style={styles.container}>
       <View style={styles.content}>
         {/* Icon Container */}
         <View style={styles.iconWrapper}>
-            <View style={styles.iconCircle}>
-                <WifiOff size={48} color={colors.dark.danger} />
-            </View>
-            <View style={styles.warningBadge}>
-                <AlertTriangle size={16} color="#000" fill={colors.dark.warning} />
-            </View>
+          <View style={styles.iconCircle}>
+            <WifiOff size={48} color={colors.dark.danger} />
+          </View>
+          <View style={styles.warningBadge}>
+            <AlertTriangle size={16} color="#000" fill={colors.dark.warning} />
+          </View>
         </View>
-
         <Text style={styles.title}>{title}</Text>
-        <Text style={styles.message}>{message}</Text>
 
-        {/* Error Code */}
-        <View style={styles.errorCodeContainer}>
-            <Info size={16} color={colors.dark.textSecondary} />
-            <Text style={styles.errorCodeText}>Error Code: {code}</Text>
-        </View>
+        {!component && (
+          <>
+            <Text style={styles.message}>{message}</Text>
 
-        {/* Actions */}
-        <View style={styles.actions}>
-            <TouchableOpacity
+            {/* Error Code */}
+            <View style={styles.errorCodeContainer}>
+              <Info size={16} color={colors.dark.textSecondary} />
+              <Text style={styles.errorCodeText}>Error Code: {code}</Text>
+            </View>
+
+            {/* Actions */}
+            <View style={styles.actions}>
+              <Button
                 style={styles.retryButton}
                 activeOpacity={0.8}
                 onPress={onRetry}
-            >
+              >
                 <RefreshCw size={20} color="#FFFFFF" />
                 <Text style={styles.retryButtonText}>Retry Connection</Text>
-            </TouchableOpacity>
+              </Button>
 
-            {onOfflineMode && (
+              {onOfflineMode && (
                 <TouchableOpacity
-                    style={styles.offlineButton}
-                    onPress={onOfflineMode}
+                  style={styles.offlineButton}
+                  onPress={onOfflineMode}
                 >
-                    <Text style={styles.offlineButtonText}>Go to Offline Mode</Text>
+                  <Text style={styles.offlineButtonText}>
+                    Go to Offline Mode
+                  </Text>
                 </TouchableOpacity>
-            )}
-        </View>
+              )}
+            </View>
+          </>
+        )}
       </View>
     </View>
   );
@@ -69,31 +78,31 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.dark.background,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     padding: 24,
   },
   content: {
-    alignItems: 'center',
-    width: '100%',
+    alignItems: "center",
+    width: "100%",
     maxWidth: 340,
   },
   iconWrapper: {
-    position: 'relative',
+    position: "relative",
     marginBottom: 24,
   },
   iconCircle: {
-     width: 96,
-     height: 96,
-     borderRadius: 48,
-     backgroundColor: colors.dark.cardBackground,
-     alignItems: 'center',
-     justifyContent: 'center',
-     borderWidth: 1,
-     borderColor: colors.dark.border,
+    width: 96,
+    height: 96,
+    borderRadius: 48,
+    backgroundColor: colors.dark.cardBackground,
+    alignItems: "center",
+    justifyContent: "center",
+    borderWidth: 1,
+    borderColor: colors.dark.border,
   },
   warningBadge: {
-    position: 'absolute',
+    position: "absolute",
     bottom: 0,
     right: 0,
     backgroundColor: colors.dark.cardBackground,
@@ -104,21 +113,21 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 20,
-    fontWeight: '700',
+    fontWeight: "700",
     color: colors.dark.text,
     marginBottom: 8,
-    textAlign: 'center',
+    textAlign: "center",
   },
   message: {
     fontSize: 14,
     color: colors.dark.textSecondary,
-    textAlign: 'center',
+    textAlign: "center",
     marginBottom: 32,
     lineHeight: 22,
   },
   errorCodeContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     backgroundColor: colors.dark.cardBackground,
     paddingVertical: 12,
     paddingHorizontal: 16,
@@ -127,22 +136,22 @@ const styles = StyleSheet.create({
     marginBottom: 32,
     borderWidth: 1,
     borderColor: colors.dark.border,
-    width: '100%',
+    width: "100%",
   },
   errorCodeText: {
-    fontFamily: 'monospace', // Or Platform.select for monospace
+    fontFamily: "monospace", // Or Platform.select for monospace
     color: colors.dark.textSecondary,
     fontSize: 12,
-    fontWeight: '600',
+    fontWeight: "600",
   },
   actions: {
-    width: '100%',
+    width: "100%",
     gap: 16,
   },
   retryButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
     backgroundColor: colors.dark.primary,
     paddingVertical: 14,
     borderRadius: 12,
@@ -154,17 +163,17 @@ const styles = StyleSheet.create({
     elevation: 4,
   },
   retryButtonText: {
-    color: '#FFFFFF',
-    fontWeight: '600',
+    color: "#FFFFFF",
+    fontWeight: "600",
     fontSize: 15,
   },
   offlineButton: {
-    alignItems: 'center',
+    alignItems: "center",
     paddingVertical: 8,
   },
   offlineButtonText: {
     color: colors.dark.textSecondary,
     fontSize: 14,
-    fontWeight: '500',
+    fontWeight: "500",
   },
 });
