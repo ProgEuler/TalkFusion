@@ -72,7 +72,7 @@ const NewTopicModal = ({ visible, onClose, editTopic }: NewTopicModalProps) => {
       setContent('');
       onClose();
     } catch (error) {
-      console.log(`Error ${isEditMode ? 'updating' : 'creating'} topic:`, error);
+      // console.log(`Error ${isEditMode ? 'updating' : 'creating'} topic:`, error);
       Toast.error(`Failed to ${isEditMode ? 'update' : 'add'} topic`);
     }
   };

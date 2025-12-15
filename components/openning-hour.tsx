@@ -50,16 +50,16 @@ const OpeningHoursManager = ({ onSuccess }: { onSuccess: () => void }) => {
             end: formatTime(endTime)
          }).unwrap()
 
-         console.log("adding.. ", {
-            days: selectedDays,
-            start: formatTime(startTime),
-            end: formatTime(endTime)
-         })
+         // console.log("adding.. ", {
+         //    days: selectedDays,
+         //    start: formatTime(startTime),
+         //    end: formatTime(endTime)
+         // })
 
          setSelectedDays([])
          onSuccess()
       } catch (error) {
-         console.log(error)
+         // console.log(error)
          Toast.error("Failed to add opening hours")
       }
    }

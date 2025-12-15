@@ -76,14 +76,14 @@ export default function IntegrationsScreen() {
     integrationId: string,
     integrationUrl: string
   ) => {
-    console.log("Connecting to:", integrationId);
+   //  console.log("Connecting to:", integrationId);
 
     try {
       await Linking.openURL(integrationUrl);
       Toast.success(`${integrationId} connected successfully!`);
     } catch (error) {
       Toast.error(`Failed to connect ${integrationId}.`);
-      console.log("Error connecting to Google Calendar:", error);
+      // console.log("Error connecting to Google Calendar:", error);
       return;
     }
   };

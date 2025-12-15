@@ -85,7 +85,7 @@ export default function Settings() {
       </Text> */}
 
       {/* AI Training Data */}
-      <View style={styles.card}>
+      {/* <View style={styles.card}>
         <View style={styles.cardContent}>
           <View>
             <Text style={styles.cardTitle}>AI Training Data</Text>
@@ -105,7 +105,7 @@ export default function Settings() {
             />
           </View>
         </View>
-      </View>
+      </View> */}
 
       {/* Delete Account */}
       <View style={styles.card}>

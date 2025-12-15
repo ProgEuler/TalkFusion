@@ -75,7 +75,7 @@ export default function AddAppointmentScreen() {
         description: data.description,
       };
 
-      console.log("Submitting payload:", payload);
+      // console.log("Submitting payload:", payload);
       await addBooking(payload).unwrap();
 
       Toast.success("Appointment added successfully");

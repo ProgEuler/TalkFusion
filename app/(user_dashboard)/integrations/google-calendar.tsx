@@ -21,7 +21,7 @@ export default function GoogleCalendar() {
       Toast.success("Google Calendar connected successfully!");
     } catch (error) {
       Toast.error("Failed to connect Google Calendar.");
-      console.log("Error connecting to Google Calendar:", error);
+      // console.log("Error connecting to Google Calendar:", error);
       return;
     }
   };

@@ -44,7 +44,7 @@ export default function AddServices() {
       Toast.success('Service added successfully');
       reset();
     } catch (error) {
-      console.log('Error adding service:', error);
+      // console.log('Error adding service:', error);
       Toast.error('Failed to add service');
     }
   };

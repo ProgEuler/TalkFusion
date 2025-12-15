@@ -54,7 +54,7 @@ export default function Sessions() {
          await logoutOther({id: item.session_id})
          Toast.success(`logged out from ${item.device}`)
       } catch (error) {
-         console.log(error)
+         // console.log(error)
          Toast.error(`Failed to logout from ${item.session_id}`)
       }
   }
@@ -64,7 +64,7 @@ export default function Sessions() {
       await logOutAll("")
       Toast.success("Logged out from all device")
     } catch (error) {
-      console.log(error)
+      // console.log(error)
       Toast.error("Failed to logout from all device")
     }
   }

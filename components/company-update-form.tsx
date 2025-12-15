@@ -76,7 +76,7 @@ export default function CompanyUpdateForm({ defaultValues, onSuccess }: CompanyU
       Toast.success('Company information updated successfully');
       onSuccess?.();
     } catch (error) {
-      console.log('Error updating company:', error);
+      // console.log('Error updating company:', error);
       Toast.error('Failed to update company information');
     }
   };

@@ -8,7 +8,7 @@ import {
 } from "react-native";
 
 export const AppointmentItem = ({ appointment, index, isLast }) => {
-  console.log("Appointment Data:", appointment);
+//   console.log("Appointment Data:", appointment);
 
   const formatTime = (dateString) => {
     return new Date(dateString).toLocaleTimeString("en-US", {
@@ -18,7 +18,7 @@ export const AppointmentItem = ({ appointment, index, isLast }) => {
     });
   };
   async function openCalendarLink() {
-    console.log("Opening calendar link:", appointment.event_link);
+   //  console.log("Opening calendar link:", appointment.event_link);
     await Linking.openURL(appointment.event_link);
   }
 

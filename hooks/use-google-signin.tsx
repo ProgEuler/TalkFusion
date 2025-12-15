@@ -20,13 +20,13 @@ export function useSignIn() {
         await GoogleSignin.hasPlayServices();
         const res = GoogleSignin.signOut();
         setName(null);
-        console.log(res);
+      //   console.log(res);
         return;
       }
       await GoogleSignin.hasPlayServices();
       const response = await GoogleSignin.signIn();
       const token = await GoogleSignin.getTokens();
-      console.log(token);
+      // console.log(token);
       GoogleLogin(token)
 
       if (isSuccessResponse(response)) {

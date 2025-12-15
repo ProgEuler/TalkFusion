@@ -42,11 +42,11 @@ const UpdateRoleModal = ({ visible = false, onClose, employee }) => {
   const [selectedRole, setSelectedRole] = useState('owner');
   const [updateEmployeeRoles, { isLoading } ] = useUpdateEmployeeRolesMutation();
 
-  console.log('Employee:', employee);
+//   console.log('Employee:', employee);
 
   const handleSave = async () => {
     if (!employee) return;
-    console.log('Selected role:', selectedRole);
+   //  console.log('Selected role:', selectedRole);
 
     const payload = {
       id: employee.id,
@@ -56,14 +56,14 @@ const UpdateRoleModal = ({ visible = false, onClose, employee }) => {
       }
     }
 
-    console.log('Payload:', payload);
+   //  console.log('Payload:', payload);
     try {
        const res = await updateEmployeeRoles(payload);
-       console.log(res)
+      //  console.log(res)
        Toast.success('Employee role updated successfully');
        onClose();
     } catch (error) {
-      console.log('Error updating employee roles:', error);
+      // console.log('Error updating employee roles:', error);
       Toast.error('Error updating employee role');
     }
   };

@@ -30,7 +30,7 @@ function Employees({ onEmployeePress }: { onEmployeePress?: (employee: Employee)
   const employees: Employee[] = data?.employees || [];
 
   function onPress(employee: Employee){
-    console.log("CLicked Employee", employee.id)
+   //  console.log("CLicked Employee", employee.id)
     if (onEmployeePress) {
       onEmployeePress(employee);
     }

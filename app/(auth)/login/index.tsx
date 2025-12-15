@@ -10,12 +10,12 @@ import { useRouter } from "expo-router";
 import { Eye, EyeOff } from "lucide-react-native";
 import React, { useState } from "react";
 import {
-  Modal,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
+    Modal,
+    StyleSheet,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    View,
 } from "react-native";
 import { useDispatch } from "react-redux";
 import { Toast } from "toastify-react-native";
@@ -48,19 +48,25 @@ export default function LoginScreen() {
     }
     setEmailError(null);
     try {
-      router.replace("/(user_dashboard)/home");
-      // const res = await login({
-      //   email: email.toLowerCase(),
-      //   password,
-      // }).unwrap();
+
+      const res = await login({
+        email: email.toLowerCase(),
+        password,
+      }).unwrap();
       // console.log("Login response:", res);
-      // dispatch(setCredentials({ user: res.user, token: res.access, session_id: res.session_id }));
-      // Toast.success("Login successful!");
-      // if (res.user.role === "admin") {
-      //   router.replace("/(admin_dashboard)/home");
-      // } else {
-      //   router.replace("/(user_dashboard)/home");
-      // }
+      dispatch(
+        setCredentials({
+          user: res.user,
+          token: res.access,
+          session_id: res.session_id,
+        })
+      );
+      Toast.success("Login successful!");
+      if (res.user.role === "admin") {
+        router.replace("/(admin_dashboard)/home");
+      } else {
+        router.replace("/(user_dashboard)/home");
+      }
     } catch (error: any) {
       console.error("Login Error:", error);
       const message =

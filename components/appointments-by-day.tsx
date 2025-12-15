@@ -26,8 +26,8 @@ export default function AppointmentsByDay({
     return (
       <Text style={{ color: colors.dark.text }}>Loading appointments...</Text>
     );
-  console.log("Appointments data for", day, month, year, ":", data);
-  console.log("Appointments data for", day, month, year, ":", data);
+//   console.log("Appointments data for", day, month, year, ":", data);
+//   console.log("Appointments data for", day, month, year, ":", data);
   if (isError) return <ErrorScreen onRetry={refetch} />;
 
   return (

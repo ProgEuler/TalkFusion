@@ -16,7 +16,7 @@ export default function TopicCard({ item, onEdit }: { item: TopicItem; onEdit: (
          Toast.success("Topic deleted successfully")
       } catch (error) {
          Toast.error("Failed to delete topic")
-         console.log(error)
+         // console.log(error)
       }
    }
 
