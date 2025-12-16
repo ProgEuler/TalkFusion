@@ -1,5 +1,12 @@
 export function timeAgo(dateInput: string | number | Date) {
-  const targetDate = new Date(dateInput);
+  let date = dateInput;
+  if (typeof date === "string") {
+    // If string is ISO format but missing timezone (naive), assume UTC
+    if (date.includes("T") && !date.endsWith("Z") && !/[+-]\d{2}:?\d{2}$/.test(date)) {
+      date = date + "Z";
+    }
+  }
+  const targetDate = new Date(date);
   const now = new Date();
   const diffMs = now.getTime() - targetDate.getTime();
 

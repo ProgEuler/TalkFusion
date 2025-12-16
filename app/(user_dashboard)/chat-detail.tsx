@@ -4,7 +4,7 @@ import { selectRoomMessages } from "@/store/chat.slice";
 import { timeAgo } from "@/utils/helpers";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { ArrowLeft } from "lucide-react-native";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef } from "react";
 import {
   KeyboardAvoidingView,
   Platform,
@@ -37,10 +37,9 @@ const mockChatNames: Record<string, string> = {}; // Keeping empty or removing u
 export default function ChatDetailScreen() {
   const insets = useSafeAreaInsets();
   const router = useRouter();
-  const params = useLocalSearchParams<{ chatId: string }>();
+  const params = useLocalSearchParams<{ chatId: string; channel?: string }>();
 
   const scrollViewRef = useRef<ScrollView>(null);
-  const [message, setMessage] = useState("");
 
   const realtimeMessages = useSelector(
     selectRoomMessages(params.chatId || "1")
@@ -53,8 +52,9 @@ export default function ChatDetailScreen() {
     refetch,
   } = useGetOldChatQuery({
     id: params.chatId,
-    channel: "whatsapp",
+    channel: params.channel,
   });
+  console.log(historicalMessages, params)
 
   // Combine historical and real-time messages
   // Filter out duplicates if any (e.g. if realtime message arrived before history fetch completed)
@@ -66,7 +66,7 @@ export default function ChatDetailScreen() {
   }, [historicalMessages, realtimeMessages]);
 
   const chatId = params.chatId || "1";
-  const chatName = mockChatNames[chatId] || "Unknown";
+  const chatName = params.chatId || "Unknown";
 
   useEffect(() => {
     // Scroll to bottom when messages change

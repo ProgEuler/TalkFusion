@@ -16,10 +16,10 @@ interface ChatListProps {
 export default function ChatList({ rooms }: ChatListProps) {
   const router = useRouter();
 
-  const handleChatSelect = (chatId: string) => {
+  const handleChatSelect = (chatId: string, channel: string) => {
     router.push({
       pathname: "/(user_dashboard)/chat-detail",
-      params: { chatId },
+      params: { chatId, channel },
     });
   };
 
@@ -31,7 +31,7 @@ export default function ChatList({ rooms }: ChatListProps) {
           <TouchableOpacity
             key={chat.room_id}
             style={styles.chatItem}
-            onPress={() => handleChatSelect(chat.room_id.toString())}
+            onPress={() => handleChatSelect(chat.room_id.toString(), chat.channel)}
             activeOpacity={0.7}
           >
             {/* Profile Picture */}
