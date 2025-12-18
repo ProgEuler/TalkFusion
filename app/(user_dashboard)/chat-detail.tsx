@@ -1,10 +1,14 @@
 import { useGetOldChatQuery } from "@/api/user-api/chat.api";
+import ErrorScreen from "@/components/ErrorScreen";
+import { Layout } from "@/components/layout/Layout";
+import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
 import colors from "@/constants/colors";
 import { selectRoomMessages } from "@/store/chat.slice";
 import { timeAgo } from "@/utils/helpers";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { ArrowLeft } from "lucide-react-native";
 import React, { useEffect, useRef } from "react";
+import { RefreshControl } from "react-native";
 import {
   KeyboardAvoidingView,
   Platform,
@@ -17,32 +21,15 @@ import {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useSelector } from "react-redux";
 
-interface Message {
-  id: string;
-  text: string;
-  timestamp: string;
-  isSent: boolean;
-  isRead?: boolean;
-}
-
-// Mock data removed
-const mockChatNames: Record<string, string> = {}; // Keeping empty or removing usage later if needed, but easier to just empty it or find usage.
-// Wait, I see usage: const chatName = mockChatNames[chatId] || "Unknown";
-// I should keep mockChatNames empty or minimal to prevent crash, or better: fetch name from store.
-// For now I will just empty it and let it fallback to "Unknown" effectively,
-// UNLESS I want to fix the name display too.
-// The user didn't ask for name fix, but it's nice.
-// But I'll stick to just removing the huge message mock.
-
 export default function ChatDetailScreen() {
   const insets = useSafeAreaInsets();
   const router = useRouter();
-  const params = useLocalSearchParams<{ chatId: string; channel?: string }>();
+  const params = useLocalSearchParams<{ roomId: string; channel?: string; clientId: string }>();
 
   const scrollViewRef = useRef<ScrollView>(null);
 
   const realtimeMessages = useSelector(
-    selectRoomMessages(params.chatId || "1")
+    selectRoomMessages(params.roomId)
   );
 
   const {
@@ -50,14 +37,19 @@ export default function ChatDetailScreen() {
     isLoading,
     isFetching,
     refetch,
-  } = useGetOldChatQuery({
-    id: params.chatId,
-    channel: params.channel,
-  });
-  console.log(historicalMessages, params)
+    isError,
+  } = useGetOldChatQuery(
+    {
+      roomId: params.roomId,
+      channel: params.channel,
+    },
+    {
+      skip: !params.roomId || !params.channel,
+    }
+  );
 
-  // Combine historical and real-time messages
-  // Filter out duplicates if any (e.g. if realtime message arrived before history fetch completed)
+  console.log(params)
+
   const allMessages = React.useMemo(() => {
     const history = historicalMessages || [];
     const historyIds = new Set(history.map((m) => m.id));
@@ -65,8 +57,7 @@ export default function ChatDetailScreen() {
     return [...history, ...newUnique];
   }, [historicalMessages, realtimeMessages]);
 
-  const chatId = params.chatId || "1";
-  const chatName = params.chatId || "Unknown";
+  const chatName = params.clientId || "Unknown";
 
   useEffect(() => {
     // Scroll to bottom when messages change
@@ -75,11 +66,14 @@ export default function ChatDetailScreen() {
     }, 100);
   }, [allMessages]);
 
+    if(isLoading) return <LoadingSpinner />
+  if(isError) return <ErrorScreen />
+
   return (
-    // <Layout
-    //       refreshControl={
-    //      <RefreshControl refreshing={isFetching} onRefresh={refetch} />
-    //    }>
+   //  <Layout
+   //        refreshControl={
+   //       <RefreshControl refreshing={isFetching} onRefresh={refetch} />
+   //     }>
     <KeyboardAvoidingView
       style={styles.container}
       behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -208,7 +202,7 @@ export default function ChatDetailScreen() {
                 </TouchableOpacity>
             </View> */}
     </KeyboardAvoidingView>
-    //  </Layout>
+//  </Layout>
   );
 }
 

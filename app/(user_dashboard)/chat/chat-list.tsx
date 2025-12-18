@@ -16,10 +16,10 @@ interface ChatListProps {
 export default function ChatList({ rooms }: ChatListProps) {
   const router = useRouter();
 
-  const handleChatSelect = (chatId: string, channel: string) => {
+  const handleChatSelect = (roomId: string, channel: string, clientId: string) => {
     router.push({
       pathname: "/(user_dashboard)/chat-detail",
-      params: { chatId, channel },
+      params: { roomId, channel, clientId },
     });
   };
 
@@ -27,93 +27,127 @@ export default function ChatList({ rooms }: ChatListProps) {
     <View style={styles.chatList}>
       <FlashList
         data={rooms}
-        renderItem={({ item: chat }) => (
-          <TouchableOpacity
-            key={chat.room_id}
-            style={styles.chatItem}
-            onPress={() => handleChatSelect(chat.room_id.toString(), chat.channel)}
-            activeOpacity={0.7}
-          >
-            {/* Profile Picture */}
-            <View style={styles.profilePictureContainer}>
-              <View
-                style={[
-                  styles.profilePicture,
-                  {
-                    backgroundColor:
-                      (chat.channel === "facebook"
-                        ? "#1877F2"
-                        : chat.channel === "whatsapp"
-                        ? "#25D366"
-                        : chat.channel === "instagram"
-                        ? "#E4405F"
-                        : colors.dark.primary) + "40",
-                  },
-                ]}
-              >
-               {
-                  chat.channel === "facebook"
-                          ? <Fb color={"#fff"} />
-                          : chat.channel === "whatsapp"
-                          ? <Wp color={"#fff"}  />
-                          : chat.channel === "instagram"
-                          ? <Insta color={"#fff"}  />
-                          : colors.dark.primary
-               }
-              </View>
-            </View>
+        renderItem={({ item: chat }) => {
+          const isUnread =
+            (chat.unreadCount && chat.unreadCount > 0) || chat.isRead === false;
 
-            {/* Chat Content */}
-            <View style={styles.chatContent}>
-              <View style={styles.chatHeader}>
-                <View style={styles.nameContainer}>
-                  <Text style={styles.chatName}>{chat.client_id}</Text>
-                  {/* Channel indicator badge */}
-                  <View
+          return (
+            <TouchableOpacity
+              key={chat.room_id}
+              style={styles.chatItem}
+              onPress={() =>
+                handleChatSelect(chat.room_id.toString(), chat.channel, chat.client_id)
+              }
+              activeOpacity={0.7}
+            >
+              {/* Profile Picture */}
+              <View style={styles.profilePictureContainer}>
+                <View
+                  style={[
+                    styles.profilePicture,
+                    {
+                      backgroundColor:
+                        (chat.channel === "facebook"
+                          ? "#1877F2"
+                          : chat.channel === "whatsapp"
+                          ? "#25D366"
+                          : chat.channel === "instagram"
+                          ? "#E4405F"
+                          : colors.dark.primary) + "40",
+                    },
+                  ]}
+                >
+                  {chat.channel === "facebook" ? (
+                    <Fb color={"#fff"} />
+                  ) : chat.channel === "whatsapp" ? (
+                    <Wp color={"#fff"} />
+                  ) : chat.channel === "instagram" ? (
+                    <Insta color={"#fff"} />
+                  ) : (
+                    colors.dark.primary
+                  )}
+                </View>
+              </View>
+
+              {/* Chat Content */}
+              <View style={styles.chatContent}>
+                <View style={styles.chatHeader}>
+                  <View style={styles.nameContainer}>
+                    <Text
+                      style={[
+                        styles.chatName,
+                        isUnread && { fontWeight: "800", color: "#FFFFFF" },
+                      ]}
+                    >
+                      {chat.client_id}
+                    </Text>
+                    {/* Channel indicator badge */}
+                    <View
+                      style={[
+                        styles.channelBadge,
+                        {
+                          backgroundColor:
+                            chat.channel === "facebook"
+                              ? "#1877F2"
+                              : chat.channel === "whatsapp"
+                              ? "#25D366"
+                              : chat.channel === "instagram"
+                              ? "#E4405F"
+                              : colors.dark.primary,
+                        },
+                      ]}
+                    >
+                      <Text style={styles.channelBadgeText}>
+                        {chat.channel?.charAt(0).toUpperCase()}
+                      </Text>
+                    </View>
+                  </View>
+                  {chat.timestamp && (
+                    <Text
+                      style={[
+                        styles.timestamp,
+                        isUnread && {
+                          color: colors.dark.primary,
+                          fontWeight: "700",
+                        },
+                      ]}
+                    >
+                      {new Date(chat.timestamp).toLocaleTimeString([], {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })}
+                    </Text>
+                  )}
+                </View>
+                <View style={styles.messageContainer}>
+                  <Text
                     style={[
-                      styles.channelBadge,
-                      {
-                        backgroundColor:
-                          chat.channel === "facebook"
-                            ? "#1877F2"
-                            : chat.channel === "whatsapp"
-                            ? "#25D366"
-                            : chat.channel === "instagram"
-                            ? "#E4405F"
-                            : colors.dark.primary,
+                      styles.lastMessage,
+                      chat.message_type === "outgoing" &&
+                        styles.lastMessageSent,
+                      isUnread && {
+                        color: "#FFFFFF",
+                        fontWeight: "700",
+                        opacity: 1,
                       },
                     ]}
+                    numberOfLines={2}
                   >
-                    <Text style={styles.channelBadgeText}>
-                      {chat.channel?.charAt(0).toUpperCase()}
-                    </Text>
-                  </View>
-                </View>
-                {chat.timestamp && (
-                  <Text style={styles.timestamp}>
-                    {new Date(chat.timestamp).toLocaleTimeString([], {
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    })}
+                    {chat.message_type === "outgoing" ? "You: " : ""}
+                    {chat.last_msg || "No messages yet"}
                   </Text>
-                )}
+                  {isUnread && (
+                    <View style={styles.unreadBadge}>
+                      <Text style={styles.unreadBadgeText}>
+                        {chat.unreadCount || ""}
+                      </Text>
+                    </View>
+                  )}
+                </View>
               </View>
-              <View style={styles.messageContainer}>
-                <Text
-                  style={[
-                    styles.lastMessage,
-                    chat.message_type === "outgoing" && styles.lastMessageSent,
-                  ]}
-                  numberOfLines={2}
-                >
-                  {chat.message_type === "outgoing" ? "You: " : ""}
-                  {chat.lastMessage || "No messages yet"}
-                </Text>
-              </View>
-            </View>
-          </TouchableOpacity>
-        )}
-        estimatedItemSize={80}
+            </TouchableOpacity>
+          );
+        }}
         keyExtractor={(item) => item.room_id.toString()}
       />
     </View>
@@ -313,14 +347,16 @@ const styles = StyleSheet.create({
     minWidth: 20,
     height: 20,
     borderRadius: 10,
+    backgroundColor: colors.dark.primary, // Add background color!
     alignItems: "center",
     justifyContent: "center",
     paddingHorizontal: 6,
+    marginLeft: 8, // Add margin
   },
   unreadBadgeText: {
-    fontSize: 12,
-    fontWeight: "600",
-    color: colors.dark.text,
+    fontSize: 10, // Slightly smaller
+    fontWeight: "700",
+    color: "#FFFFFF", // Ensure contrast
   },
   channelBadge: {
     width: 16,

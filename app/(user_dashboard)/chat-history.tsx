@@ -4,24 +4,24 @@ import { Layout } from "@/components/layout/Layout";
 import colors from "@/constants/colors";
 import { selectCurrentToken } from "@/store/authSlice";
 import {
-   addMessage,
-   selectAllRooms,
-   setRooms,
-   updateRoomLastMessage
+    addMessage,
+    selectAllRooms,
+    setRooms,
+    updateRoomLastMessage
 } from "@/store/chat.slice";
 import {
-   ChevronDown,
-   Instagram,
-   MessageCircle,
-   Search,
+    ChevronDown,
+    Instagram,
+    MessageCircle,
+    Search,
 } from "lucide-react-native";
 import React, { useEffect, useState } from "react";
 import {
-   StyleSheet,
-   Text,
-   TextInput,
-   TouchableOpacity,
-   View,
+    StyleSheet,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    View,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useDispatch, useSelector } from "react-redux";
@@ -64,19 +64,26 @@ export default function ChatHistoryScreen() {
 
     socket.onmessage = (e) => {
       const data = JSON.parse(e.data);
-      console.log("WebSocket message:", data);
+      // console.log("WebSocket message:", data);
 
       if (data.type === "connection_established") {
         // Initial connection - set profiles and rooms
         // Combine all rooms from all profiles
-        const combinedRooms = data.profiles.flatMap((profile: any) =>
-          profile.room.map((room: any) => ({
-            ...room,
-            channel: profile.platform,
-            profile_name: profile.profile_name,
-            profile_id: profile.profile_id,
-          }))
-        );
+const combinedRooms = data.profiles.flatMap((profile: any) =>
+  profile.room.map((room: any) => ({
+    room_id: room.room_id.toString(),           // Ensure string
+    client_id: room.client_id,
+    lastMessage: room.last_msg || "No messages yet",
+    last_msg: room.last_msg || "No messages yet",  // Keep both if needed
+    timestamp: room.timestamp,
+    message_type: room.type,                    // "outgoing" or "incoming"
+    channel: profile.platform as "facebook" | "whatsapp" | "instagram" | "chat",
+    profile_name: profile.profile_name,
+    profile_id: profile.profile_id,
+    unreadCount: room.unread_count ?? 0,         // Use actual unread if available later
+    isRead: (room.unread_count ?? 0) === 0,
+  }))
+);
         dispatch(setRooms(combinedRooms));
       } else if (data.type === "new_message") {
         // Handle new message - update the relevant room
@@ -134,6 +141,15 @@ export default function ChatHistoryScreen() {
 
   // Sort rooms
   const sortedRooms = [...filteredRooms].sort((a, b) => {
+    // Prioritize unread messages
+    // Check if room has unread messages (unreadCount > 0 or isRead explicitly false)
+    const aIsUnread = (a.unreadCount && a.unreadCount > 0) || a.isRead === false;
+    const bIsUnread = (b.unreadCount && b.unreadCount > 0) || b.isRead === false;
+
+    if (aIsUnread && !bIsUnread) return -1;
+    if (!aIsUnread && bIsUnread) return 1;
+
+    // Then sort by timestamp if active sort is "Newest"
     if (sortBy === "Newest") {
       return (
         new Date(b.timestamp || 0).getTime() -
@@ -220,8 +236,6 @@ export default function ChatHistoryScreen() {
         </TouchableOpacity>
       </View>
       <Layout>
-        <Text style={styles.pageTitle}>Messages History</Text>
-
         {/* Search Bar */}
         <View style={styles.searchContainer}>
           <Search

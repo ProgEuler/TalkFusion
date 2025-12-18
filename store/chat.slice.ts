@@ -45,9 +45,19 @@ const chatSlice = createSlice({
     setRooms: (state, action: PayloadAction<Room[]>) => {
       state.rooms = action.payload;
     },
-    updateRoomLastMessage: (state, action: PayloadAction<{ roomId: string; message: string; timestamp: string; messageType: string }>) => {
+    updateRoomLastMessage: (
+      state,
+      action: PayloadAction<{
+        roomId: string;
+        message: string;
+        timestamp: string;
+        messageType: string;
+      }>
+    ) => {
       const { roomId, message, timestamp, messageType } = action.payload;
-      const roomIndex = state.rooms.findIndex((r) => r.room_id === roomId || r.id === roomId);
+      const roomIndex = state.rooms.findIndex(
+        (r) => r.room_id === roomId || r.id === roomId
+      );
       if (roomIndex !== -1) {
         state.rooms[roomIndex].lastMessage = message;
         state.rooms[roomIndex].timestamp = timestamp;
@@ -57,27 +67,36 @@ const chatSlice = createSlice({
         state.rooms.unshift(room);
       }
     },
-    addMessage: (state, action: PayloadAction<{ roomId: string; message: Message }>) => {
+    addMessage: (
+      state,
+      action: PayloadAction<{ roomId: string; message: Message }>
+    ) => {
       const { roomId, message } = action.payload;
       if (!state.messages[roomId]) {
         state.messages[roomId] = [];
       }
       // Avoid duplicates if needed, but for now just push
       // Check if message ID exists?
-      if (!state.messages[roomId].find(m => m.id === message.id)) {
-         state.messages[roomId].push(message);
+      if (!state.messages[roomId].find((m) => m.id === message.id)) {
+        state.messages[roomId].push(message);
       }
     },
-    setMessages: (state, action: PayloadAction<{ roomId: string; messages: Message[] }>) => {
+    setMessages: (
+      state,
+      action: PayloadAction<{ roomId: string; messages: Message[] }>
+    ) => {
       const { roomId, messages } = action.payload;
       state.messages[roomId] = messages;
-    }
+    },
   },
 });
 
-export const { setRooms, updateRoomLastMessage, addMessage, setMessages } = chatSlice.actions;
+export const { setRooms, updateRoomLastMessage, addMessage, setMessages } =
+  chatSlice.actions;
 
 export const selectAllRooms = (state: { chat: ChatState }) => state.chat.rooms;
-export const selectRoomMessages = (roomId: string) => (state: { chat: ChatState }) => state.chat.messages[roomId] || [];
+export const selectRoomMessages =
+  (roomId: string) => (state: { chat: ChatState }) =>
+    state.chat.messages[roomId] || [];
 
 export default chatSlice.reducer;
