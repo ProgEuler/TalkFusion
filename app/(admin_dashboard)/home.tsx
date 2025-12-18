@@ -76,20 +76,6 @@ export default function AdminDashboard() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.dark.background,
-  },
-  contentContainer: {
-    padding: 20,
-    paddingBottom: 40,
-  },
-  headerTitle: {
-    fontSize: 20,
-    fontWeight: "600",
-    color: colors.dark.text,
-    marginBottom: 20,
-  },
   gridContainer: {
     gap: 16,
     marginBottom: 24,
@@ -116,56 +102,5 @@ const styles = StyleSheet.create({
   cardValue: {
     fontSize: 36,
     fontWeight: "700",
-  },
-  chartCard: {
-    backgroundColor: colors.dark.cardBackground,
-    padding: 20,
-    borderRadius: 12,
-    marginBottom: 24,
-    alignItems: "center", // Center the chart
-    overflow: "hidden", // Prevent overflow
-  },
-  ticketsContainer: {
-    backgroundColor: colors.dark.cardBackground,
-    padding: 20,
-    borderRadius: 12,
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: "600",
-    color: colors.dark.text,
-    marginBottom: 20,
-  },
-  ticketHeader: {
-    flexDirection: "row",
-    marginBottom: 16,
-  },
-  ticketHeaderId: {
-    width: 100,
-    fontSize: 14,
-    fontWeight: "600",
-    color: colors.dark.primary,
-  },
-  ticketHeaderSubject: {
-    flex: 1,
-    fontSize: 14,
-    fontWeight: "600",
-    color: colors.dark.primary,
-  },
-  ticketRow: {
-    flexDirection: "row",
-    paddingVertical: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.dark.border,
-  },
-  ticketId: {
-    width: 100,
-    fontSize: 14,
-    color: colors.dark.textSecondary,
-  },
-  ticketSubject: {
-    flex: 1,
-    fontSize: 14,
-    color: colors.dark.text,
   },
 });

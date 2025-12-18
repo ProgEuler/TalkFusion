@@ -5,8 +5,6 @@ import { Layout } from "@/components/layout/Layout";
 import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
 import colors from "@/constants/colors";
 import { AppointmentsList } from "./appointments-list";
-import { Button } from "@/components/ui/Button";
-import { scheduleNotificationHandler } from "@/utils/get-local-notification";
 import { StyleSheet, Text, View } from "react-native";
 import { useDispatch } from "react-redux";
 import { useEffect } from "react";
@@ -46,9 +44,6 @@ export default function DashboardScreen() {
         <RefreshControl refreshing={isFetching} onRefresh={refetch} />
       }
     >
-      <Button onPress={scheduleNotificationHandler}>
-        Get local Notification
-      </Button>
       {/* stat */}
       <View style={styles.statsRow}>
         <View style={styles.statCard}>

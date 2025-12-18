@@ -10,12 +10,12 @@ import { useRouter } from "expo-router";
 import { Eye, EyeOff } from "lucide-react-native";
 import React, { useState } from "react";
 import {
-    Modal,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
+  Modal,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from "react-native";
 import { useDispatch } from "react-redux";
 import { Toast } from "toastify-react-native";
@@ -30,7 +30,7 @@ GoogleSignin.configure({
 export default function LoginScreen() {
   const router = useRouter();
   const dispatch = useDispatch();
-  const { signIn, name } = useSignIn();
+  const { signIn } = useSignIn();
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [showPassword, setShowPassword] = useState<boolean>(false);
@@ -48,7 +48,6 @@ export default function LoginScreen() {
     }
     setEmailError(null);
     try {
-
       const res = await login({
         email: email.toLowerCase(),
         password,

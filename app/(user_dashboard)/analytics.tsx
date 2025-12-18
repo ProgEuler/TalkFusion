@@ -7,11 +7,11 @@ import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
 import { RNPicker } from "@/components/ui/picker";
 import colors from "@/constants/colors";
 import {
-    Calendar,
-    DollarSign,
-    Instagram,
-    MessageCircle,
-    User2
+  Calendar,
+  DollarSign,
+  Instagram,
+  MessageCircle,
+  User2,
 } from "lucide-react-native";
 import React, { useState } from "react";
 import { RefreshControl, StyleSheet, Text, View } from "react-native";
@@ -40,7 +40,6 @@ export default function AnalyticsScreen() {
 
   if (isLoading) return <LoadingSpinner />;
   if (error) return <ErrorScreen onRetry={refetch} />;
-//   console.log("analytics data: ", data);
 
   const timeRangeLabelMap: Record<string, string> = {
     all: "All Time",
@@ -55,7 +54,6 @@ export default function AnalyticsScreen() {
     whatsapp: "WhatsApp",
     instagram: "Instagram",
   };
-
   const messageTypeLabelMap = {
     all: "All Message",
     incoming: "Incoming",
@@ -87,7 +85,7 @@ export default function AnalyticsScreen() {
             value: data?.message_count?.platforms?.facebook,
             color: colors.socials.facebook,
             label: {
-              text: "Facebook",
+              text: `${data?.message_count?.platforms?.facebook}%`,
               fontWeight: "bold",
               outline: "white",
             },
@@ -95,7 +93,10 @@ export default function AnalyticsScreen() {
           {
             value: data?.message_count?.platforms?.instagram,
             color: colors.socials.instagram,
-            label: { text: "Instagram", fontWeight: "bold" },
+            label: {
+              text: `${data?.message_count?.platforms?.instagram}%`,
+              fontWeight: "bold",
+            },
           },
           {
             value: data?.message_count?.platforms?.whatsapp,
@@ -105,7 +106,7 @@ export default function AnalyticsScreen() {
               fontWeight: "bold",
             },
           },
-        ];
+        ].filter((item) => item.value > 0);
 
   const channelData: PieChartData[] = [
     {
@@ -129,7 +130,11 @@ export default function AnalyticsScreen() {
   ];
 
   return (
-    <Layout refreshControl={ <RefreshControl refreshing={isLoading} onRefresh={refetch} /> }>
+    <Layout
+      refreshControl={
+        <RefreshControl refreshing={isLoading} onRefresh={refetch} />
+      }
+    >
       {/* Filters Section */}
       <View>
         <View style={styles.filterRow}>
@@ -163,7 +168,7 @@ export default function AnalyticsScreen() {
               label="Channel"
               value={channelLabelMap[channel] || ""}
               onSelectItem={(item) => {
-               //  console.log("selected channel: ", item);
+                //  console.log("selected channel: ", item);
                 setChannel(item);
               }}
               key={channel}
@@ -180,7 +185,7 @@ export default function AnalyticsScreen() {
               label="All Message"
               value={messageTypeLabelMap[messageType] || ""}
               onSelectItem={(item) => {
-               //  console.log("selected messageType: ", item);
+                //  console.log("selected messageType: ", item);
                 setMessageType(item);
               }}
               key={messageType}
@@ -195,9 +200,9 @@ export default function AnalyticsScreen() {
         <View style={styles.statCard}>
           <View>
             <MessageCircle color={colors.dark.primary} size={24} />
-          <Text style={styles.metricValue}>
-            {data?.message_count?.total || 0}
-          </Text>
+            <Text style={styles.metricValue}>
+              {data?.message_count?.total || 0}
+            </Text>
           </View>
           <Text style={styles.metricLabel}>Messages Received</Text>
         </View>
