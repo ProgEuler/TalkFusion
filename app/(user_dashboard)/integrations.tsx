@@ -1,11 +1,11 @@
 import {
-    useGetFbUrlQuery,
-    useGetIgUrlQuery,
+  useGetFbUrlQuery,
+  useGetIgUrlQuery,
 } from "@/api/user-api/integrations.api";
 import Fb from "@/assets/svgs/facebook.svg";
 import Ig from "@/assets/svgs/instagram.svg";
 import Wp from "@/assets/svgs/whatsapp.svg";
-import ErrorScreen from "@/components/Error";
+import ErrorScreen from "@/components/ErrorScreen";
 import { Layout } from "@/components/layout/Layout";
 import { Button } from "@/components/ui/Button";
 import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
@@ -32,10 +32,23 @@ export default function IntegrationsScreen() {
     error: fbError,
     refetch: refetchFb,
   } = useGetFbUrlQuery(undefined);
-  const { data: igUrl, isLoading: igUrlLoading, error: igError, refetch: refetchIg } = useGetIgUrlQuery(undefined);
+  const {
+    data: igUrl,
+    isLoading: igUrlLoading,
+    error: igError,
+    refetch: refetchIg,
+  } = useGetIgUrlQuery(undefined);
 
   if (fbUrlLoading || igUrlLoading) return <LoadingSpinner />;
-  if (fbError || igError) return <ErrorScreen onRetry={() => { refetchFb(); refetchIg(); }} />;
+  if (fbError || igError)
+    return (
+      <ErrorScreen
+        onRetry={() => {
+          refetchFb();
+          refetchIg();
+        }}
+      />
+    );
 
   const integrations: Integration[] = [
     {
@@ -76,7 +89,7 @@ export default function IntegrationsScreen() {
     integrationId: string,
     integrationUrl: string
   ) => {
-   //  console.log("Connecting to:", integrationId);
+    //  console.log("Connecting to:", integrationId);
 
     try {
       await Linking.openURL(integrationUrl);

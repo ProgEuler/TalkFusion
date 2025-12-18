@@ -3,8 +3,15 @@ import colors from "@/constants/colors";
 import { FlashList } from "@shopify/flash-list";
 import { ChevronRight, User } from "lucide-react-native";
 import React from "react";
-import { ActivityIndicator, Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import ErrorScreen from "./Error";
+import {
+  ActivityIndicator,
+  Image,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import ErrorScreen from "./ErrorScreen";
 
 export type Employee = {
   id: number;
@@ -14,7 +21,11 @@ export type Employee = {
   profile_image?: string;
 };
 
-function Employees({ onEmployeePress }: { onEmployeePress?: (employee: Employee) => void }) {
+function Employees({
+  onEmployeePress,
+}: {
+  onEmployeePress?: (employee: Employee) => void;
+}) {
   const { data, isLoading, isError, refetch } = useGetEmployeesQuery(undefined);
 
   if (isLoading) {
@@ -29,8 +40,8 @@ function Employees({ onEmployeePress }: { onEmployeePress?: (employee: Employee)
 
   const employees: Employee[] = data?.employees || [];
 
-  function onPress(employee: Employee){
-   //  console.log("CLicked Employee", employee.id)
+  function onPress(employee: Employee) {
+    //  console.log("CLicked Employee", employee.id)
     if (onEmployeePress) {
       onEmployeePress(employee);
     }
@@ -39,12 +50,12 @@ function Employees({ onEmployeePress }: { onEmployeePress?: (employee: Employee)
   return (
     <View style={styles.card}>
       <View style={styles.header}>
-        <Text style={{ color: "#FFFFFF"}}>Set Role-based admin</Text>
+        <Text style={{ color: "#FFFFFF" }}>Set Role-based admin</Text>
       </View>
 
       <View style={styles.list}>
         {employees.length === 0 ? (
-           <Text style={{ color: "#FFFFFF"}}>No employees found</Text>
+          <Text style={{ color: "#FFFFFF" }}>No employees found</Text>
         ) : (
           <FlashList
             data={employees}
@@ -52,13 +63,20 @@ function Employees({ onEmployeePress }: { onEmployeePress?: (employee: Employee)
               <TouchableOpacity onPress={() => onPress(item)}>
                 <View style={styles.item}>
                   {item?.profile_image ? (
-                    <Image source={{ uri: item.profile_image }} style={styles.avatar} />
+                    <Image
+                      source={{ uri: item.profile_image }}
+                      style={styles.avatar}
+                    />
                   ) : (
                     <User color={"#ffffff"} />
                   )}
                   <View style={styles.info}>
-                    <Text style={{ color: "#FFFFFF"}}>{item?.name || item?.email}</Text>
-                    <Text style={{ color: "#FFFFFF"}}>{item?.roles?.join(", ")}</Text>
+                    <Text style={{ color: "#FFFFFF" }}>
+                      {item?.name || item?.email}
+                    </Text>
+                    <Text style={{ color: "#FFFFFF" }}>
+                      {item?.roles?.join(", ")}
+                    </Text>
                   </View>
                   <ChevronRight size={20} color="#8E8E93" />
                 </View>
@@ -89,8 +107,8 @@ const styles = StyleSheet.create({
   },
   loadingContainer: {
     minHeight: 100,
-    justifyContent: 'center',
-    alignItems: 'center'
+    justifyContent: "center",
+    alignItems: "center",
   },
   header: {
     flexDirection: "row",
@@ -114,7 +132,7 @@ const styles = StyleSheet.create({
   item: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 16
+    gap: 16,
   },
   avatar: {
     width: 48,
@@ -136,10 +154,10 @@ const styles = StyleSheet.create({
     color: "#6B7280", // Gray text
   },
   emptyText: {
-      textAlign: 'center',
-      color: '#6B7280',
-      padding: 20
-  }
+    textAlign: "center",
+    color: "#6B7280",
+    padding: 20,
+  },
 });
 
 export default Employees;

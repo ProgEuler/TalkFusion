@@ -1,6 +1,6 @@
 import { useGetDaysDataQuery } from "@/api/user-api/calendar.api";
 import AppointmentsByDay from "@/components/appointments-by-day";
-import ErrorScreen from "@/components/Error";
+import ErrorScreen from "@/components/ErrorScreen";
 import { Layout } from "@/components/layout/Layout";
 import { Button } from "@/components/ui/Button";
 import { LoadingSpinner } from "@/components/ui/LoadingSpinner";

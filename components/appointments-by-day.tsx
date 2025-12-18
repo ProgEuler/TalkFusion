@@ -5,7 +5,7 @@ import { FlashList } from "@shopify/flash-list";
 import { CalendarIcon } from "lucide-react-native";
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
-import ErrorScreen from "./Error";
+import ErrorScreen from "./ErrorScreen";
 
 export default function AppointmentsByDay({
   day,
@@ -26,8 +26,8 @@ export default function AppointmentsByDay({
     return (
       <Text style={{ color: colors.dark.text }}>Loading appointments...</Text>
     );
-//   console.log("Appointments data for", day, month, year, ":", data);
-//   console.log("Appointments data for", day, month, year, ":", data);
+  //   console.log("Appointments data for", day, month, year, ":", data);
+  //   console.log("Appointments data for", day, month, year, ":", data);
   if (isError) return <ErrorScreen onRetry={refetch} />;
 
   return (
@@ -85,10 +85,10 @@ const styles = StyleSheet.create({
   },
   section: {
     marginBottom: 24,
-        borderRadius: 12,
-        padding: 10,
-        borderWidth: 1,
-        borderColor: colors.dark.border,
+    borderRadius: 12,
+    padding: 10,
+    borderWidth: 1,
+    borderColor: colors.dark.border,
   },
   sectionHeader: {
     flexDirection: "row",
@@ -97,7 +97,7 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   sectionTitle: {
-   color: colors.dark.textSecondary
+    color: colors.dark.textSecondary,
   },
   sectionDate: {
     fontSize: 14,

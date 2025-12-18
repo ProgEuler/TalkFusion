@@ -1,14 +1,14 @@
 import { useGetFinanceDataQuery } from "@/api/user-api/analytics.api";
-import ErrorScreen from "@/components/Error";
+import ErrorScreen from "@/components/ErrorScreen";
 import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
 import colors from "@/constants/colors";
 import {
-    BarChart2,
-    CircleAlert,
-    Clock,
-    TrendingDown,
-    TrendingUp,
-    Wallet,
+  BarChart2,
+  CircleAlert,
+  Clock,
+  TrendingDown,
+  TrendingUp,
+  Wallet,
 } from "lucide-react-native";
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
@@ -18,7 +18,7 @@ export default function Finance() {
   if (isLoading) return <LoadingSpinner />;
   if (error) return <ErrorScreen onRetry={refetch} />;
 
-//   console.log("Finance Data:", data);
+  //   console.log("Finance Data:", data);
   return (
     <View style={styles.financialRow}>
       {/* total payments */}

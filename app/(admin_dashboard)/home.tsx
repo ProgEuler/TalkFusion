@@ -1,6 +1,6 @@
 import { useGetAdminDataQuery } from "@/api/admin-api/dashboard.api";
 import AdminChart from "@/components/admin-chart";
-import ErrorScreen from "@/components/Error";
+import ErrorScreen from "@/components/ErrorScreen";
 import { Layout } from "@/components/layout/Layout";
 import Tickets from "@/components/tickets";
 import { LoadingSpinner } from "@/components/ui/LoadingSpinner";

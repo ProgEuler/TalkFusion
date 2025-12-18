@@ -1,7 +1,7 @@
 import { useGetAnalyticsDataQuery } from "@/api/user-api/analytics.api";
 import Facebook from "@/assets/svgs/facebook.svg";
 import WhatsApp from "@/assets/svgs/whatsapp.svg";
-import ErrorScreen from "@/components/Error";
+import ErrorScreen from "@/components/ErrorScreen";
 import { Layout } from "@/components/layout/Layout";
 import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
 import { RNPicker } from "@/components/ui/picker";

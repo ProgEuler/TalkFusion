@@ -1,4 +1,8 @@
-import { useGetSessionsQuery, useLogOutAllMutation, useLogOutOtherDeviceMutation } from "@/api/user-api/sessions.api";
+import {
+  useGetSessionsQuery,
+  useLogOutAllMutation,
+  useLogOutOtherDeviceMutation,
+} from "@/api/user-api/sessions.api";
 import colors from "@/constants/colors";
 import { selectSessionId } from "@/store/authSlice";
 import { timeAgo } from "@/utils/helpers";
@@ -7,7 +11,7 @@ import React from "react";
 import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
 import { useSelector } from "react-redux";
 import { Toast } from "toastify-react-native";
-import ErrorScreen from "./Error";
+import ErrorScreen from "./ErrorScreen";
 import { Button } from "./ui/Button";
 
 type Session = {
@@ -20,10 +24,16 @@ type Session = {
 };
 
 export default function Sessions() {
-  const { data: sessions = [], isLoading, isError, refetch } = useGetSessionsQuery(undefined);
-   const session_id = useSelector(selectSessionId)
-   const [logoutOther, {isLoading: logginOutOther}] = useLogOutOtherDeviceMutation()
-   const [logOutAll] = useLogOutAllMutation()
+  const {
+    data: sessions = [],
+    isLoading,
+    isError,
+    refetch,
+  } = useGetSessionsQuery(undefined);
+  const session_id = useSelector(selectSessionId);
+  const [logoutOther, { isLoading: logginOutOther }] =
+    useLogOutOtherDeviceMutation();
+  const [logOutAll] = useLogOutAllMutation();
 
   if (isLoading) {
     return (
@@ -42,66 +52,68 @@ export default function Sessions() {
     return (
       <View style={styles.card}>
         <View style={styles.divider} />
-        <Text style={styles.emptyText}>
-          No active sessions
-        </Text>
+        <Text style={styles.emptyText}>No active sessions</Text>
       </View>
     );
   }
 
   const logoutOtherDevice = async (item: Session) => {
-      try {
-         await logoutOther({id: item.session_id})
-         Toast.success(`logged out from ${item.device}`)
-      } catch (error) {
-         // console.log(error)
-         Toast.error(`Failed to logout from ${item.session_id}`)
-      }
-  }
+    try {
+      await logoutOther({ id: item.session_id });
+      Toast.success(`logged out from ${item.device}`);
+    } catch (error) {
+      // console.log(error)
+      Toast.error(`Failed to logout from ${item.session_id}`);
+    }
+  };
 
   const logoutAll = async () => {
     try {
-      await logOutAll("")
-      Toast.success("Logged out from all device")
+      await logOutAll("");
+      Toast.success("Logged out from all device");
     } catch (error) {
       // console.log(error)
-      Toast.error("Failed to logout from all device")
+      Toast.error("Failed to logout from all device");
     }
-  }
+  };
 
   return (
     <View style={styles.card}>
-
       <FlashList
         data={sessions}
         renderItem={({ item }: { item: Session }) => (
-         <>
-          <View key={item.session_id} style={styles.sessionItem}>
-            <View style={styles.sessionInfo}>
-              <View>
-                <Text style={styles.sessionDevice}>
-                  {item.device || "Unknown device"} • {item.browser || "Unknown browser"}
-                </Text>
-              </View>
-                {(session_id === item.session_id) && (
+          <>
+            <View key={item.session_id} style={styles.sessionItem}>
+              <View style={styles.sessionInfo}>
+                <View>
+                  <Text style={styles.sessionDevice}>
+                    {item.device || "Unknown device"} •{" "}
+                    {item.browser || "Unknown browser"}
+                  </Text>
+                </View>
+                {session_id === item.session_id && (
                   <View style={styles.currentBadge}>
                     <Text style={styles.currentBadgeText}>Current Device</Text>
                   </View>
                 )}
-            {(session_id !== item.session_id) &&(
-              <Button onPress={() => logoutOtherDevice(item)} variant="destructive_outline" size="sm">
-                Logout
-              </Button>
-            )}
+                {session_id !== item.session_id && (
+                  <Button
+                    onPress={() => logoutOtherDevice(item)}
+                    variant="destructive_outline"
+                    size="sm"
+                  >
+                    Logout
+                  </Button>
+                )}
+              </View>
+
+              <Text style={styles.sessionDetails}>
+                {item.ip} • {item.location || "Unknown location"} •{" "}
+                {timeAgo(item.last_active)}
+              </Text>
             </View>
-
-            <Text style={styles.sessionDetails}>
-              {item.ip} • {item.location || "Unknown location"} • {timeAgo(item.last_active)}
-            </Text>
-          </View>
-                <View style={styles.divider} />
+            <View style={styles.divider} />
           </>
-
         )}
         ItemSeparatorComponent={() => <View style={{ height: 12 }} />}
         scrollEnabled={false}

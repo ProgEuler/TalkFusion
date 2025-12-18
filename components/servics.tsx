@@ -4,11 +4,16 @@ import { FlashList } from "@shopify/flash-list";
 import { Briefcase } from "lucide-react-native";
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
-import ErrorScreen from "./Error";
+import ErrorScreen from "./ErrorScreen";
 import { LoadingSpinner } from "./ui/LoadingSpinner";
 
 export default function Services() {
-  const { data: services, isLoading, error, refetch } = useGetServicesQuery(undefined);
+  const {
+    data: services,
+    isLoading,
+    error,
+    refetch,
+  } = useGetServicesQuery(undefined);
   if (isLoading) return <LoadingSpinner />;
   if (error) return <ErrorScreen onRetry={refetch} component />;
 
@@ -35,14 +40,14 @@ export default function Services() {
           data={services || []}
           keyExtractor={(item: any) => item.id || item.name}
           renderItem={({ item: service }: any) => (
-          <View style={styles.listItem}>
-            <Text style={styles.listItemTitle}>{service.name}</Text>
-            <View style={{ flexDirection: "row", gap: 12 }}>
-              <Text style={styles.listItemSub}>${service.price}</Text>
+            <View style={styles.listItem}>
+              <Text style={styles.listItemTitle}>{service.name}</Text>
+              <View style={{ flexDirection: "row", gap: 12 }}>
+                <Text style={styles.listItemSub}>${service.price}</Text>
+              </View>
             </View>
-          </View>
           )}
-          />
+        />
         {(!services || services.length === 0) && (
           <Text style={styles.emptyText}>No services added yet</Text>
         )}

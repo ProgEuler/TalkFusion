@@ -1,17 +1,23 @@
 import { useGetDashboardDataQuery } from "@/api/user-api/dashboard.api";
 import Facebook from "@/assets/svgs/facebook.svg";
 import WhatsApp from "@/assets/svgs/whatsapp.svg";
+import ErrorScreen from "@/components/ErrorScreen";
 import { Layout } from "@/components/layout/Layout";
 import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
 import colors from "@/constants/colors";
-import { AppointmentsList } from "./appointments-list";
-import { StyleSheet, Text, View } from "react-native";
-import { useDispatch } from "react-redux";
-import { useEffect } from "react";
 import { setChannelStatus } from "@/store/channelSlice";
-import { Calendar, CheckCircle, CreditCard, DollarSign, Instagram, MessageCircle } from "lucide-react-native";
-import { RefreshControl } from "react-native";
-import ErrorScreen from "@/components/Error";
+import {
+  Calendar,
+  CheckCircle,
+  CreditCard,
+  DollarSign,
+  Instagram,
+  MessageCircle,
+} from "lucide-react-native";
+import { useEffect } from "react";
+import { RefreshControl, StyleSheet, Text, View } from "react-native";
+import { useDispatch } from "react-redux";
+import { AppointmentsList } from "./appointments-list";
 
 export default function DashboardScreen() {
   const { data, isLoading, refetch, isFetching, isError } =
@@ -26,8 +32,8 @@ export default function DashboardScreen() {
   }, [data, dispatch]);
 
   if (isLoading) return <LoadingSpinner />;
-  if(isError) return <ErrorScreen onRetry={refetch} />
-//   console.log("data ->", data);
+  if (isError) return <ErrorScreen onRetry={refetch} />;
+  //   console.log("data ->", data);
 
   function formatTime(dateString: string) {
     const date = new Date(dateString.replace(" ", "T"));

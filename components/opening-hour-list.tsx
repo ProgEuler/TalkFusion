@@ -3,8 +3,8 @@ import colors from "@/constants/colors";
 import { Clock } from "lucide-react-native";
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
-import ErrorScreen from "./Error";
 import { LoadingSpinner } from "./ui/LoadingSpinner";
+import ErrorScreen from "./ErrorScreen";
 
 export default function OpeningHourList() {
   const { data: openingHour, isLoading, error, refetch } = useGetOpeningHoursQuery(undefined);
