@@ -237,7 +237,7 @@ export default function AnalyticsScreen() {
         </View>
 
         {/* Unanswered Messages */}
-        <View style={styles.statCard}>
+        {/* <View style={styles.statCard}>
           <View>
             <MessageCircle color={colors.dark.danger} size={24} />
           </View>
@@ -245,7 +245,7 @@ export default function AnalyticsScreen() {
             {data?.unanswered_messages || 0}
           </Text>
           <Text style={styles.metricLabel}>Unanswered Messages</Text>
-        </View>
+        </View> */}
       </View>
 
       {/* Channel Distribution */}

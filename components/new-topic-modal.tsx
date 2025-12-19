@@ -1,7 +1,6 @@
 import { useCreateTopicMutation, useUpdateTopicMutation } from '@/api/user-api/topoics.api';
 import { TopicItem } from '@/app/(user_dashboard)/business-topics';
 import colors from '@/constants/colors';
-import { Sparkles } from 'lucide-react-native';
 import React, { useEffect, useState } from 'react';
 import {
     KeyboardAvoidingView,
@@ -17,6 +16,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Toast } from 'toastify-react-native';
 import { Button } from './ui/Button';
+import { toast } from 'sonner-native';
 
 interface NewTopicModalProps {
   visible: boolean;
@@ -63,7 +63,8 @@ const NewTopicModal = ({ visible, onClose, editTopic }: NewTopicModalProps) => {
     try {
       if (isEditMode) {
         await updateTopic(payload).unwrap();
-        Toast.success('Topic updated successfully');
+        toast('Hello, World!')
+      //   Toast.success('Topic updated successfully');
       } else {
         await createTopic(payload).unwrap();
         Toast.success('Topic added successfully');

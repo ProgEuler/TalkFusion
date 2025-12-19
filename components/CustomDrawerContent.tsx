@@ -1,7 +1,8 @@
 import Logo from "@/assets/svgs/logo.svg";
 import colors from "@/constants/colors";
 import { useSignIn } from "@/hooks/use-google-signin";
-import { selectCurrentUser } from "@/store/authSlice";
+import { logOut, selectCurrentUser } from "@/store/authSlice";
+import { clearAuthData } from "@/utils/storage";
 import { LinearGradient } from "expo-linear-gradient";
 import { usePathname, useRouter } from "expo-router";
 import {
@@ -32,7 +33,7 @@ import {
     TouchableOpacity,
     View,
 } from "react-native";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 interface MenuItem {
   id: string;
@@ -169,6 +170,7 @@ const adminMenuItems: MenuItem[] = [
 
 export default function CustomDrawerContent(props: any) {
   const router = useRouter();
+  const dispatch = useDispatch();
   const { signIn, name } = useSignIn();
   const pathname = usePathname();
   const user = useSelector(selectCurrentUser);
@@ -178,8 +180,10 @@ export default function CustomDrawerContent(props: any) {
     router.push(route as any);
   };
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
     signIn("signout")
+    dispatch(logOut());
+    await clearAuthData();
     router.replace("/(auth)/login");
   };
 

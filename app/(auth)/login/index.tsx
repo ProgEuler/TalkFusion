@@ -4,18 +4,19 @@ import { Button } from "@/components/ui/Button";
 import { ModalView } from "@/components/ui/modal-view";
 import { useSignIn } from "@/hooks/use-google-signin";
 import { setCredentials } from "@/store/authSlice";
+import { saveAuthData } from "@/utils/storage";
 import { isValidEmail } from "@/utils/validation";
 import { GoogleSignin } from "@react-native-google-signin/google-signin";
 import { useRouter } from "expo-router";
 import { Eye, EyeOff } from "lucide-react-native";
 import React, { useState } from "react";
 import {
-  Modal,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
+    Modal,
+    StyleSheet,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    View,
 } from "react-native";
 import { useDispatch } from "react-redux";
 import { Toast } from "toastify-react-native";
@@ -57,9 +58,16 @@ export default function LoginScreen() {
         setCredentials({
           user: res.user,
           token: res.access,
+          refreshToken: res.refresh,
           session_id: res.session_id,
         })
       );
+      await saveAuthData({
+        accessToken: res.access,
+        refreshToken: res.refresh,
+        user: res.user,
+        sessionId: res.session_id,
+      });
       Toast.success("Login successful!");
       if (res.user.role === "admin") {
         router.replace("/(admin_dashboard)/home");
