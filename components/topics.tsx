@@ -6,7 +6,6 @@ import { Calendar, Edit3, Trash2 } from 'lucide-react-native'
 import React from 'react'
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { toast } from 'sonner-native'
-import { Toast } from 'toastify-react-native'
 
 export default function TopicCard({ item, onEdit }: { item: TopicItem; onEdit: (topic: TopicItem) => void }) {
    const [deleteTopic] = useDeleteTopicMutation()

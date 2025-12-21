@@ -27,6 +27,7 @@ export function timeAgo(dateInput: string | number | Date) {
 }
 
 export function getHostname(url: string) {
+   if(!url.startsWith("https")) return url;
    try {
       const urlObj = new URL(url);
       return urlObj.hostname

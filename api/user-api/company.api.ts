@@ -27,6 +27,13 @@ export const companyApi = baseApi.injectEndpoints({
     }),
     getServices: builder.query({ query: () => "/auth/company/service/" }),
     getOpeningHours: builder.query({ query: () => "/opening-hours/" }),
+    uploadAiFiles: builder.mutation({
+      query: (file) => ({
+         url: "/ai-training-files/",
+         method: 'POST',
+         body: file
+      })
+    })
   }),
 });
 
@@ -35,5 +42,6 @@ export const {
   useAddOpenningHourMutation,
   useGetServicesQuery,
   useGetOpeningHoursQuery,
-  useAddServiceMutation
+  useAddServiceMutation,
+  useUploadAiFilesMutation
 } = companyApi;

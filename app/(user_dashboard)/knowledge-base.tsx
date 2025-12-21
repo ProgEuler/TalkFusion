@@ -3,9 +3,8 @@ import { Layout } from "@/components/layout/Layout";
 import OpeningHourList from "@/components/opening-hour-list";
 import Services from "@/components/servics";
 import colors from "@/constants/colors";
-import { Download, Upload } from "lucide-react-native";
 import React from "react";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 
 interface ActivityItemProps {
   title: string;
@@ -110,23 +109,6 @@ export default function KnowledgeBaseScreen() {
         </View>
       </View>
 
-      <View>
-        <Text style={styles.sectionTitle}>Import/Export</Text>
-        <Text style={styles.importExportDescription}>
-          Quickly add information in bulk or export your AI knowledge for
-          review.
-        </Text>
-        <View style={styles.buttonRow}>
-          <TouchableOpacity style={styles.importButton}>
-            <Upload color="#FFFFFF" size={18} />
-            <Text style={styles.importButtonText}>Import</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.exportButton}>
-            <Download color="#FFFFFF" size={18} />
-            <Text style={styles.exportButtonText}>Export</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
     </Layout>
   );
 }
@@ -248,47 +230,5 @@ const styles = StyleSheet.create({
     fontSize: 13,
     color: colors.dark.textSecondary,
     lineHeight: 18,
-  },
-  importExportDescription: {
-    fontSize: 14,
-    color: colors.dark.textSecondary,
-    marginBottom: 16,
-    lineHeight: 20,
-  },
-  buttonRow: {
-    flexDirection: "row",
-    gap: 12,
-  },
-  importButton: {
-    flex: 1,
-    backgroundColor: colors.dark.primary,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    paddingVertical: 12,
-    borderRadius: 8,
-    gap: 8,
-  },
-  importButtonText: {
-    color: "#FFFFFF",
-    fontSize: 14,
-    fontWeight: "600" as const,
-  },
-  exportButton: {
-    flex: 1,
-    backgroundColor: colors.dark.cardBackground,
-    borderWidth: 1,
-    borderColor: colors.dark.border,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    paddingVertical: 12,
-    borderRadius: 8,
-    gap: 8,
-  },
-  exportButtonText: {
-    color: "#FFFFFF",
-    fontSize: 14,
-    fontWeight: "600" as const,
   },
 });

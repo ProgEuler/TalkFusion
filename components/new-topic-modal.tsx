@@ -6,6 +6,7 @@ import {
     KeyboardAvoidingView,
     Modal,
     Platform,
+    Pressable,
     ScrollView,
     StyleSheet,
     Text,
@@ -63,23 +64,23 @@ const NewTopicModal = ({ visible, onClose, editTopic }: NewTopicModalProps) => {
     try {
       if (isEditMode) {
         await updateTopic(payload).unwrap();
-        toast('Hello, World!')
+        toast.success('Topic updated')
       } else {
         await createTopic(payload).unwrap();
-        Toast.success('Topic added successfully');
+        toast.success('Topic added successfully');
       }
       setTitle('');
       setContent('');
       onClose();
     } catch (error) {
       // console.log(`Error ${isEditMode ? 'updating' : 'creating'} topic:`, error);
-      Toast.error(`Failed to ${isEditMode ? 'update' : 'add'} topic`);
+      toast.error(`Failed to ${isEditMode ? 'update' : 'add'} topic`);
     }
   };
 
   return (
     <Modal visible={visible} transparent animationType="slide">
-      <SafeAreaView style={styles.modalContainer}>
+      <Pressable style={styles.modalContainer} onPress={onClose}>
         <KeyboardAvoidingView
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
           style={styles.keyboardView}
@@ -147,7 +148,7 @@ const NewTopicModal = ({ visible, onClose, editTopic }: NewTopicModalProps) => {
             </ScrollView>
           </View>
         </KeyboardAvoidingView>
-      </SafeAreaView>
+      </Pressable>
     </Modal>
   );
 };
