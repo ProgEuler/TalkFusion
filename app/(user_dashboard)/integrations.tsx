@@ -79,7 +79,7 @@ export default function IntegrationsScreen() {
       id: "calendar",
       name: "Calendar",
       description: "Connect to automate Booking",
-      icon: <Calendar color={colors.dark.primary} size={28} />,
+      icon: <Calendar color={colors.dark.primary} />,
       connected: channel.calendar,
       url: fbUrl.redirect_url,
     },

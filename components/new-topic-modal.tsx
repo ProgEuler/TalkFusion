@@ -46,11 +46,11 @@ const NewTopicModal = ({ visible, onClose, editTopic }: NewTopicModalProps) => {
 
   const handleAddTopic = async () => {
     if (!title.trim()) {
-      Toast.error('Please enter a topic title');
+      toast.error('Please enter a topic title');
       return;
     }
     if (!content.trim()) {
-      Toast.error('Please enter knowledge content');
+      toast.error('Please enter knowledge content');
       return;
     }
 
@@ -64,7 +64,6 @@ const NewTopicModal = ({ visible, onClose, editTopic }: NewTopicModalProps) => {
       if (isEditMode) {
         await updateTopic(payload).unwrap();
         toast('Hello, World!')
-      //   Toast.success('Topic updated successfully');
       } else {
         await createTopic(payload).unwrap();
         Toast.success('Topic added successfully');

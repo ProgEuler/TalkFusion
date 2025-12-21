@@ -10,8 +10,8 @@ import { StatusBar, Text, View } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { KeyboardProvider } from "react-native-keyboard-controller";
 import { Provider, useDispatch } from "react-redux";
-import ToastManager from 'toastify-react-native';
 import { Toaster } from 'sonner-native';
+import ToastManager from 'toastify-react-native';
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -95,7 +95,20 @@ export default function RootLayout() {
               barStyle="light-content"
             />
             <RootLayoutNav />
-            <Toaster />
+            <Toaster
+               position="bottom-center"
+               swipeToDismissDirection="left"
+               richColors
+               toastOptions={{
+                  style: {
+                     borderWidth: 0,
+                   },
+                   success: { backgroundColor: colors.dark.primary },
+                   warning: { backgroundColor: colors.dark.warning },
+                   error: { backgroundColor: colors.dark.danger },
+                   titleStyle: { color: "#fff" }
+               }}
+            />
             <ToastManager config={toastConfig} position="bottom" />
           </GestureHandlerRootView>
         </KeyboardProvider>

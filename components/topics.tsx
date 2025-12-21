@@ -5,6 +5,7 @@ import { timeAgo } from '@/utils/helpers'
 import { Calendar, Edit3, Trash2 } from 'lucide-react-native'
 import React from 'react'
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { toast } from 'sonner-native'
 import { Toast } from 'toastify-react-native'
 
 export default function TopicCard({ item, onEdit }: { item: TopicItem; onEdit: (topic: TopicItem) => void }) {
@@ -13,9 +14,10 @@ export default function TopicCard({ item, onEdit }: { item: TopicItem; onEdit: (
    const handleDelete = async () => {
       try {
          await deleteTopic(item.id)
-         Toast.success("Topic deleted successfully")
+         toast.error("Topic deleted successfully")
+         // Toast.success("Topic deleted successfully")
       } catch (error) {
-         Toast.error("Failed to delete topic")
+         toast.error("Failed to delete topic")
          // console.log(error)
       }
    }

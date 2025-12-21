@@ -9,6 +9,7 @@ import {
    TextInput,
    View
 } from 'react-native';
+import { toast } from 'sonner-native';
 import { Toast } from 'toastify-react-native';
 
 const SupportPage = () => {
@@ -17,7 +18,7 @@ const SupportPage = () => {
 
   const handleSendMessage = async () => {
     if (!message.trim()) {
-      Toast.warn("Please enter a message");
+      toast.warning("Please enter a message");
       return;
     }
 
@@ -26,10 +27,10 @@ const SupportPage = () => {
          subject: "Support",
          description: message,
        }).unwrap();
-      Toast.success("Message sent successfully");
+      toast.success("Message sent successfully");
       setMessage('');
     } catch (error) {
-      Toast.error("Failed to send message");
+      toast.error("Failed to send message");
     }
   };
 

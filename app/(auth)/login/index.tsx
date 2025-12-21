@@ -2,23 +2,25 @@ import { useLoginMutation } from "@/api/auth.api";
 import { Layout } from "@/components/layout/Layout";
 import { Button } from "@/components/ui/Button";
 import { ModalView } from "@/components/ui/modal-view";
+import colors from "@/constants/colors";
 import { useSignIn } from "@/hooks/use-google-signin";
 import { setCredentials } from "@/store/authSlice";
 import { saveAuthData } from "@/utils/storage";
 import { isValidEmail } from "@/utils/validation";
 import { GoogleSignin } from "@react-native-google-signin/google-signin";
 import { useRouter } from "expo-router";
-import { Eye, EyeOff } from "lucide-react-native";
+import { AlertCircle, Eye, EyeOff } from "lucide-react-native";
 import React, { useState } from "react";
 import {
-    Modal,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
+  Modal,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from "react-native";
 import { useDispatch } from "react-redux";
+import { toast } from "sonner-native";
 import { Toast } from "toastify-react-native";
 
 GoogleSignin.configure({
@@ -68,7 +70,7 @@ export default function LoginScreen() {
         user: res.user,
         sessionId: res.session_id,
       });
-      Toast.success("Login successful!");
+      toast.success("Login successful!");
       if (res.user.role === "admin") {
         router.replace("/(admin_dashboard)/home");
       } else {
@@ -78,7 +80,7 @@ export default function LoginScreen() {
       console.error("Login Error:", error);
       const message =
         error?.data?.non_field_errors?.[0] || "Login failed. Please try again.";
-      Toast.error(message);
+      toast.error(message);
       console.log(message);
       if (
         message ===
@@ -92,7 +94,6 @@ export default function LoginScreen() {
   };
 
   const handleGoogleLogin = () => {
-    console.log("google signin clicked");
     signIn("signin");
   };
 
