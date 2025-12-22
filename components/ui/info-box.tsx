@@ -25,7 +25,7 @@ export const InfoRow = ({
     {url ? (
       <TouchableOpacity
         onPress={() => Linking.openURL(
-         (!value.startsWith("https") ? "https://" + value : value)
+         (!value?.startsWith("https") ? "https://" + value : value)
         )}
         style={{ flexDirection: "row", gap: 6 }}
       >

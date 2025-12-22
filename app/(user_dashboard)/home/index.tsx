@@ -16,12 +16,16 @@ import {
 } from "lucide-react-native";
 import { useEffect } from "react";
 import { RefreshControl, StyleSheet, Text, View } from "react-native";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { AppointmentsList } from "./appointments-list";
+import { selectCurrentUser } from "@/store/authSlice";
 
 export default function DashboardScreen() {
   const { data, isLoading, refetch, isFetching, isError } =
     useGetDashboardDataQuery(undefined);
+
+      const user = useSelector(selectCurrentUser);
+      console.log(user)
 
   const dispatch = useDispatch();
 

@@ -3,21 +3,16 @@ import Sessions from "@/components/sesstions";
 import { Button } from "@/components/ui/Button";
 import { ModalView } from "@/components/ui/modal-view";
 import colors from "@/constants/colors";
+import { selectCurrentUser } from "@/store/authSlice";
 import { Trash2, TriangleAlert } from "lucide-react-native";
 import React, { useState } from "react";
-import {
-   Modal,
-   StyleSheet,
-   Switch,
-   Text,
-   TouchableOpacity,
-   View,
-} from "react-native";
+import { Image, Modal, StyleSheet, Switch, Text, View } from "react-native";
+import { useSelector } from "react-redux";
 
 export default function Settings() {
   const [twoFactorEnabled, setTwoFactorEnabled] = useState(true);
-  const [aiTrainingEnabled, setAiTrainingEnabled] = useState(false);
   const [deleteAcc, setDeleteAcc] = useState(false);
+  const user = useSelector(selectCurrentUser);
 
   return (
     <Layout>
@@ -37,11 +32,42 @@ export default function Settings() {
           buttonVariant={"destructive"}
         >
           <Text style={styles.modalText}>
-            Are you sure you want to delete your account? {'\n'}
+            Are you sure you want to delete your account? {"\n"}
             This action cannot be undone.
           </Text>
         </ModalView>
       </Modal>
+
+      {/* Profile Section */}
+      {user && (
+        <View style={styles.profileCard}>
+          <View style={styles.profileAvatar}>
+            {user.image ? (
+              <Image
+                src={`https://ape-in-eft.ngrok-free.app` + user.image}
+                height={60}
+                width={60}
+              />
+            ) : (
+              <Text style={styles.profileAvatarText}>
+                {user.name
+                  ? user.name.charAt(0).toUpperCase()
+                  : user.email.charAt(0).toUpperCase()}
+              </Text>
+            )}
+          </View>
+          <View style={styles.profileInfo}>
+            <Text style={styles.profileName}>{user.name || "User"}</Text>
+            {user.company && (
+              <Text style={styles.profileCompany}>
+                {user.company.name || user.company}
+              </Text>
+            )}
+            <Text style={styles.profileEmail}>{user.email}</Text>
+          </View>
+        </View>
+      )}
+
       {/* Security Section */}
       <Text style={styles.sectionTitle}>Security</Text>
 
@@ -77,7 +103,7 @@ export default function Settings() {
       </View>
 
       {/* Active Sessions */}
-        <Sessions />
+      <Sessions />
 
       {/* Data & Privacy Section */}
       {/* <Text style={[styles.sectionTitle, styles.sectionMarginTop]}>
@@ -111,7 +137,7 @@ export default function Settings() {
       <View style={styles.card}>
         <View style={styles.cardContent}>
           <View style={styles.deleteTextContainer}>
-              <TriangleAlert  color={colors.dark.danger} />
+            <TriangleAlert color={colors.dark.danger} />
             <View style={{ flex: 1 }}>
               <Text style={styles.cardTitle}>Delete Account</Text>
               <Text style={styles.cardSubtitle}>
@@ -173,19 +199,64 @@ const styles = StyleSheet.create({
   },
   modalText: {
     color: "white",
-   //  width: '86%',
+    //  width: '86%',
     marginBottom: 15,
     textAlign: "center",
+  },
+  profileCard: {
+    backgroundColor: colors.dark.cardBackground,
+    borderRadius: 12,
+    padding: 20,
+    borderWidth: 1,
+    borderColor: "#2c2c2e",
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 16,
+  },
+  profileAvatar: {
+    width: 64,
+    height: 64,
+    borderRadius: 32,
+    backgroundColor: colors.dark.primary,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  profileAvatarText: {
+    fontSize: 24,
+    fontWeight: "700",
+    color: colors.dark.text,
+  },
+  profileInfo: {
+    flex: 1,
+  },
+  profileName: {
+    fontSize: 20,
+    fontWeight: "600",
+    color: "#ffffff",
+    marginBottom: 4,
+  },
+  profileRole: {
+    fontSize: 14,
+    fontWeight: "500",
+    color: colors.dark.primary,
+    marginBottom: 4,
+  },
+  profileCompany: {
+    fontSize: 14,
+    color: "#8e8e93",
+    marginBottom: 4,
+  },
+  profileEmail: {
+    fontSize: 14,
+    color: "#8e8e93",
   },
   sectionTitle: {
     fontSize: 17,
     fontWeight: "600",
     color: "#ffffff",
-    marginTop: 20,
-    marginBottom: 12,
   },
   sectionMarginTop: {
-    marginTop: 32,
+    marginTop: 20,
   },
   card: {
     backgroundColor: colors.dark.cardBackground,
@@ -219,7 +290,7 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: "row",
     alignItems: "center",
-    gap: 12
+    gap: 12,
   },
   cardTitle: {
     fontSize: 16,
