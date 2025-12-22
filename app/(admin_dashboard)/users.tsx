@@ -1,140 +1,286 @@
+import { useGetUsersQuery } from "@/api/admin-api/users.api";
+import UsersList from "@/components/admin-components/users-list";
+import ErrorScreen from "@/components/ErrorScreen";
 import { Layout } from "@/components/layout/Layout";
+import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
 import colors from "@/constants/colors";
-import React from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { Search } from "lucide-react-native";
+import React, { useEffect, useState } from "react";
+import {
+    ActivityIndicator,
+    Pressable,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TextInput,
+    View,
+} from "react-native";
 
-interface User {
-  id: string;
-  name: string;
-  role: string;
-  email: string;
-}
-
-const usersData: User[] = [
-  {
-    id: "1",
-    name: "Jane Cooper",
-    role: "Owner",
-    email: "felicia.reid@example.com",
-  },
-  {
-    id: "2",
-    name: "Wade Warren",
-    role: "Admin",
-    email: "sara.cruz@example.com",
-  },
-  {
-    id: "3",
-    name: "Jenny Wilson",
-    role: "Agent",
-    email: "nathan.roberts@example.com",
-  },
-  {
-    id: "4",
-    name: "Guy Hawkins",
-    role: "Owner",
-    email: "jackson.graham@example.com",
-  },
-  {
-    id: "5",
-    name: "Kristin Watson",
-    role: "Admin",
-    email: "kristin.watson@example.com",
-  },
-  {
-    id: "6",
-    name: "Cody Fisher",
-    role: "Agent",
-    email: "cody.fisher@example.com",
-  },
+const statusFilters = [
+  { label: "All Status", value: "all" },
+  { label: "Active", value: true },
+  { label: "Inactive", value: false },
 ];
 
 export default function UsersPage() {
+  const [searchQuery, setSearchQuery] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
+  const [selectedStatus, setSelectedStatus] = useState<boolean | string>("all");
+  const [page, setPage] = useState(1);
+
+  // Debounce search input
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearch(searchQuery);
+      setPage(1); // Reset to page 1 when search changes
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
+
+  // Reset page when filters change
+  useEffect(() => {
+    setPage(1);
+  }, [selectedStatus]);
+
+  const { data, isLoading, isError, isFetching } = useGetUsersQuery({
+    search: debouncedSearch || undefined,
+    page,
+    is_active: selectedStatus,
+  });
+
+  const handleLoadMore = () => {
+    if (data?.next && !isFetching) {
+      setPage((prev) => prev + 1);
+    }
+  };
+
+  const handleStatusFilter = (status: boolean | string) => {
+    setSelectedStatus(status);
+  };
+
+  if (isLoading && page === 1) return <LoadingSpinner />;
+  if (isError) return <ErrorScreen />;
+
+  const hasMore = data?.next !== null;
+  const users = data?.results || [];
+
   return (
     <Layout>
-      <View style={styles.tableCard}>
-        <Text style={styles.cardTitle}>
-          Admin control center sort by active in active
-        </Text>
-
-        <View style={styles.tableHeader}>
-          <Text style={[styles.headerText, styles.colName]}>Name</Text>
-          <Text style={[styles.headerText, styles.colRole]}>role</Text>
-          <Text style={[styles.headerText, styles.colEmail]}>Email</Text>
+      <View style={styles.container}>
+        {/* Search Bar */}
+        <View style={styles.searchContainer}>
+          <Search size={20} color="rgba(255, 255, 255, 0.5)" />
+          <TextInput
+            style={styles.searchInput}
+            placeholder="Search by name or email..."
+            placeholderTextColor="rgba(255, 255, 255, 0.5)"
+            value={searchQuery}
+            onChangeText={setSearchQuery}
+          />
+          {isFetching && page === 1 && (
+            <ActivityIndicator size="small" color={colors.dark.primary} />
+          )}
         </View>
 
-        {usersData.map((user) => (
-          <View key={user.id} style={styles.tableRow}>
-            <Text style={[styles.cellText, styles.colName]}>{user.name}</Text>
-            <Text style={[styles.cellText, styles.colRole]}>{user.role}</Text>
-            <Text
-              style={[styles.cellText, styles.colEmail]}
-              numberOfLines={1}
-              ellipsizeMode="tail"
+        {/* Status Filter Chips */}
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          style={styles.filterContainer}
+          contentContainerStyle={styles.filterContent}
+        >
+          {statusFilters.map((filter) => (
+            <Pressable
+              key={filter.label}
+              style={[
+                styles.filterChip,
+                selectedStatus === filter.value && styles.filterChipActive,
+              ]}
+              onPress={() => handleStatusFilter(filter.value)}
             >
-              {user.email}
+              <Text
+                style={[
+                  styles.filterText,
+                  selectedStatus === filter.value && styles.filterTextActive,
+                ]}
+              >
+                {filter.label}
+              </Text>
+            </Pressable>
+          ))}
+        </ScrollView>
+
+        {/* Results Count */}
+        {data && (
+          <Text style={styles.resultsCount}>
+            {data.count} {data.count === 1 ? 'user' : 'users'} found
+          </Text>
+        )}
+
+        {/* User List */}
+        {users.length === 0 ? (
+          <View style={styles.emptyState}>
+            <Text style={styles.emptyStateText}>No users found</Text>
+            <Text style={styles.emptyStateSubtext}>
+              Try adjusting your search or filters
             </Text>
           </View>
-        ))}
+        ) : (
+          <UsersList
+            users={users}
+            onLoadMore={handleLoadMore}
+            hasMore={hasMore}
+            isLoadingMore={isFetching && page > 1}
+          />
+        )}
       </View>
     </Layout>
   );
 }
+
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.dark.background,
   },
-  contentContainer: {
-    padding: 20,
-  },
-  headerTitle: {
-    fontSize: 16,
-    color: colors.dark.textSecondary,
-    marginBottom: 20,
-  },
-  tableCard: {
+  header: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingVertical: 16,
+    paddingHorizontal: 20,
     backgroundColor: colors.dark.cardBackground,
     borderRadius: 12,
-    padding: 20,
+    marginBottom: 16,
   },
-  cardTitle: {
+  backButton: {
+    width: 40,
+    height: 40,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  headerTitle: {
     fontSize: 18,
     fontWeight: "600",
-    color: colors.dark.text,
-    marginBottom: 24,
+    color: "#FFFFFF",
   },
-  tableHeader: {
+  addButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: colors.dark.primary,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  searchContainer: {
     flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: colors.dark.cardBackground,
+    borderRadius: 12,
+    paddingHorizontal: 16,
+    paddingVertical: 4,
     marginBottom: 16,
-    paddingBottom: 8,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.dark.border,
+    gap: 12,
   },
-  headerText: {
+  searchInput: {
+    flex: 1,
+    fontSize: 16,
+    color: "#FFFFFF",
+  },
+  filterContainer: {
+    marginBottom: 16,
+  },
+  filterContent: {
+    gap: 8,
+    paddingHorizontal: 4,
+  },
+  filterChip: {
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 20,
+    backgroundColor: "rgba(255, 255, 255, 0.1)",
+    borderWidth: 1,
+    borderColor: "rgba(255, 255, 255, 0.1)",
+  },
+  filterChipActive: {
+    backgroundColor: "#FFFFFF",
+  },
+  filterText: {
     fontSize: 14,
-    color: colors.dark.textSecondary,
+    color: "rgba(255, 255, 255, 0.7)",
     fontWeight: "500",
-    textTransform: "capitalize",
   },
-  tableRow: {
-    flexDirection: "row",
-    paddingVertical: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.dark.border,
+  filterTextActive: {
+    color: colors.dark.background,
   },
-  cellText: {
-    fontSize: 14,
-    color: colors.dark.text,
-  },
-  colName: {
-    flex: 1.5,
-  },
-  colRole: {
+  userList: {
     flex: 1,
   },
-  colEmail: {
-    flex: 2.5,
+  userItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: colors.dark.cardBackground,
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 8,
+    gap: 12,
+  },
+  avatar: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  avatarText: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: "#FFFFFF",
+  },
+  userInfo: {
+    flex: 1,
+  },
+  userName: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: "#FFFFFF",
+    marginBottom: 4,
+  },
+  userRole: {
+    fontSize: 14,
+    color: "rgba(255, 255, 255, 0.6)",
+  },
+  userRight: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+  },
+  resultsCount: {
+    fontSize: 14,
+    color: "rgba(255, 255, 255, 0.6)",
+    marginBottom: 12,
+    marginTop: 4,
+  },
+  emptyState: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: 60,
+  },
+  emptyStateText: {
+    fontSize: 18,
+    fontWeight: "600",
+    color: "#FFFFFF",
+    marginBottom: 8,
+  },
+  emptyStateSubtext: {
+    fontSize: 14,
+    color: "rgba(255, 255, 255, 0.6)",
+  },
+  statusBadge: {
+    fontSize: 14,
+    fontWeight: "600",
   },
 });
