@@ -14,10 +14,8 @@ import {
     TouchableOpacity,
     View,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { Toast } from 'toastify-react-native';
-import { Button } from './ui/Button';
 import { toast } from 'sonner-native';
+import { Button } from './ui/Button';
 
 interface NewTopicModalProps {
   visible: boolean;
@@ -34,7 +32,6 @@ const NewTopicModal = ({ visible, onClose, editTopic }: NewTopicModalProps) => {
   const isEditMode = !!editTopic;
   const isLoading = isCreating || isUpdating;
 
-  // Pre-fill form when editing
   useEffect(() => {
     if (editTopic) {
       setTitle(editTopic.name);
@@ -134,18 +131,18 @@ const NewTopicModal = ({ visible, onClose, editTopic }: NewTopicModalProps) => {
                   textAlignVertical="top"
                 />
               </View>
-
-              {/* Add Topic Button */}
-              <View style={styles.buttonContainer}>
-                <Button
-                  onPress={handleAddTopic}
-                  isLoading={isLoading}
-                  style={styles.addButton}
-                >
-                  {isLoading ? (isEditMode ? 'Updating...' : 'Adding...') : (isEditMode ? 'Update Topic' : 'Add Topic')}
-                </Button>
-              </View>
             </ScrollView>
+
+            {/* Add Topic Button - Sticky Footer */}
+            <View style={styles.buttonContainer}>
+              <Button
+                onPress={handleAddTopic}
+                isLoading={isLoading}
+                style={styles.addButton}
+              >
+                {isLoading ? (isEditMode ? 'Updating...' : 'Adding...') : (isEditMode ? 'Update Topic' : 'Add Topic')}
+              </Button>
+            </View>
           </View>
         </KeyboardAvoidingView>
       </Pressable>
@@ -166,8 +163,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.dark.background,
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
-   //  paddingBottom: 20,
-    minHeight: '65%',
+    minHeight: '54%',
   },
   scrollView: {
     flex: 1,
@@ -242,25 +238,11 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontSize: 15,
     padding: 16,
-    minHeight: 180,
-  },
-  aiButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 8,
-    backgroundColor: 'rgba(0, 122, 255, 0.15)',
-  },
-  aiButtonText: {
-    fontSize: 13,
-    fontWeight: '600',
-    color: colors.dark.primary,
+    minHeight: 120,
   },
   buttonContainer: {
     paddingHorizontal: 20,
-    marginTop: 32,
+    paddingBottom: 20,
   },
   addButton: {
     width: '100%',
