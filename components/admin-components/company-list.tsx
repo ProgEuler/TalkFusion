@@ -14,10 +14,10 @@ interface Company {
   id: number;
   name: string;
   status: "active" | "pending" | "inactive";
-  billingContact: string;
+  billing_contact: string;
   email: string;
   dueAmount: number;
-  totalPaid: number;
+  total_paid: number;
   icon?: string;
 }
 
