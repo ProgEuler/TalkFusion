@@ -84,11 +84,8 @@ export default function UsersPage() {
         </View>
 
         {/* Status Filter Chips */}
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
+        <View
           style={styles.filterContainer}
-          contentContainerStyle={styles.filterContent}
         >
           {statusFilters.map((filter) => (
             <Pressable
@@ -109,7 +106,7 @@ export default function UsersPage() {
               </Text>
             </Pressable>
           ))}
-        </ScrollView>
+        </View>
 
         {/* Results Count */}
         {data && (
@@ -191,10 +188,8 @@ const styles = StyleSheet.create({
   },
   filterContainer: {
     marginBottom: 16,
-  },
-  filterContent: {
-    gap: 8,
-    paddingHorizontal: 4,
+    flexDirection: "row",
+    gap: 6
   },
   filterChip: {
     paddingHorizontal: 16,

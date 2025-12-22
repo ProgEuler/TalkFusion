@@ -132,7 +132,7 @@ const adminMenuItems: MenuItem[] = [
   },
   {
     id: "company-profile",
-    label: "Company Profile",
+    label: "Companies",
     icon: Building,
     route: "/(admin_dashboard)/company-profile",
   },
@@ -166,6 +166,12 @@ const adminMenuItems: MenuItem[] = [
     icon: Wallet,
     route: "/(admin_dashboard)/payment",
   },
+//   {
+//     id: "settings",
+//     label: "Settings",
+//     icon: Settings,
+//     route: "/(user_dashboard)/settings",
+//   },
 ];
 
 export default function CustomDrawerContent(props: any) {
