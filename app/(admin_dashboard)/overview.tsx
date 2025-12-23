@@ -1,148 +1,236 @@
+import type { Company, SocialChannel } from "@/api/admin-api/overview.api";
+import { useGetOverviewQuery } from "@/api/admin-api/overview.api";
+import ErrorScreen from "@/components/ErrorScreen";
 import { Layout } from "@/components/layout/Layout";
-import { Button } from "@/components/ui/Button";
+import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
 import colors from "@/constants/colors";
+import { timeAgo } from "@/utils/helpers";
 import { FontAwesome5 } from "@expo/vector-icons";
-import { Check, Search } from "lucide-react-native";
+import { FlashList } from "@shopify/flash-list";
+import { AlertTriangle, Check, Search } from "lucide-react-native";
 import React, { useState } from "react";
 import { StyleSheet, Text, TextInput, View } from "react-native";
 
-const HealthCard = ({
+const StatCard = ({
   title,
   value,
   type,
 }: {
   title: string;
-  value: string;
-  type: "online" | "offline";
-}) => (
-  <View style={styles.healthCard}>
-    <View
-      style={[
-        styles.iconCircle,
-        type === "online" ? styles.iconOnline : styles.iconOffline,
-      ]}
-    >
-      {type === "online" ? (
-        <Check size={20} color="white" />
-      ) : (
-        <Text style={styles.exclamation}>!</Text>
-      )}
+  value: number;
+  type: "total" | "online" | "offline" | "warning";
+}) => {
+  const getIconColor = () => {
+    switch (type) {
+      case "total":
+        return "#8B5CF6"; // Purple
+      case "online":
+        return "#10B981"; // Green
+      case "offline":
+        return "#EF4444"; // Red
+      case "warning":
+        return "#F59E0B"; // Orange
+      default:
+        return "#6B7280";
+    }
+  };
+
+  return (
+    <View style={styles.statCard}>
+      <View style={[styles.iconCircle, { backgroundColor: getIconColor() }]}>
+        {type === "online" ? (
+          <Check size={20} color="white" />
+        ) : type === "warning" || type === "offline" ? (
+          <AlertTriangle size={20} color="white" />
+        ) : (
+          <Text style={styles.totalIcon}>{value}</Text>
+        )}
+      </View>
+      <Text style={styles.statValue}>{value}</Text>
+      <Text style={styles.statTitle}>{title}</Text>
     </View>
-    <Text style={styles.healthValue}>{value}</Text>
-    <Text style={styles.healthTitle}>{title}</Text>
-  </View>
-);
+  );
+};
 
 const ChannelItem = ({
-  icon,
+  channel,
   name,
-  usage,
-  messages,
+  iconName,
+  iconColor,
 }: {
-  icon: any;
+  channel: SocialChannel | null;
   name: string;
-  usage: string;
-  messages: string;
-}) => (
-  <View style={styles.channelItem}>
-    <View style={styles.channelHeader}>
-      {icon}
-      <Text style={styles.channelName}>{name}</Text>
+  iconName: string;
+  iconColor: string;
+}) => {
+  if (!channel) {
+    return (
+      <View style={styles.channelItem}>
+        <View style={styles.channelHeader}>
+          <FontAwesome5 name={iconName} size={16} color="#6B7280" />
+          <Text style={[styles.channelName, { color: "#6B7280" }]}>{name}</Text>
+        </View>
+        <Text style={styles.notConnected}>Not Connected</Text>
+      </View>
+    );
+  }
+
+  return (
+    <View style={styles.channelItem}>
+      <View style={styles.channelHeader}>
+        <FontAwesome5 name={iconName} size={16} color={iconColor} />
+        <Text style={styles.channelName}>{name}</Text>
+      </View>
+      <View style={styles.channelStats}>
+        <Text style={styles.statLabel}>Last Usage:</Text>
+        <Text style={styles.statValue}>
+          {channel.last_used ? timeAgo(channel.last_used) : "Never"}
+        </Text>
+      </View>
+      <View style={styles.channelStats}>
+        <Text style={styles.statLabel}>Messages Today:</Text>
+        <Text style={styles.statValue}>{channel.messages_today}</Text>
+      </View>
+      <View style={styles.channelStats}>
+        <Text style={styles.statLabel}>Status:</Text>
+        <Text style={styles.statValue}>{channel.status}</Text>
+      </View>
     </View>
-    <View style={styles.channelStats}>
-      <Text style={styles.statLabel}>Last Usage:</Text>
-      <Text style={styles.statValue}>{usage}</Text>
+  );
+};
+
+const CompanyCard = ({ company }: { company: Company }) => {
+  const hasAnyChannel = company.whatsapp || company.facebook || company.instagram;
+  const activeChannels = [
+    company.whatsapp,
+    company.facebook,
+    company.instagram,
+  ].filter(Boolean).length;
+
+  return (
+    <View style={styles.companyCard}>
+      <View style={styles.companyHeader}>
+        <View style={styles.companyTitleRow}>
+          <View style={styles.diamondIcon} />
+          <Text style={styles.companyName}>
+            {company.name || `Company #${company.id}`}
+          </Text>
+        </View>
+        {hasAnyChannel ? (
+          <View style={styles.systemStatus}>
+            <Text style={styles.systemStatusText}>
+              {activeChannels} Channel{activeChannels !== 1 ? "s" : ""} Active
+            </Text>
+          </View>
+        ) : (
+          <View style={[styles.systemStatus, styles.systemStatusInactive]}>
+            <Text style={[styles.systemStatusText, styles.systemStatusTextInactive]}>
+              No Channels Connected
+            </Text>
+          </View>
+        )}
+      </View>
+
+      {company.status_message && (
+        <Text style={styles.statusMessage}>{company.status_message}</Text>
+      )}
+
+      <View style={styles.channelsList}>
+        <ChannelItem
+          channel={company.whatsapp}
+          name="WhatsApp Business"
+          iconName="whatsapp"
+          iconColor="#10B981"
+        />
+        <ChannelItem
+          channel={company.facebook}
+          name="Facebook"
+          iconName="facebook"
+          iconColor="#1877F2"
+        />
+        <ChannelItem
+          channel={company.instagram}
+          name="Instagram"
+          iconName="instagram"
+          iconColor="#E1306C"
+        />
+      </View>
     </View>
-    <View style={styles.channelStats}>
-      <Text style={styles.statLabel}>Messages Today:</Text>
-      <Text style={styles.statValue}>{messages}</Text>
-    </View>
-  </View>
-);
+  );
+};
 
 export default function OverviewPage() {
-   // const [company, setCompany] = useState('')
-   const handleSearch = () => {
-      console.log("searching companies")
-   }
+  const [searchQuery, setSearchQuery] = useState("");
+  const { data, isLoading, isError, refetch } = useGetOverviewQuery();
+
+  if (isLoading) return <LoadingSpinner />;
+  if (isError) return <ErrorScreen onRetry={refetch} />;
+  if (!data) return null;
+
+  const filteredCompanies = data.companies.filter((company) =>
+    company.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const totalChannels = data.total_channels[0] || 0;
+  const onlineChannels = data.online_channels[0] || 0;
+  const offlineChannels = data.offline_channels[0] || 0;
+  const warningChannels = data.warning_channels[0] || 0;
+
   return (
     <Layout>
-      <Text style={styles.pageTitle}>Connections Health Overview</Text>
 
+      {/* Search Bar */}
       <View style={styles.searchContainer}>
         <Search size={20} color={colors.dark.textSecondary} />
         <TextInput
           style={styles.searchInput}
-          placeholder="Search company"
+          placeholder="Search company..."
           placeholderTextColor={colors.dark.textSecondary}
-         //  value={company}
-         //  onChangeText={setCompany}
+          value={searchQuery}
+          onChangeText={setSearchQuery}
         />
-        {/* <Button size="sm" onPress={handleSearch}>Search</Button> */}
       </View>
 
-      <View style={styles.healthRow}>
-        <HealthCard title="Online Channels" value="20" type="online" />
-        <HealthCard title="Offline Channels" value="4" type="offline" />
+      {/* Channel Statistics */}
+      <View style={styles.statsGrid}>
+        <StatCard title="Total Channels" value={totalChannels} type="total" />
+        <StatCard title="Online" value={onlineChannels} type="online" />
+      </View>
+      <View style={styles.statsGrid}>
+        <StatCard title="Offline" value={offlineChannels} type="offline" />
+        <StatCard title="Warning" value={warningChannels} type="warning" />
       </View>
 
-      {/* Company Status Section - Repeated for demo */}
-      {[1, 2].map((i) => (
-        <View key={i} style={styles.companyCard}>
-          <View style={styles.companyHeader}>
-            <View style={styles.companyTitleRow}>
-              <View style={styles.diamondIcon} />
-              <Text style={styles.companyName}>TechCorp Inc.</Text>
-            </View>
-            <View style={styles.systemStatus}>
-              <Text style={styles.systemStatusText}>
-                All Systems Operational
-              </Text>
-            </View>
-          </View>
+      {/* Companies List */}
+      <Text style={styles.sectionTitle}>
+        Companies ({filteredCompanies.length})
+      </Text>
 
-          <View style={styles.channelsList}>
-            <ChannelItem
-              icon={<FontAwesome5 name="whatsapp" size={16} color="#10B981" />}
-              name="WhatsApp Business"
-              usage=""
-              messages=""
-            />
-            <ChannelItem
-              icon={<FontAwesome5 name="instagram" size={16} color="#E1306C" />}
-              name="Instagram"
-              usage=""
-              messages=""
-            />
-            <ChannelItem
-              icon={<FontAwesome5 name="facebook" size={16} color="#1877F2" />}
-              name="Facebook"
-              usage=""
-              messages=""
-            />
+      <FlashList
+        data={filteredCompanies}
+        renderItem={({ item }) => <CompanyCard company={item} />}
+        keyExtractor={(item) => item.id.toString()}
+        showsVerticalScrollIndicator={false}
+        ListEmptyComponent={
+          <View style={styles.emptyState}>
+            <Text style={styles.emptyText}>No companies found</Text>
           </View>
-        </View>
-      ))}
+        }
+      />
     </Layout>
   );
 }
 
 const styles = StyleSheet.create({
-  pageTitle: {
-    fontSize: 18,
-    fontWeight: "600",
-    color: colors.dark.text,
-  },
   searchContainer: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "transparent",
+    backgroundColor: colors.dark.cardBackground,
     borderWidth: 1,
     borderColor: colors.dark.border,
-    borderRadius: 8,
+    borderRadius: 12,
     paddingHorizontal: 12,
-    paddingVertical: 10,
-    marginBottom: 16,
+    paddingVertical: 4,
     gap: 10,
   },
   searchInput: {
@@ -150,16 +238,16 @@ const styles = StyleSheet.create({
     color: colors.dark.text,
     fontSize: 14,
   },
-  healthRow: {
+  statsGrid: {
     flexDirection: "row",
-    gap: 16,
-    marginBottom: 24,
+    gap: 12,
+    marginBottom: 12,
   },
-  healthCard: {
+  statCard: {
     flex: 1,
     backgroundColor: colors.dark.cardBackground,
     borderRadius: 12,
-    padding: 20,
+    padding: 16,
     alignItems: "center",
     justifyContent: "center",
   },
@@ -169,37 +257,38 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     alignItems: "center",
     justifyContent: "center",
-    marginBottom: 12,
+    marginBottom: 8,
   },
-  iconOnline: {
-    backgroundColor: "#DB2777", // Pinkish/Magenta from image
-  },
-  iconOffline: {
-    backgroundColor: "#2563EB", // Blue from image
-  },
-  exclamation: {
+  totalIcon: {
     color: "white",
-    fontWeight: "bold",
-    fontSize: 20,
+    fontWeight: "700",
+    fontSize: 16,
   },
-  healthValue: {
+  statValue: {
     fontSize: 24,
     fontWeight: "700",
-    color: "white",
+    color: colors.dark.text,
     marginBottom: 4,
   },
-  healthTitle: {
+  statTitle: {
     fontSize: 12,
     color: colors.dark.textSecondary,
+  },
+  sectionTitle: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: colors.dark.text,
+    marginTop: 8,
+    marginBottom: 12,
   },
   companyCard: {
     backgroundColor: colors.dark.cardBackground,
     borderRadius: 12,
-    padding: 20,
-    marginBottom: 16,
+    padding: 16,
+    marginBottom: 12,
   },
   companyHeader: {
-    marginBottom: 20,
+    marginBottom: 12,
   },
   companyTitleRow: {
     flexDirection: "row",
@@ -211,9 +300,7 @@ const styles = StyleSheet.create({
     width: 8,
     height: 8,
     transform: [{ rotate: "45deg" }],
-    backgroundColor: colors.dark.textSecondary,
-    borderWidth: 1,
-    borderColor: "white",
+    backgroundColor: colors.dark.primary,
   },
   companyName: {
     fontSize: 16,
@@ -221,22 +308,37 @@ const styles = StyleSheet.create({
     color: colors.dark.text,
   },
   systemStatus: {
-    backgroundColor: "#1E3A8A", // Dark Blue
+    backgroundColor: "rgba(16, 185, 129, 0.15)",
     paddingHorizontal: 8,
     paddingVertical: 4,
-    borderRadius: 4,
+    borderRadius: 6,
     alignSelf: "flex-start",
   },
+  systemStatusInactive: {
+    backgroundColor: "rgba(107, 114, 128, 0.15)",
+  },
   systemStatusText: {
-    fontSize: 10,
-    color: "#60A5FA", // Light Blue
+    fontSize: 11,
+    color: "#10B981",
     fontWeight: "600",
   },
+  systemStatusTextInactive: {
+    color: "#6B7280",
+  },
+  statusMessage: {
+    fontSize: 13,
+    color: colors.dark.textSecondary,
+    marginBottom: 12,
+    fontStyle: "italic",
+  },
   channelsList: {
-    gap: 16,
+    gap: 12,
   },
   channelItem: {
-    gap: 4,
+    gap: 6,
+    paddingBottom: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: "rgba(255, 255, 255, 0.05)",
   },
   channelHeader: {
     flexDirection: "row",
@@ -246,18 +348,29 @@ const styles = StyleSheet.create({
   },
   channelName: {
     fontSize: 14,
+    fontWeight: "500",
     color: colors.dark.text,
+  },
+  notConnected: {
+    fontSize: 12,
+    color: "#6B7280",
+    fontStyle: "italic",
   },
   channelStats: {
     flexDirection: "row",
     justifyContent: "space-between",
+    paddingVertical: 2,
   },
   statLabel: {
     fontSize: 12,
     color: colors.dark.textSecondary,
   },
-  statValue: {
-    fontSize: 12,
-    color: colors.dark.text,
+  emptyState: {
+    padding: 40,
+    alignItems: "center",
+  },
+  emptyText: {
+    fontSize: 14,
+    color: colors.dark.textSecondary,
   },
 });

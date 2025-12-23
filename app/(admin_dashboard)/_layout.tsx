@@ -70,8 +70,8 @@ export default function DashboardLayout() {
             <Drawer.Screen
                 name="company-profile"
                 options={{
-                    drawerLabel: "Company Profile",
-                    title: "Company Profile",
+                    drawerLabel: "Companies",
+                    title: "Companies",
                     drawerIcon: ({ color, size }) => <Building color={color} size={size} />,
                 }}
             />
