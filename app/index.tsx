@@ -9,7 +9,6 @@ import * as Notifications from "expo-notifications";
 
 LogBox.ignoreAllLogs();
 
-
 if (Platform.OS === "android") {
   Notifications.setNotificationChannelAsync("default", {
     name: "default",

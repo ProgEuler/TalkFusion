@@ -11,7 +11,7 @@ export const integrationsApi = baseApi.injectEndpoints({
     }),
     getFbUrl: builder.query({
       query: () => ({
-         url: "/connect/fb/",
+         url: "/connect/fb/?from=app",
          method: "Get",
       }),
     }),

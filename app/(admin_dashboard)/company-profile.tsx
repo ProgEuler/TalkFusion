@@ -30,7 +30,6 @@ export default function CompanyProfilePage() {
   if (isLoading) return <LoadingSpinner />;
   if (isError) return <ErrorScreen onRetry={refetch} />;
 
-  console.log(error);
   return (
     <Layout>
       <View style={styles.searchContainer}>

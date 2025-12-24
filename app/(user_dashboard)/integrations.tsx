@@ -12,7 +12,7 @@ import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
 import colors from "@/constants/colors";
 import { selectChannelStatus } from "@/store/channelSlice";
 import { Calendar } from "lucide-react-native";
-import { Linking, StyleSheet, Text, View } from "react-native";
+import { Linking, RefreshControl, StyleSheet, Text, View } from "react-native";
 import { useSelector } from "react-redux";
 import { Toast } from "toastify-react-native";
 interface Integration {
@@ -31,6 +31,7 @@ export default function IntegrationsScreen() {
     isLoading: fbUrlLoading,
     error: fbError,
     refetch: refetchFb,
+    isFetching
   } = useGetFbUrlQuery(undefined);
   const {
     data: igUrl,
@@ -49,7 +50,7 @@ export default function IntegrationsScreen() {
         }}
       />
     );
-
+console.log(fbUrl)
   const integrations: Integration[] = [
     {
       id: "facebook",
@@ -102,7 +103,11 @@ export default function IntegrationsScreen() {
   };
 
   return (
-    <Layout>
+    <Layout
+      refreshControl={
+        <RefreshControl refreshing={isFetching} onRefresh={refetchFb} />
+      }
+    >
       <Text style={{ color: colors.dark.textSecondary, padding: 8 }}>
         Link your business accounts to manage messages and posts from on
         ecentralized hub.

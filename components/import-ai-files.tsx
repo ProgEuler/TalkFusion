@@ -61,9 +61,9 @@ export default function ImportAiFiles() {
 
   return (
     <View>
-      <Text style={styles.sectionTitle}>Import/Export</Text>
+      <Text style={styles.sectionTitle}>Import files</Text>
       <Text style={styles.importExportDescription}>
-        Quickly add information in bulk or export your AI knowledge for review.
+        Quickly add information in bulk.
       </Text>
       <View style={styles.buttonRow}>
         <Pressable style={styles.exportButton} onPress={browseFiles}>

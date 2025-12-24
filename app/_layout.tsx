@@ -13,7 +13,6 @@ import { Provider, useDispatch } from "react-redux";
 import { Toaster } from 'sonner-native';
 import ToastManager from 'toastify-react-native';
 
-// Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 
 const queryClient = new QueryClient();

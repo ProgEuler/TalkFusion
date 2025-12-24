@@ -1,10 +1,26 @@
-import { useDisableAllMutation, useEnableAllMutation } from "@/api/admin-api/integration-api.api";
+import { useGetCompaniesQuery } from "@/api/admin-api/company.api";
+import {
+  useDisableAllMutation,
+  useEnableAllMutation,
+} from "@/api/admin-api/integration-api.api";
+import NewTopicModal from "@/components/admin-components/approve-reject-modal";
+import { Company } from "@/components/admin-components/company-list";
+import ErrorScreen from "@/components/ErrorScreen";
 import { Layout } from "@/components/layout/Layout";
 import { Button } from "@/components/ui/Button";
+import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
 import colors from "@/constants/colors";
-import { Briefcase, Eye } from "lucide-react-native";
-import React from "react";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { FlashList } from "@shopify/flash-list";
+import { Briefcase, Eye, Search } from "lucide-react-native";
+import React, { useEffect, useState } from "react";
+import {
+  ActivityIndicator,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { toast } from "sonner-native";
 
 interface IntegrationItem {
@@ -42,6 +58,32 @@ const integrationsData: IntegrationItem[] = [
 ];
 
 export default function IntegrationsPage() {
+  const [search, setSearch] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
+  const [page, setPage] = useState(1);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [editingTopic, setEditingTopic] = useState(null);
+
+  const handleEditTopic = (topic) => {
+    setEditingTopic(topic);
+    setIsModalVisible(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalVisible(false);
+    setEditingTopic(null);
+  };
+
+  // Debounce search input
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearch(search);
+      setPage(1); // Reset to page 1 when search changes
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [search]);
+
   const [enableFacebookApi, { isLoading: facebookEnableLoading }] =
     useEnableAllMutation();
   const [disableFacebookApi, { isLoading: facebookDisableLoading }] =
@@ -52,20 +94,30 @@ export default function IntegrationsPage() {
   const [disableWhatsappApi, { isLoading: whatsappDisableLoading }] =
     useDisableAllMutation();
 
+  const { data, isLoading, isError, refetch, isFetching } =
+    useGetCompaniesQuery({
+      search: debouncedSearch || undefined,
+      page,
+    });
+
+  if (isLoading) return <LoadingSpinner />;
+  if (isError) return <ErrorScreen onRetry={refetch} />;
+
   const approveChannel = async (channel: string, enableApi: any) => {
     try {
       const res = await enableApi({ channel_name: channel });
       toast.success(res.data.status);
-      console.log(res.data.status)
+      console.log(res.data.status);
     } catch (err) {
       toast.error("resError");
     }
   };
+
   const disableChannel = async (channel: string, disableApi: any) => {
     try {
       const res = await disableApi({ channel_name: channel });
       toast.success(res.data.status);
-      console.log(res.data.status)
+      console.log(res.data.status);
     } catch (err) {
       toast.error("resError");
     }
@@ -73,7 +125,7 @@ export default function IntegrationsPage() {
 
   return (
     <Layout>
-      {/* Header Card */}
+      {/* enable, disable Cards */}
       <View>
         <View style={styles.headerCard}>
           <View>
@@ -84,7 +136,11 @@ export default function IntegrationsPage() {
           </View>
 
           <View style={styles.actionButtons}>
-            <Button size="sm" onPress={() => approveChannel("facebook", enableFacebookApi)} isLoading={facebookEnableLoading}>
+            <Button
+              size="sm"
+              onPress={() => approveChannel("facebook", enableFacebookApi)}
+              isLoading={facebookEnableLoading}
+            >
               All Enable
             </Button>
             <Button
@@ -108,7 +164,11 @@ export default function IntegrationsPage() {
           </View>
 
           <View style={styles.actionButtons}>
-            <Button size="sm" onPress={() => approveChannel("whatsapp", enableWhatsappApi)} isLoading={whatsappEnableLoading}>
+            <Button
+              size="sm"
+              onPress={() => approveChannel("whatsapp", enableWhatsappApi)}
+              isLoading={whatsappEnableLoading}
+            >
               All Enable
             </Button>
             <Button
@@ -139,39 +199,81 @@ export default function IntegrationsPage() {
       </View>
 
       {/* Integrations List */}
-      <View style={styles.listContainer}>
-        {integrationsData.map((item, index) => (
-          <View key={`${item.id}-${index}`} style={styles.itemCard}>
-            <View style={styles.itemInfo}>
-              <Text style={styles.itemName}>{item.name}</Text>
 
-              <View style={styles.row}>
-                <Text style={styles.itemEmail}>{item.email}</Text>
-              </View>
-
-              <View style={styles.row}>
-                <Briefcase size={14} color={colors.dark.primary} />
-                <Text style={styles.itemCompany}>{item.company}</Text>
-              </View>
-            </View>
-
-            <TouchableOpacity style={styles.viewButton}>
-              <Eye size={16} color={colors.dark.primary} />
-              <Text style={styles.viewButtonText}>View</Text>
-            </TouchableOpacity>
-          </View>
-        ))}
+      <View style={styles.searchContainer}>
+        <Search size={20} color="rgba(255, 255, 255, 0.5)" />
+        <TextInput
+          style={styles.searchInput}
+          placeholder="Search by name or email..."
+          placeholderTextColor="rgba(255, 255, 255, 0.5)"
+          value={search}
+          onChangeText={setSearch}
+        />
+        {isFetching && page === 1 && (
+          <ActivityIndicator size="small" color={colors.dark.primary} />
+        )}
       </View>
+      <View style={styles.listContainer}>
+        <FlashList
+          data={data.results}
+          renderItem={({ item: company }: { item: Company }) => (
+            <View style={styles.itemCard}>
+              <View style={styles.itemInfo}>
+                <Text style={styles.itemName}>{company.billing_contact}</Text>
+
+                <View style={styles.row}>
+                  <Text style={styles.itemEmail}>{company.email}</Text>
+                </View>
+
+                <View style={styles.row}>
+                  <Briefcase size={14} color={colors.dark.primary} />
+                  <Text style={styles.itemCompany}>{company.name}</Text>
+                </View>
+              </View>
+
+              <TouchableOpacity
+                style={styles.viewButton}
+                onPress={() => setIsModalVisible(true)}
+              >
+                <Eye size={16} color={colors.dark.primary} />
+                <Text style={styles.viewButtonText}>View</Text>
+              </TouchableOpacity>
+            </View>
+          )}
+          keyExtractor={(item) => item.id.toString()}
+          showsVerticalScrollIndicator={false}
+        />
+      </View>
+      <NewTopicModal
+        visible={isModalVisible}
+        onClose={handleCloseModal}
+        editTopic={editingTopic}
+      />
     </Layout>
   );
 }
 
 const styles = StyleSheet.create({
+  searchContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: colors.dark.cardBackground,
+    borderRadius: 12,
+    paddingHorizontal: 16,
+    paddingVertical: 4,
+    marginBottom: 16,
+    gap: 12,
+  },
+  searchInput: {
+    flex: 1,
+    fontSize: 16,
+    color: "#FFFFFF",
+  },
   headerCard: {
     borderRadius: 16,
     backgroundColor: colors.dark.cardBackground,
     padding: 12,
-    marginBottom: 12
+    marginBottom: 12,
   },
   headerCardTitle: {
     fontSize: 24,

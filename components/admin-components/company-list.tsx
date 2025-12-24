@@ -9,8 +9,7 @@ import {
     TextInput,
     View,
 } from "react-native";
-
-interface Company {
+export interface Company {
   id: number;
   name: string;
   status: "active" | "pending" | "inactive";
