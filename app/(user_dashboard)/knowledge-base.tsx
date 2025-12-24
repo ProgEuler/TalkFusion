@@ -2,36 +2,10 @@ import CompanyInfo from "@/components/company-info";
 import { Layout } from "@/components/layout/Layout";
 import OpeningHourList from "@/components/opening-hour-list";
 import Services from "@/components/servics";
+import ActivityLog from "@/components/user-components/activity-log";
 import colors from "@/constants/colors";
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
-
-interface ActivityItemProps {
-  title: string;
-  description: string;
-  date: string;
-  iconColor: string;
-}
-
-function ActivityItem({
-  title,
-  description,
-  date,
-  iconColor,
-}: ActivityItemProps) {
-  return (
-    <View style={styles.activityItem}>
-      <View style={[styles.activityDot, { backgroundColor: iconColor }]} />
-      <View style={styles.activityContent}>
-        <View style={styles.activityHeader}>
-          <Text style={styles.activityTitle}>{title}</Text>
-          <Text style={styles.activityDate}>{date}</Text>
-        </View>
-        <Text style={styles.activityDescription}>{description}</Text>
-      </View>
-    </View>
-  );
-}
 
 export default function KnowledgeBaseScreen() {
   return (
@@ -76,36 +50,8 @@ export default function KnowledgeBaseScreen() {
           <Services />
 
           <OpeningHourList />
-        </View>
-      </View>
 
-      <View>
-        <Text style={styles.sectionTitle}>Activity Log</Text>
-        <View style={styles.activityLog}>
-          <ActivityItem
-            title="Price list updated"
-            description="Haircut price changed from €12 to €15"
-            date="Today, 10:24 AM"
-            iconColor={colors.dark.primary}
-          />
-          <ActivityItem
-            title="New FAQ added"
-            description="'What payment methods do you accept?'"
-            date="Yesterday, 3:45 PM"
-            iconColor={colors.dark.success}
-          />
-          <ActivityItem
-            title="Working hours updated"
-            description="Extended Saturday hours"
-            date="Oct 27, 2023"
-            iconColor={colors.dark.primary}
-          />
-          <ActivityItem
-            title="Service removed"
-            description="'Beard trimming' service deleted"
-            date="Oct 18, 2023"
-            iconColor={colors.dark.danger}
-          />
+          <ActivityLog />
         </View>
       </View>
 
@@ -188,47 +134,5 @@ const styles = StyleSheet.create({
     fontWeight: "700" as const,
     color: colors.dark.text,
     marginBottom: 16,
-  },
-
-  activityLog: {
-    backgroundColor: colors.dark.cardBackground,
-    borderRadius: 12,
-    padding: 16,
-    borderWidth: 1,
-    borderColor: colors.dark.border,
-  },
-  activityItem: {
-    flexDirection: "row",
-    marginBottom: 16,
-  },
-  activityDot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    marginTop: 6,
-    marginRight: 12,
-  },
-  activityContent: {
-    flex: 1,
-  },
-  activityHeader: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: 4,
-  },
-  activityTitle: {
-    fontSize: 14,
-    fontWeight: "600" as const,
-    color: colors.dark.text,
-  },
-  activityDate: {
-    fontSize: 12,
-    color: colors.dark.textSecondary,
-  },
-  activityDescription: {
-    fontSize: 13,
-    color: colors.dark.textSecondary,
-    lineHeight: 18,
   },
 });

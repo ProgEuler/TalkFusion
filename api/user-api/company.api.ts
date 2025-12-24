@@ -37,7 +37,8 @@ export const companyApi = baseApi.injectEndpoints({
          method: 'POST',
          body: file
       })
-    })
+    }),
+    getActivity: builder.query({ query: () => "/log/" })
   }),
 });
 
@@ -48,5 +49,6 @@ export const {
   useGetServicesQuery,
   useGetOpeningHoursQuery,
   useAddServiceMutation,
-  useUploadAiFilesMutation
+  useUploadAiFilesMutation,
+  useGetActivityQuery
 } = companyApi;
