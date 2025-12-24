@@ -27,6 +27,15 @@ const INDUSTRIES = [
   'Other',
 ];
 
+const TONE_OPTIONS = [
+  'Formal',
+  'Standard',
+  'Friendly',
+  'Polite',
+  'Humorous',
+];
+
+
 export interface CompanyFormData {
   name: string;
   industry: string | null;
@@ -39,6 +48,7 @@ export interface CompanyFormData {
   country: string | null;
   training_files: string | null;
   website: string | null;
+  tone: string | null;
 }
 
 interface CompanyUpdateFormProps {
@@ -68,6 +78,7 @@ export default function CompanyUpdateForm({ defaultValues, onSuccess }: CompanyU
       country: defaultValues?.country || null,
       training_files: defaultValues?.training_files || null,
       website: defaultValues?.website || null,
+      tone: defaultValues?.tone || null,
     },
   });
 
@@ -85,6 +96,7 @@ export default function CompanyUpdateForm({ defaultValues, onSuccess }: CompanyU
         country: defaultValues.country || null,
         training_files: defaultValues.training_files || null,
         website: defaultValues.website || null,
+        tone: defaultValues.tone || null,
       });
     }
   }, [defaultValues, reset]);
@@ -162,6 +174,23 @@ export default function CompanyUpdateForm({ defaultValues, onSuccess }: CompanyU
           )}
         />
         {errors.description && <Text style={styles.errorText}>{errors.description.message}</Text>}
+      </View>
+
+      {/* Tone */}
+      <View style={styles.section}>
+        <Controller
+          control={control}
+          name="tone"
+          render={({ field: { onChange, value } }) => (
+            <RNPicker
+              items={TONE_OPTIONS.map(t => ({ value: t, label: t }))}
+              label="AI Tone"
+              value={value || ''}
+              onSelectItem={(item) => onChange(item)}
+              key={value}
+            />
+          )}
+        />
       </View>
 
       {/* Opening Hours */}
