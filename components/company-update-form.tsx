@@ -1,19 +1,19 @@
 import { useUpdateCompanyMutation } from '@/api/user-api/company.api';
 import colors from '@/constants/colors';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import {
-   ActivityIndicator,
-   StyleSheet,
-   Switch,
-   Text,
-   TextInput,
-   TouchableOpacity,
-   View,
+    ActivityIndicator,
+    StyleSheet,
+    Switch,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    View,
 } from 'react-native';
 import { Toast } from 'toastify-react-native';
-import { RNPicker } from './ui/picker';
 import OpeningHoursManager from './openning-hour';
+import { RNPicker } from './ui/picker';
 
 const INDUSTRIES = [
   'Technology',
@@ -54,6 +54,7 @@ export default function CompanyUpdateForm({ defaultValues, onSuccess }: CompanyU
     handleSubmit,
     formState: { errors },
     watch,
+    reset,
   } = useForm<CompanyFormData>({
     defaultValues: {
       name: defaultValues?.name || '',
@@ -69,6 +70,24 @@ export default function CompanyUpdateForm({ defaultValues, onSuccess }: CompanyU
       website: defaultValues?.website || null,
     },
   });
+
+  useEffect(() => {
+    if (defaultValues) {
+      reset({
+        name: defaultValues.name || '',
+        industry: defaultValues.industry || null,
+        description: defaultValues.description || '',
+        open: defaultValues.open || null,
+        close: defaultValues.close || null,
+        is_24_hours_open: defaultValues.is_24_hours_open || false,
+        address: defaultValues.address || null,
+        city: defaultValues.city || null,
+        country: defaultValues.country || null,
+        training_files: defaultValues.training_files || null,
+        website: defaultValues.website || null,
+      });
+    }
+  }, [defaultValues, reset]);
 
   const onSubmit = async (data: CompanyFormData) => {
     try {

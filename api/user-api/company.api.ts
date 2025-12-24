@@ -25,6 +25,10 @@ export const companyApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ["Company"],
     }),
+    getCompany: builder.query({
+      query: () => "/auth/company/",
+      providesTags: ["Company"],
+    }),
     getServices: builder.query({ query: () => "/auth/company/service/" }),
     getOpeningHours: builder.query({ query: () => "/opening-hours/" }),
     uploadAiFiles: builder.mutation({
@@ -39,6 +43,7 @@ export const companyApi = baseApi.injectEndpoints({
 
 export const {
   useUpdateCompanyMutation,
+  useGetCompanyQuery,
   useAddOpenningHourMutation,
   useGetServicesQuery,
   useGetOpeningHoursQuery,
