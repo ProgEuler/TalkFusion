@@ -38,6 +38,9 @@ export const companyApi = baseApi.injectEndpoints({
          body: file
       })
     }),
+    getUploadedFiles: builder.query({
+      query: () => "ai-training-files/"
+    }),
     getActivity: builder.query({ query: () => "/log/" })
   }),
 });
@@ -50,5 +53,6 @@ export const {
   useGetOpeningHoursQuery,
   useAddServiceMutation,
   useUploadAiFilesMutation,
+  useGetUploadedFilesQuery,
   useGetActivityQuery
 } = companyApi;

@@ -5,6 +5,7 @@ import { CloudUpload, Folder, X } from "lucide-react-native";
 import React, { useState } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { toast } from "sonner-native";
+import UploadedFiles from "./user-components/uploaded-files";
 
 export default function ImportAiFiles() {
   const [selectedFiles, setSelectedFiles] = useState<
@@ -63,7 +64,7 @@ export default function ImportAiFiles() {
     <View>
       <Text style={styles.sectionTitle}>Import files</Text>
       <Text style={styles.importExportDescription}>
-        Quickly add information in bulk.
+        Quickly add information in bulk or Export uploaded files.
       </Text>
       <View style={styles.buttonRow}>
         <Pressable style={styles.exportButton} onPress={browseFiles}>
@@ -112,6 +113,8 @@ export default function ImportAiFiles() {
           ))}
         </View>
       )}
+
+      <UploadedFiles />
     </View>
   );
 }

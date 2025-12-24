@@ -67,6 +67,7 @@ export default function Sessions() {
   const logoutOtherDevice = async (item: Session) => {
     try {
       await logoutOther({ id: item.session_id });
+      refetch();
       toast.success(`logged out from ${item.device}`);
     } catch (error) {
       // console.log(error)
@@ -86,7 +87,14 @@ export default function Sessions() {
 
   return (
     <View style={styles.card}>
-      <View style={{ flexDirection: "row", justifyContent: "space-between", marginBottom: 20, alignItems: "center" }}>
+      <View
+        style={{
+          flexDirection: "row",
+          justifyContent: "space-between",
+          marginBottom: 20,
+          alignItems: "center",
+        }}
+      >
         <Text style={{ color: "#fff", fontSize: 18 }}>Sessions</Text>
         <TouchableOpacity onPress={refetch}>
           <RefreshCw color={"#fff"} size={20} />
@@ -110,21 +118,22 @@ export default function Sessions() {
                     <Text style={styles.currentBadgeText}>Current Device</Text>
                   </View>
                 )}
-                {session_id !== item.session_id && (
-                  <Button
-                    onPress={() => logoutOtherDevice(item)}
-                    variant="destructive_outline"
-                    size="sm"
-                  >
-                    Logout
-                  </Button>
-                )}
               </View>
 
               <Text style={styles.sessionDetails}>
                 {item.ip} • {item.location || "Unknown location"} •{" "}
                 {timeAgo(item.last_active)}
               </Text>
+              {session_id !== item.session_id && (
+                <Button
+                  onPress={() => logoutOtherDevice(item)}
+                  variant="destructive_outline"
+                  size="sm"
+                  style={{ marginTop: 8, width: "20%"}}
+                >
+                  Logout
+                </Button>
+              )}
             </View>
             <View style={styles.divider} />
           </>
