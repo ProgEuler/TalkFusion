@@ -7,10 +7,17 @@ import colors from "@/constants/colors";
 import { selectSessionId } from "@/store/authSlice";
 import { timeAgo } from "@/utils/helpers";
 import { FlashList } from "@shopify/flash-list";
+import { RefreshCw } from "lucide-react-native";
 import React from "react";
-import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
+import {
+  ActivityIndicator,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { useSelector } from "react-redux";
-import { Toast } from "toastify-react-native";
+import { toast } from "sonner-native";
 import ErrorScreen from "./ErrorScreen";
 import { Button } from "./ui/Button";
 
@@ -60,25 +67,32 @@ export default function Sessions() {
   const logoutOtherDevice = async (item: Session) => {
     try {
       await logoutOther({ id: item.session_id });
-      Toast.success(`logged out from ${item.device}`);
+      toast.success(`logged out from ${item.device}`);
     } catch (error) {
       // console.log(error)
-      Toast.error(`Failed to logout from ${item.session_id}`);
+      toast.error(`Failed to logout from ${item.session_id}`);
     }
   };
 
   const logoutAll = async () => {
     try {
       await logOutAll("");
-      Toast.success("Logged out from all device");
+      toast.success("Logged out from all device");
     } catch (error) {
       // console.log(error)
-      Toast.error("Failed to logout from all device");
+      toast.error("Failed to logout from all device");
     }
   };
 
   return (
     <View style={styles.card}>
+      <View style={{ flexDirection: "row", justifyContent: "space-between", marginBottom: 20, alignItems: "center" }}>
+        <Text style={{ color: "#fff", fontSize: 18 }}>Sessions</Text>
+        <TouchableOpacity onPress={refetch}>
+          <RefreshCw color={"#fff"} size={20} />
+        </TouchableOpacity>
+      </View>
+
       <FlashList
         data={sessions}
         renderItem={({ item }: { item: Session }) => (

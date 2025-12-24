@@ -163,34 +163,42 @@ export default function IntegrationsScreen() {
       <View style={styles.grid}>
         {integrations.map((integration) => (
           <View key={integration.id} style={styles.card}>
-            <View style={styles.cardHeader}>
-              <View>{integration.icon}</View>
+            <View style={{ flexDirection: "row", gap: 16 }}>
+              <View style={styles.cardHeader}>
+                <View>{integration.icon}</View>
+              </View>
+              <View>
+                <Text style={styles.cardTitle}>{integration.name}</Text>
+                <Text style={styles.cardDescription}>
+                  {integration.description}
+                </Text>
+              </View>
             </View>
-            <View>
-              <Text style={styles.cardTitle}>{integration.name}</Text>
-              <Text style={styles.cardDescription}>
-                {integration.description}
-              </Text>
+
+            <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+              <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
+                <Text style={{ color: "#fff" }}>Bot status</Text>
+                <Switch
+                  value={integration.bot}
+                  onValueChange={() =>
+                    handleToggleBot(integration.id, integration.bot ?? false)
+                  }
+                  trackColor={{ false: "#374151", true: colors.dark.primary }}
+                  thumbColor="#FFFFFF"
+                  disabled={!integration.connected}
+                />
+              </View>
+              <Button
+                size="sm"
+                style={{ height: 36 }}
+                variant={integration.connected ? "destructive" : "primary"}
+                onPress={() => handleConnect(integration.id, integration.url)}
+                testID={`connect-${integration.id}`}
+                disabled={integration.connected}
+              >
+                {integration.connected ? "connected" : "Connect"}
+              </Button>
             </View>
-            <Switch
-              value={integration.bot}
-              onValueChange={() =>
-                handleToggleBot(integration.id, integration.bot ?? false)
-              }
-              trackColor={{ false: "#374151", true: colors.dark.primary }}
-              thumbColor="#FFFFFF"
-              disabled={!integration.connected}
-            />
-            <Button
-              size="sm"
-              style={{ height: 36 }}
-              variant={integration.connected ? "destructive" : "primary"}
-              onPress={() => handleConnect(integration.id, integration.url)}
-              testID={`connect-${integration.id}`}
-              disabled={integration.connected}
-            >
-              {integration.connected ? "connected" : "Connect"}
-            </Button>
           </View>
         ))}
       </View>
@@ -209,13 +217,14 @@ const styles = StyleSheet.create({
   card: {
     width: "100%",
     display: "flex",
-    flexDirection: "row" as const,
+    flexDirection: "column" as const,
     justifyContent: "space-between" as const,
     backgroundColor: colors.dark.cardBackground,
     borderRadius: 12,
-    padding: 18,
+    padding: 14,
     borderWidth: 1,
     borderColor: "rgba(255, 255, 255, 0.05)",
+    gap: 12
   },
   cardHeader: {
     flexDirection: "row" as const,
