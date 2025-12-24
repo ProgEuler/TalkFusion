@@ -1,4 +1,6 @@
 import {
+  useBotActiveQuery,
+  useDisConnectMutation,
   useGetFbUrlQuery,
   useGetIgUrlQuery,
 } from "@/api/user-api/integrations.api";
@@ -12,9 +14,17 @@ import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
 import colors from "@/constants/colors";
 import { selectChannelStatus } from "@/store/channelSlice";
 import { Calendar } from "lucide-react-native";
-import { Linking, RefreshControl, StyleSheet, Text, View } from "react-native";
+import { useEffect, useState } from "react";
+import {
+  Linking,
+  RefreshControl,
+  StyleSheet,
+  Switch,
+  Text,
+  View,
+} from "react-native";
 import { useSelector } from "react-redux";
-import { Toast } from "toastify-react-native";
+import { toast } from "sonner-native";
 interface Integration {
   id: string;
   name: string;
@@ -22,6 +32,7 @@ interface Integration {
   icon: React.ReactNode;
   connected: boolean;
   url: string;
+  bot?: boolean;
 }
 
 export default function IntegrationsScreen() {
@@ -31,7 +42,7 @@ export default function IntegrationsScreen() {
     isLoading: fbUrlLoading,
     error: fbError,
     refetch: refetchFb,
-    isFetching
+    isFetching,
   } = useGetFbUrlQuery(undefined);
   const {
     data: igUrl,
@@ -39,6 +50,22 @@ export default function IntegrationsScreen() {
     error: igError,
     refetch: refetchIg,
   } = useGetIgUrlQuery(undefined);
+
+  const { data: fbBot } = useBotActiveQuery({ platform: "facebook" });
+  const { data: wpBot } = useBotActiveQuery({ platform: "whatsapp" });
+
+  const [botStatus, setBotStatus] = useState<Record<string, boolean>>({});
+
+  useEffect(() => {
+    if (fbBot || wpBot) {
+      setBotStatus({
+        facebook: fbBot?.bot_active ?? false,
+        whatsapp: wpBot?.bot_active ?? false,
+      });
+    }
+  }, [fbBot, wpBot]);
+
+  const [disconnectBot, { isLoading }] = useDisConnectMutation();
 
   if (fbUrlLoading || igUrlLoading) return <LoadingSpinner />;
   if (fbError || igError)
@@ -50,7 +77,7 @@ export default function IntegrationsScreen() {
         }}
       />
     );
-console.log(fbUrl)
+
   const integrations: Integration[] = [
     {
       id: "facebook",
@@ -59,6 +86,7 @@ console.log(fbUrl)
       icon: <Fb color={colors.dark.primary} />,
       connected: channel.facebook,
       url: fbUrl.redirect_url,
+      bot: botStatus.facebook,
     },
     {
       id: "whatsapp",
@@ -67,6 +95,7 @@ console.log(fbUrl)
       icon: <Wp color={colors.dark.primary} />,
       connected: channel.whatsapp,
       url: fbUrl.redirect_url,
+      bot: botStatus.whatsapp,
     },
     {
       id: "instagram",
@@ -75,6 +104,7 @@ console.log(fbUrl)
       icon: <Ig color={colors.dark.primary} />,
       connected: channel.instagram,
       url: igUrl.redirect_url,
+      bot: false,
     },
     {
       id: "calendar",
@@ -90,15 +120,33 @@ console.log(fbUrl)
     integrationId: string,
     integrationUrl: string
   ) => {
-    //  console.log("Connecting to:", integrationId);
-
     try {
       await Linking.openURL(integrationUrl);
-      Toast.success(`${integrationId} connected successfully!`);
+      toast.success(`${integrationId} connected successfully!`);
     } catch (error) {
-      Toast.error(`Failed to connect ${integrationId}.`);
-      // console.log("Error connecting to Google Calendar:", error);
+      toast.error(`Failed to connect ${integrationId}.`);
       return;
+    }
+  };
+
+  const handleToggleBot = async (
+    integrationId: string,
+    currentStatus: boolean
+  ) => {
+    try {
+      await disconnectBot({
+        platform: integrationId,
+        bot_active: !currentStatus,
+      }).unwrap();
+      setBotStatus((prev) => ({
+        ...prev,
+        [integrationId]: !currentStatus,
+      }));
+      toast.success(
+        `Bot ${!currentStatus ? "activated" : "deactivated"} for ${integrationId}`
+      );
+    } catch (error) {
+      toast.error(`Failed to update bot status for ${integrationId}`);
     }
   };
 
@@ -124,6 +172,15 @@ console.log(fbUrl)
                 {integration.description}
               </Text>
             </View>
+            <Switch
+              value={integration.bot}
+              onValueChange={() =>
+                handleToggleBot(integration.id, integration.bot ?? false)
+              }
+              trackColor={{ false: "#374151", true: colors.dark.primary }}
+              thumbColor="#FFFFFF"
+              disabled={!integration.connected}
+            />
             <Button
               size="sm"
               style={{ height: 36 }}
