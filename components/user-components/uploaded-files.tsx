@@ -9,7 +9,7 @@ import { toast } from "sonner-native";
 const API_URL = process.env.EXPO_PUBLIC_API_MEDIA_URL;
 
 export default function UploadedFiles() {
-  const { data } = useGetUploadedFilesQuery(undefined);
+  const { data, refetch } = useGetUploadedFilesQuery(undefined);
 
   const getFileName = (filePath: string) => {
     return filePath.split("/").pop() || "Unknown File";

@@ -36,10 +36,12 @@ export const companyApi = baseApi.injectEndpoints({
          url: "/ai-training-files/",
          method: 'POST',
          body: file
-      })
+      }),
+      invalidatesTags: ["UploadedFiles"],
     }),
     getUploadedFiles: builder.query({
-      query: () => "ai-training-files/"
+      query: () => "ai-training-files/",
+      providesTags: ["UploadedFiles"],
     }),
     getActivity: builder.query({ query: () => "/log/" })
   }),
