@@ -1,18 +1,18 @@
+import { useGetMeQuery } from "@/api/admin-api/users.api";
 import { Layout } from "@/components/layout/Layout";
 import Sessions from "@/components/sesstions";
 import { Button } from "@/components/ui/Button";
 import { ModalView } from "@/components/ui/modal-view";
 import colors from "@/constants/colors";
-import { selectCurrentUser } from "@/store/authSlice";
 import { Trash2, TriangleAlert } from "lucide-react-native";
 import React, { useState } from "react";
 import { Image, Modal, StyleSheet, Switch, Text, View } from "react-native";
-import { useSelector } from "react-redux";
 
 export default function Settings() {
   const [twoFactorEnabled, setTwoFactorEnabled] = useState(true);
   const [deleteAcc, setDeleteAcc] = useState(false);
-  const user = useSelector(selectCurrentUser);
+
+  const {data: user, isLoading} = useGetMeQuery(undefined)
 
   return (
     <Layout>
@@ -39,7 +39,6 @@ export default function Settings() {
       </Modal>
 
       {/* Profile Section */}
-      {user && (
         <View style={styles.profileCard}>
           <View style={styles.profileAvatar}>
             {user.image ? (
@@ -66,7 +65,6 @@ export default function Settings() {
             <Text style={styles.profileEmail}>{user.email}</Text>
           </View>
         </View>
-      )}
 
       {/* Security Section */}
       <Text style={styles.sectionTitle}>Security</Text>

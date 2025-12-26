@@ -3,7 +3,7 @@ import {
   useDisableAllMutation,
   useEnableAllMutation,
 } from "@/api/admin-api/integration-api.api";
-import NewTopicModal from "@/components/admin-components/approve-reject-modal";
+import ChannelApproveReject from "@/components/admin-components/approve-reject-modal";
 import { Company } from "@/components/admin-components/company-list";
 import ErrorScreen from "@/components/ErrorScreen";
 import { Layout } from "@/components/layout/Layout";
@@ -23,46 +23,14 @@ import {
 } from "react-native";
 import { toast } from "sonner-native";
 
-interface IntegrationItem {
-  id: string;
-  name: string;
-  email: string;
-  company: string;
-}
-
-const integrationsData: IntegrationItem[] = [
-  {
-    id: "1",
-    name: "Jane Cooper",
-    email: "felicia.reid@example.com",
-    company: "Louis Vuitton",
-  },
-  {
-    id: "2",
-    name: "Jane Cooper",
-    email: "felicia.reid@example.com",
-    company: "Louis Vuitton",
-  },
-  {
-    id: "3",
-    name: "Jane Cooper",
-    email: "felicia.reid@example.com",
-    company: "Louis Vuitton",
-  },
-  {
-    id: "4",
-    name: "Jane Cooper",
-    email: "felicia.reid@example.com",
-    company: "Louis Vuitton",
-  },
-];
-
 export default function IntegrationsPage() {
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const [page, setPage] = useState(1);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [editingTopic, setEditingTopic] = useState(null);
+
+  const [companyId, setCompanyId] = useState<number>()
 
   const handleEditTopic = (topic) => {
     setEditingTopic(topic);
@@ -233,7 +201,10 @@ export default function IntegrationsPage() {
 
               <TouchableOpacity
                 style={styles.viewButton}
-                onPress={() => setIsModalVisible(true)}
+                onPress={() => {
+                  setIsModalVisible(true)
+                  setCompanyId(company.id)
+                }}
               >
                 <Eye size={16} color={colors.dark.primary} />
                 <Text style={styles.viewButtonText}>View</Text>
@@ -244,10 +215,10 @@ export default function IntegrationsPage() {
           showsVerticalScrollIndicator={false}
         />
       </View>
-      <NewTopicModal
+      <ChannelApproveReject
         visible={isModalVisible}
         onClose={handleCloseModal}
-        editTopic={editingTopic}
+        companyId={companyId}
       />
     </Layout>
   );

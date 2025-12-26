@@ -185,7 +185,7 @@ export default function IntegrationsScreen() {
                   }
                   trackColor={{ false: "#374151", true: colors.dark.primary }}
                   thumbColor="#FFFFFF"
-                  disabled={!integration.connected}
+                  // disabled={!integration.connected}
                 />
               </View>
               <Button
@@ -194,7 +194,7 @@ export default function IntegrationsScreen() {
                 variant={integration.connected ? "destructive" : "primary"}
                 onPress={() => handleConnect(integration.id, integration.url)}
                 testID={`connect-${integration.id}`}
-                disabled={integration.connected}
+               //  disabled={integration.connected}
               >
                 {integration.connected ? "connected" : "Connect"}
               </Button>

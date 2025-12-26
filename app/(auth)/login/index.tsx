@@ -20,7 +20,6 @@ import {
 } from "react-native";
 import { useDispatch } from "react-redux";
 import { toast } from "sonner-native";
-import { Toast } from "toastify-react-native";
 
 GoogleSignin.configure({
   scopes: [],

@@ -48,12 +48,11 @@ export default function ErrorScreen({
             {/* Actions */}
             <View style={styles.actions}>
               <Button
-                style={styles.retryButton}
                 activeOpacity={0.8}
                 onPress={onRetry}
               >
-                <RefreshCw size={20} color="#FFFFFF" />
-                <Text style={styles.retryButtonText}>Retry Connection</Text>
+                <RefreshCw size={14} color="#FFFFFF" />
+                Retry Connection
               </Button>
 
               {onOfflineMode && (
@@ -147,25 +146,6 @@ const styles = StyleSheet.create({
   actions: {
     width: "100%",
     gap: 16,
-  },
-  retryButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: colors.dark.primary,
-    paddingVertical: 14,
-    borderRadius: 12,
-    gap: 8,
-    shadowColor: colors.dark.primary,
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.2,
-    shadowRadius: 8,
-    elevation: 4,
-  },
-  retryButtonText: {
-    color: "#FFFFFF",
-    fontWeight: "600",
-    fontSize: 15,
   },
   offlineButton: {
     alignItems: "center",

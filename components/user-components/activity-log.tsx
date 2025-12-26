@@ -2,7 +2,7 @@ import { useGetActivityQuery } from "@/api/user-api/company.api";
 import colors from "@/constants/colors";
 import { timeAgo } from "@/utils/helpers";
 import { FlashList } from "@shopify/flash-list";
-import { Info } from "lucide-react-native";
+import { Info, RefreshCcw } from "lucide-react-native";
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { LoadingSpinner } from "../ui/LoadingSpinner";
@@ -31,13 +31,17 @@ function ActivityItem({ title, description, timestamp }: ActivityItemProps) {
 }
 
 export default function ActivityLog() {
-  const { data, isLoading } = useGetActivityQuery(undefined);
+  const { data, isLoading, refetch } = useGetActivityQuery(undefined);
+  console.table(data)
 
   if(isLoading) return <LoadingSpinner />
-  
+
   return (
     <View>
+      <View style={{ flexDirection: "row", gap: 12 }}>
       <Text style={styles.sectionTitle}>Activity Log</Text>
+      <RefreshCcw color={"#fff"} onPress={refetch} />
+      </View>
       <View style={styles.activityLog}>
         <FlashList
           data={data}
