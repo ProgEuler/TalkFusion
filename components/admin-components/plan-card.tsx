@@ -37,7 +37,10 @@ export default function PlanCard({
         ))}
       </View>
       <View style={styles.planActions}>
-        <Pressable style={styles.editPlanButton}>
+        <Pressable
+          style={styles.editPlanButton}
+          onPress={() => onEdit(plan)}
+        >
           <Edit2 size={16} color="white" />
           <Text style={styles.buttonText}>Edit Plan</Text>
         </Pressable>
