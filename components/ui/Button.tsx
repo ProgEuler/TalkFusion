@@ -82,7 +82,7 @@ const variantStyles: Record<Variant, ViewStyle> = {
     borderWidth: 1,
     borderColor: COLORS.red,
     borderRadius: 12,
-    paddingHorizontal: 6,
+    paddingHorizontal: 12,
     paddingVertical: 4,
   },
   big: {

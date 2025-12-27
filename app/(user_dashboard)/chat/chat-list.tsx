@@ -14,7 +14,7 @@ interface ChatListProps {
 }
 
 export default function ChatList({ rooms }: ChatListProps) {
-  const router = useRouter();
+const router = useRouter();
 
   const handleChatSelect = (roomId: string, channel: string, clientId: string) => {
     router.push({
