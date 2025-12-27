@@ -86,6 +86,15 @@ export default function DashboardLayout() {
             />
 
             <Drawer.Screen
+                name="subscription"
+                options={{
+                    drawerLabel: "Subscription",
+                    title: "Subscription",
+                    drawerIcon: ({ color, size }) => <Grid color={color} size={size} />,
+                }}
+            />
+
+            <Drawer.Screen
                 name="integrations"
                 options={{
                     drawerLabel: "Integrations",
