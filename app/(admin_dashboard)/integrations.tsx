@@ -218,7 +218,7 @@ export default function IntegrationsPage() {
       <ChannelApproveReject
         visible={isModalVisible}
         onClose={handleCloseModal}
-        companyId={companyId}
+        company_id={companyId}
       />
     </Layout>
   );

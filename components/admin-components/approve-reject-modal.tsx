@@ -1,77 +1,55 @@
-import { useCreateTopicMutation, useUpdateTopicMutation } from '@/api/user-api/topoics.api';
-import { TopicItem } from '@/app/(user_dashboard)/business-topics';
-import colors from '@/constants/colors';
-import React, { useEffect, useState } from 'react';
 import {
-    KeyboardAvoidingView,
-    Modal,
-    Platform,
-    Pressable,
-    ScrollView,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
-} from 'react-native';
-import { toast } from 'sonner-native';
-import { Button } from '../ui/Button';
+   useApproveChannelMutation,
+   useGetCompanyUserChannelListQuery,
+   useRejectChannelMutation,
+} from "@/api/admin-api/company.api";
+import colors from "@/constants/colors";
+import { FlashList } from "@shopify/flash-list";
+import React from "react";
+import {
+   ActivityIndicator,
+   KeyboardAvoidingView,
+   Modal,
+   Platform,
+   Pressable,
+   StyleSheet,
+   Text,
+   TouchableOpacity,
+   View,
+} from "react-native";
+import { toast } from "sonner-native";
+import { Button } from "../ui/Button";
 
-interface NewTopicModalProps {
+interface ChannelApproveRejectProps {
   visible: boolean;
   onClose: () => void;
-  editTopic?: TopicItem | null;
+  company_id: number;
 }
 
-const NewTopicModal = ({ visible, onClose, editTopic }: NewTopicModalProps) => {
-  const [title, setTitle] = useState('');
-  const [content, setContent] = useState('');
-  const [createTopic, { isLoading: isCreating }] = useCreateTopicMutation();
-  const [updateTopic, { isLoading: isUpdating }] = useUpdateTopicMutation();
+const ChannelApproveReject = ({
+  visible,
+  onClose,
+  company_id,
+}: ChannelApproveRejectProps) => {
+  const { data, isLoading, isError, refetch } =
+    useGetCompanyUserChannelListQuery(company_id, {
+      skip: !company_id,
+    });
 
-  const isEditMode = !!editTopic;
-  const isLoading = isCreating || isUpdating;
+  const [approve, { isLoading: approving }] = useApproveChannelMutation();
+  const [reject, { isLoading: rejecting }] = useRejectChannelMutation();
 
-  useEffect(() => {
-    if (editTopic) {
-      setTitle(editTopic.name);
-      setContent(editTopic.details);
-    } else {
-      setTitle('');
-      setContent('');
-    }
-  }, [editTopic, visible]);
-
-  const handleAddTopic = async () => {
-    if (!title.trim()) {
-      toast.error('Please enter a topic title');
-      return;
-    }
-    if (!content.trim()) {
-      toast.error('Please enter knowledge content');
-      return;
-    }
-
-    const payload = {
-      name: title,
-      details: content,
-      ...(isEditMode && { id: editTopic.id }),
-    };
-
+  const handleAction = async (type: "approve" | "reject", id: number) => {
     try {
-      if (isEditMode) {
-        await updateTopic(payload).unwrap();
-        toast.success('Topic updated')
+      if (type === "approve") {
+        await approve({ chat_profile_id: id }).unwrap();
+        toast.success("Channel Approved");
       } else {
-        await createTopic(payload).unwrap();
-        toast.success('Topic added successfully');
+        await reject({ chat_profile_id: id }).unwrap();
+        toast.success("Channel Rejected");
       }
-      setTitle('');
-      setContent('');
-      onClose();
-    } catch (error) {
-      // console.log(`Error ${isEditMode ? 'updating' : 'creating'} topic:`, error);
-      toast.error(`Failed to ${isEditMode ? 'update' : 'add'} topic`);
+    } catch (error: any) {
+      toast.error(error?.data?.detail || `Failed to ${type} channel`);
     }
   };
 
@@ -79,7 +57,7 @@ const NewTopicModal = ({ visible, onClose, editTopic }: NewTopicModalProps) => {
     <Modal visible={visible} transparent animationType="slide">
       <Pressable style={styles.modalContainer} onPress={onClose}>
         <KeyboardAvoidingView
-          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
           style={styles.keyboardView}
         >
           <View style={styles.modalContent}>
@@ -91,57 +69,105 @@ const NewTopicModal = ({ visible, onClose, editTopic }: NewTopicModalProps) => {
               <TouchableOpacity onPress={onClose}>
                 <Text style={styles.cancelText}>Cancel</Text>
               </TouchableOpacity>
-              <Text style={styles.title}>{isEditMode ? 'Edit Topic' : 'New Topic'}</Text>
+              <Text style={styles.title}>Channel Status</Text>
               <View style={{ width: 60 }} />
             </View>
 
-            <ScrollView
-              style={styles.scrollView}
-              contentContainerStyle={styles.scrollContent}
-              keyboardShouldPersistTaps="handled"
-              showsVerticalScrollIndicator={false}
-            >
-              {/* Topic Title Input */}
-              <View style={styles.inputSection}>
-                <Text style={styles.label}>Topic Title</Text>
-                <View style={styles.inputContainer}>
-                  <TextInput
-                    style={styles.input}
-                    placeholder="e.g., Refund Guidelines"
-                    placeholderTextColor="rgba(255, 255, 255, 0.4)"
-                    value={title}
-                    onChangeText={setTitle}
+            <View style={styles.contentContainer}>
+              {isLoading ? (
+                <View style={styles.centerContainer}>
+                  <ActivityIndicator color={colors.dark.primary} />
+                  <Text style={styles.loadingText}>Loading channels...</Text>
+                </View>
+              ) : isError ? (
+                <View style={styles.centerContainer}>
+                  <Text
+                    style={[styles.noDataText, { color: colors.dark.danger }]}
+                  >
+                    Failed to load channels
+                  </Text>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onPress={() => refetch()}
+                    style={{ marginTop: 12 }}
+                  >
+                    Retry
+                  </Button>
+                </View>
+              ) : (
+                <View style={{ height: 400, width: "100%" }}>
+                  <FlashList
+                    data={data?.channels || []}
+                    keyExtractor={(item: any) => item.id.toString()}
+                    renderItem={({ item: channel }: { item: any }) => (
+                      <View style={styles.channelItem}>
+                        <View style={styles.channelInfo}>
+                          <Text style={styles.platformText}>
+                            {channel.platform.toUpperCase()}
+                          </Text>
+                          <Text style={styles.profileIdText}>
+                            ID: {channel.profile_id}
+                          </Text>
+                          <View
+                            style={[
+                              styles.statusBadge,
+                              {
+                                backgroundColor: channel.is_approved
+                                  ? "rgba(34, 197, 94, 0.2)"
+                                  : "rgba(239, 68, 68, 0.2)",
+                              },
+                            ]}
+                          >
+                            <Text
+                              style={[
+                                styles.statusText,
+                                {
+                                  color: channel.is_approved
+                                    ? "#22c55e"
+                                    : "#ef4444",
+                                },
+                              ]}
+                            >
+                              {channel.is_approved
+                                ? "Approved"
+                                : "Pending/Rejected"}
+                            </Text>
+                          </View>
+                        </View>
+
+                        <View style={styles.actions}>
+                          <Button
+                            size="sm"
+                            onPress={() => handleAction("approve", channel.id)}
+                            isLoading={approving}
+                            disabled={channel.is_approved}
+                            style={styles.actionButton}
+                          >
+                            {channel.is_approved ? "Approved" : "Approve"}
+                          </Button>
+                          {!channel.is_approved && (
+                            <Button
+                              size="sm"
+                              variant="destructive_outline"
+                              onPress={() => handleAction("reject", channel.id)}
+                              isLoading={rejecting}
+                              style={styles.actionButton}
+                            >
+                              Reject
+                            </Button>
+                          )}
+                        </View>
+                      </View>
+                    )}
+                    ListEmptyComponent={
+                      <View style={styles.centerContainer}>
+                        <Text style={styles.noDataText}>No channels found</Text>
+                      </View>
+                    }
                   />
                 </View>
-              </View>
-
-              {/* Knowledge Content Input */}
-              <View style={styles.inputSection}>
-                <View style={styles.labelRow}>
-                  <Text style={styles.label}>Knowledge Content</Text>
-                </View>
-                <TextInput
-                  style={styles.textArea}
-                  placeholder="Paste text, guidelines, or write detailed instructions for the AI assistant here..."
-                  placeholderTextColor="rgba(255, 255, 255, 0.4)"
-                  value={content}
-                  onChangeText={setContent}
-                  multiline
-                  numberOfLines={8}
-                  textAlignVertical="top"
-                />
-              </View>
-            </ScrollView>
-
-            {/* Add Topic Button - Sticky Footer */}
-            <View style={styles.buttonContainer}>
-              <Button
-                onPress={handleAddTopic}
-                isLoading={isLoading}
-                style={styles.addButton}
-              >
-                {isLoading ? (isEditMode ? 'Updating...' : 'Adding...') : (isEditMode ? 'Update Topic' : 'Add Topic')}
-              </Button>
+              )}
             </View>
           </View>
         </KeyboardAvoidingView>
@@ -153,100 +179,105 @@ const NewTopicModal = ({ visible, onClose, editTopic }: NewTopicModalProps) => {
 const styles = StyleSheet.create({
   modalContainer: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-   //  justifyContent: 'flex-end',
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    justifyContent: "flex-end",
   },
   keyboardView: {
-    width: '100%',
+    width: "100%",
   },
   modalContent: {
     backgroundColor: colors.dark.background,
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
-    minHeight: '54%',
-  },
-  scrollView: {
-    flex: 1,
-  },
-  scrollContent: {
-    paddingBottom: 30,
+    maxHeight: "40%",
+    paddingBottom: 40,
   },
   handleBar: {
     width: 40,
     height: 4,
-    backgroundColor: 'rgba(255, 255, 255, 0.3)',
+    backgroundColor: "rgba(255, 255, 255, 0.3)",
     borderRadius: 2,
-    alignSelf: 'center',
+    alignSelf: "center",
     marginTop: 8,
     marginBottom: 8,
   },
   header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     paddingHorizontal: 20,
     paddingVertical: 16,
     borderBottomWidth: 1,
-    borderBottomColor: 'rgba(255, 255, 255, 0.1)',
+    borderBottomColor: "rgba(255, 255, 255, 0.1)",
   },
   cancelText: {
     fontSize: 16,
     color: colors.dark.primary,
-    fontWeight: '400',
+    fontWeight: "400",
   },
   title: {
     fontSize: 18,
-    fontWeight: '600',
-    color: '#FFFFFF',
+    fontWeight: "600",
+    color: "#FFFFFF",
   },
-  inputSection: {
-    paddingHorizontal: 20,
-    marginTop: 24,
+  contentContainer: {
+    padding: 20,
   },
-  label: {
+  centerContainer: {
+    alignItems: "center",
+    justifyContent: "center",
+    padding: 40,
+  },
+  loadingText: {
+    marginTop: 12,
+    color: colors.dark.textSecondary,
     fontSize: 14,
-    fontWeight: '600',
-    color: '#FFFFFF',
-    marginBottom: 12,
   },
-  labelRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 12,
-  },
-  inputContainer: {
-    backgroundColor: colors.dark.cardBackground,
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.1)',
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 16,
-  },
-  input: {
-    flex: 1,
-    color: '#FFFFFF',
+  noDataText: {
+    color: colors.dark.textSecondary,
     fontSize: 16,
-    paddingVertical: 14,
   },
-  textArea: {
+  channelItem: {
     backgroundColor: colors.dark.cardBackground,
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.1)',
-    color: '#FFFFFF',
-    fontSize: 15,
+   //  borderRadius: 12,
     padding: 16,
-    minHeight: 120,
+    marginBottom: 12,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
   },
-  buttonContainer: {
-    paddingHorizontal: 20,
-    paddingBottom: 20,
+  channelInfo: {
+    flex: 1,
+    gap: 4,
   },
-  addButton: {
-    width: '100%',
+  platformText: {
+    fontSize: 16,
+    fontWeight: "700",
+    color: colors.dark.text,
+  },
+  profileIdText: {
+    fontSize: 12,
+    color: colors.dark.textSecondary,
+  },
+  statusBadge: {
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    borderRadius: 4,
+    alignSelf: "flex-start",
+    marginTop: 4,
+  },
+  statusText: {
+    fontSize: 10,
+    fontWeight: "600",
+    textTransform: "uppercase",
+  },
+  actions: {
+    flexDirection: "row",
+    gap: 8,
+  },
+  actionButton: {
+    minWidth: 80,
   },
 });
 
-export default NewTopicModal;
+export default ChannelApproveReject;

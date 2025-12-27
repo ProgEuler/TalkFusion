@@ -14,8 +14,8 @@ export const companiesApi = baseApi.injectEndpoints({
         const params: Record<string, any> = { page };
 
         if (search) params.search = search;
-        if (role && role !== 'all') params.role = role;
-        if (is_active !== undefined && is_active !== 'all') {
+        if (role && role !== "all") params.role = role;
+        if (is_active !== undefined && is_active !== "all") {
           params.is_active = is_active;
         }
 
@@ -40,7 +40,29 @@ export const companiesApi = baseApi.injectEndpoints({
         return currentArg !== previousArg;
       },
     }),
+    getCompanyUserChannelList: builder.query({
+      query: (id) => `admin/user-channels/${id}/`,
+    }),
+    approveChannel: builder.mutation({
+      query: (body) => ({
+        url: "/admin/approve-channel/",
+        method: "POST",
+        body,
+      }),
+    }),
+    rejectChannel: builder.mutation({
+      query: (body) => ({
+        url: "/admin/reject-channel/",
+        method: "POST",
+        body,
+      }),
+    }),
   }),
 });
 
-export const { useGetCompaniesQuery } = companiesApi;
+export const {
+  useGetCompaniesQuery,
+  useGetCompanyUserChannelListQuery,
+  useApproveChannelMutation,
+  useRejectChannelMutation,
+} = companiesApi;
