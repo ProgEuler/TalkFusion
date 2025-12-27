@@ -36,6 +36,7 @@ export default function Sessions() {
     isLoading,
     isError,
     refetch,
+    isFetching,
   } = useGetSessionsQuery(undefined);
   const session_id = useSelector(selectSessionId);
   const [logoutOther, { isLoading: logginOutOther }] =
@@ -92,12 +93,16 @@ export default function Sessions() {
           flexDirection: "row",
           justifyContent: "space-between",
           marginBottom: 20,
-          alignItems: "center",
         }}
       >
         <Text style={{ color: "#fff", fontSize: 18 }}>Sessions</Text>
         <TouchableOpacity onPress={refetch}>
-          <RefreshCw color={"#fff"} size={20} />
+          {!isFetching && <RefreshCw color={"#fff"} size={20} />}
+
+          <ActivityIndicator
+            color={colors.dark.primary}
+            animating={isFetching}
+          />
         </TouchableOpacity>
       </View>
 
@@ -129,7 +134,7 @@ export default function Sessions() {
                   onPress={() => logoutOtherDevice(item)}
                   variant="destructive_outline"
                   size="sm"
-                  style={{ marginTop: 8, width: "20%"}}
+                  style={{ marginTop: 8, width: "30%" }}
                 >
                   Logout
                 </Button>

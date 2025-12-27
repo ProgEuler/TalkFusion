@@ -160,18 +160,18 @@ const adminMenuItems: MenuItem[] = [
     icon: FileText,
     route: "/(admin_dashboard)/overview",
   },
-  {
-    id: "payment",
-    label: "Payment & Report",
-    icon: Wallet,
-    route: "/(admin_dashboard)/payment",
-  },
 //   {
-//     id: "settings",
-//     label: "Settings",
-//     icon: Settings,
-//     route: "/(user_dashboard)/settings",
+//     id: "payment",
+//     label: "Payment & Report",
+//     icon: Wallet,
+//     route: "/(admin_dashboard)/payment",
 //   },
+  {
+    id: "settings",
+    label: "Settings",
+    icon: Settings,
+    route: "/(admin_dashboard)/settings",
+  },
 ];
 
 export default function CustomDrawerContent(props: any) {

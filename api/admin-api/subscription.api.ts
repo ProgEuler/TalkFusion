@@ -24,8 +24,19 @@ export const subscriptionApi = baseApi.injectEndpoints({
         body,
       }),
     }),
+
+    createCustomeSubscription: builder.mutation({
+      query: (body) => ({
+        url: "/admin/create-custom-plan/",
+        method: "POST",
+        body,
+      }),
+    }),
   }),
 });
 
-
-export const { useGetSubscriptionsQuery, useUpdateSubscriptionsMutation } = subscriptionApi;
+export const {
+  useGetSubscriptionsQuery,
+  useUpdateSubscriptionsMutation,
+  useCreateCustomeSubscriptionMutation,
+} = subscriptionApi;
