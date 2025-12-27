@@ -24,7 +24,14 @@ export const teamMemberApi = baseApi.injectEndpoints({
     getTeamMember: builder.query<TeamMemberResponse, void>({
       query: () => "/admin/team-members/",
     }),
+    addTeamMember: builder.mutation({
+      query: (body) => ({
+         url: "/admin/create-admin/",
+         method: 'POST',
+         body
+      })
+    })
   }),
 });
 
-export const { useGetTeamMemberQuery } = teamMemberApi;
+export const { useGetTeamMemberQuery, useAddTeamMemberMutation } = teamMemberApi;

@@ -18,7 +18,9 @@ export default function MemberCard({ item: member }: { item: TeamMember }) {
           <View>
             <View style={styles.nameRow}>
               <Text style={styles.name}>{member.name}</Text>
+              <View style={{ width: 220 }}>
               <Text style={styles.name}>{member.email}</Text>
+              </View>
               <View style={styles.statusBadge}>
                 <Text style={styles.statusText}>
                   {member.is_active ? "Active" : "Inactive"}
@@ -33,7 +35,6 @@ export default function MemberCard({ item: member }: { item: TeamMember }) {
             <Text style={styles.role}>{member.role}</Text>
           </View>
         </View>
-        <Text style={styles.activityLabel}>Activity</Text>
       </View>
 
       <View style={styles.activityList}>
@@ -88,7 +89,7 @@ const styles = StyleSheet.create({
   },
   userInfo: {
     flexDirection: "row",
-    gap: 12,
+    gap: 4,
     alignItems: "center",
   },
   avatar: {

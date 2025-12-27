@@ -2,6 +2,7 @@ import colors from "@/constants/colors";
 import { hydrate } from "@/store/authSlice";
 import { store } from "@/store/store";
 import { getAuthData } from "@/utils/storage";
+import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
@@ -87,28 +88,30 @@ export default function RootLayout() {
     <Provider store={store}>
       <QueryClientProvider client={queryClient}>
         <KeyboardProvider>
-          <GestureHandlerRootView>
-            <StatusBar
-              animated
-              backgroundColor={colors.dark.background}
-              barStyle="light-content"
-            />
-            <RootLayoutNav />
-            <Toaster
-               position="bottom-center"
-               swipeToDismissDirection="left"
-               richColors
-               toastOptions={{
-                  style: {
-                     borderWidth: 0,
-                   },
-                   success: { backgroundColor: colors.dark.primary },
-                   warning: { backgroundColor: colors.dark.warning },
-                   error: { backgroundColor: colors.dark.danger },
-                   titleStyle: { color: "#fff" }
-               }}
-            />
-            <ToastManager config={toastConfig} position="bottom" />
+          <GestureHandlerRootView style={{ flex: 1 }}>
+            <BottomSheetModalProvider>
+              <StatusBar
+                animated
+                backgroundColor={colors.dark.background}
+                barStyle="light-content"
+              />
+              <RootLayoutNav />
+              <Toaster
+                 position="bottom-center"
+                 swipeToDismissDirection="left"
+                 richColors
+                 toastOptions={{
+                    style: {
+                       borderWidth: 0,
+                     },
+                     success: { backgroundColor: colors.dark.primary },
+                     warning: { backgroundColor: colors.dark.warning },
+                     error: { backgroundColor: colors.dark.danger },
+                     titleStyle: { color: "#fff" }
+                 }}
+              />
+              <ToastManager config={toastConfig} position="bottom" />
+            </BottomSheetModalProvider>
           </GestureHandlerRootView>
         </KeyboardProvider>
       </QueryClientProvider>
