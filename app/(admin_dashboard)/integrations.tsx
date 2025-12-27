@@ -1,7 +1,7 @@
 import { useGetCompaniesQuery } from "@/api/admin-api/company.api";
 import {
-  useDisableAllMutation,
-  useEnableAllMutation,
+    useDisableAllMutation,
+    useEnableAllMutation,
 } from "@/api/admin-api/integration-api.api";
 import ChannelApproveReject from "@/components/admin-components/approve-reject-modal";
 import { Company } from "@/components/admin-components/company-list";
@@ -10,37 +10,54 @@ import { Layout } from "@/components/layout/Layout";
 import { Button } from "@/components/ui/Button";
 import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
 import colors from "@/constants/colors";
+import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { FlashList } from "@shopify/flash-list";
 import { Briefcase, Eye, Search } from "lucide-react-native";
-import React, { useEffect, useState } from "react";
+import React, { memo, useCallback, useEffect, useRef, useState } from "react";
 import {
-  ActivityIndicator,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
+    ActivityIndicator,
+    StyleSheet,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    View,
 } from "react-native";
 import { toast } from "sonner-native";
+
+const CompanyIntegrationItem = memo(
+  ({ company, onView }: { company: Company; onView: (id: number) => void }) => (
+    <View style={styles.itemCard}>
+      <View style={styles.itemInfo}>
+        <Text style={styles.itemName}>{company.billing_contact}</Text>
+
+        <View style={styles.row}>
+          <Text style={styles.itemEmail}>{company.email}</Text>
+        </View>
+
+        <View style={styles.row}>
+          <Briefcase size={14} color={colors.dark.primary} />
+          <Text style={styles.itemCompany}>{company.name}</Text>
+        </View>
+      </View>
+
+      <TouchableOpacity
+        style={styles.viewButton}
+        onPress={() => onView(company.id)}
+      >
+        <Eye size={16} color={colors.dark.primary} />
+        <Text style={styles.viewButtonText}>View</Text>
+      </TouchableOpacity>
+    </View>
+  )
+);
 
 export default function IntegrationsPage() {
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const [page, setPage] = useState(1);
-  const [isModalVisible, setIsModalVisible] = useState(false);
-  const [editingTopic, setEditingTopic] = useState(null);
+  const bottomSheetModalRef = useRef<BottomSheetModal>(null);
 
   const [companyId, setCompanyId] = useState<number>()
-
-  const handleEditTopic = (topic) => {
-    setEditingTopic(topic);
-    setIsModalVisible(true);
-  };
-
-  const handleCloseModal = () => {
-    setIsModalVisible(false);
-    setEditingTopic(null);
-  };
 
   // Debounce search input
   useEffect(() => {
@@ -68,33 +85,31 @@ export default function IntegrationsPage() {
       page,
     });
 
+  const handleOpenSheet = useCallback((id: number) => {
+    setCompanyId(id);
+    bottomSheetModalRef.current?.present();
+  }, []);
+
   if (isLoading) return <LoadingSpinner />;
   if (isError) return <ErrorScreen onRetry={refetch} />;
 
-  const approveChannel = async (channel: string, enableApi: any) => {
+  const handleToggleChannel = async (
+    channel: string,
+    mutation: any,
+    isLoading: boolean
+  ) => {
+    if (isLoading) return;
     try {
-      const res = await enableApi({ channel_name: channel });
-      toast.success(res.data.status);
-      console.log(res.data.status);
-    } catch (err) {
-      toast.error("resError");
-    }
-  };
-
-  const disableChannel = async (channel: string, disableApi: any) => {
-    try {
-      const res = await disableApi({ channel_name: channel });
-      toast.success(res.data.status);
-      console.log(res.data.status);
-    } catch (err) {
-      toast.error("resError");
+      const res = await mutation({ channel_name: channel }).unwrap();
+      toast.success(res.status || `${channel} status updated`);
+    } catch (err: any) {
+      toast.error(err?.data?.message || `Failed to update ${channel} status`);
     }
   };
 
   return (
     <Layout>
-      {/* enable, disable Cards */}
-      <View>
+      <View style={styles.togglesContainer}>
         <View style={styles.headerCard}>
           <View>
             <Text style={styles.headerCardTitle}>Facebook APP</Text>
@@ -106,7 +121,9 @@ export default function IntegrationsPage() {
           <View style={styles.actionButtons}>
             <Button
               size="sm"
-              onPress={() => approveChannel("facebook", enableFacebookApi)}
+              onPress={() =>
+                handleToggleChannel("facebook", enableFacebookApi, facebookEnableLoading)
+              }
               isLoading={facebookEnableLoading}
             >
               All Enable
@@ -114,7 +131,9 @@ export default function IntegrationsPage() {
             <Button
               size="sm"
               variant="destructive_outline"
-              onPress={() => disableChannel("facebook", disableFacebookApi)}
+              onPress={() =>
+                handleToggleChannel("facebook", disableFacebookApi, facebookDisableLoading)
+              }
               isLoading={facebookDisableLoading}
             >
               All Disable
@@ -134,7 +153,9 @@ export default function IntegrationsPage() {
           <View style={styles.actionButtons}>
             <Button
               size="sm"
-              onPress={() => approveChannel("whatsapp", enableWhatsappApi)}
+              onPress={() =>
+                handleToggleChannel("whatsapp", enableWhatsappApi, whatsappEnableLoading)
+              }
               isLoading={whatsappEnableLoading}
             >
               All Enable
@@ -142,28 +163,15 @@ export default function IntegrationsPage() {
             <Button
               size="sm"
               variant="destructive_outline"
-              onPress={() => disableChannel("whatsapp", disableWhatsappApi)}
+              onPress={() =>
+                handleToggleChannel("whatsapp", disableWhatsappApi, whatsappDisableLoading)
+              }
               isLoading={whatsappDisableLoading}
             >
               All Disable
             </Button>
           </View>
         </View>
-        {/* <View style={styles.headerCard}>
-                <View>
-                    <Text style={styles.headerCardTitle}>Facebook API</Text>
-                    <Text style={styles.headerCardSubtitle}>Approve or manage access keys</Text>
-                </View>
-
-                <View style={styles.actionButtons}>
-                    <TouchableOpacity style={[styles.actionButton, styles.enableButton]}>
-                        <Text style={styles.enableButtonText}>All Enable</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={[styles.actionButton, styles.disableButton]}>
-                        <Text style={styles.disableButtonText}>All Disable</Text>
-                    </TouchableOpacity>
-                </View>
-            </View> */}
       </View>
 
       {/* Integrations List */}
@@ -185,39 +193,14 @@ export default function IntegrationsPage() {
         <FlashList
           data={data.results}
           renderItem={({ item: company }: { item: Company }) => (
-            <View style={styles.itemCard}>
-              <View style={styles.itemInfo}>
-                <Text style={styles.itemName}>{company.billing_contact}</Text>
-
-                <View style={styles.row}>
-                  <Text style={styles.itemEmail}>{company.email}</Text>
-                </View>
-
-                <View style={styles.row}>
-                  <Briefcase size={14} color={colors.dark.primary} />
-                  <Text style={styles.itemCompany}>{company.name}</Text>
-                </View>
-              </View>
-
-              <TouchableOpacity
-                style={styles.viewButton}
-                onPress={() => {
-                  setIsModalVisible(true)
-                  setCompanyId(company.id)
-                }}
-              >
-                <Eye size={16} color={colors.dark.primary} />
-                <Text style={styles.viewButtonText}>View</Text>
-              </TouchableOpacity>
-            </View>
+            <CompanyIntegrationItem company={company} onView={handleOpenSheet} />
           )}
           keyExtractor={(item) => item.id.toString()}
           showsVerticalScrollIndicator={false}
         />
       </View>
       <ChannelApproveReject
-        visible={isModalVisible}
-        onClose={handleCloseModal}
+        ref={bottomSheetModalRef}
         company_id={companyId}
       />
     </Layout>
@@ -225,6 +208,9 @@ export default function IntegrationsPage() {
 }
 
 const styles = StyleSheet.create({
+  togglesContainer: {
+    marginBottom: 8,
+  },
   searchContainer: {
     flexDirection: "row",
     alignItems: "center",
