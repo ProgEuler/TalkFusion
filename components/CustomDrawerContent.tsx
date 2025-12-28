@@ -18,6 +18,7 @@ import {
   HelpCircle,
   LayoutDashboard,
   LogOut,
+  MessageCircle,
   MessageSquare,
   Plug,
   Settings,
@@ -107,6 +108,12 @@ const userMenuItems: MenuItem[] = [
     label: "Settings",
     icon: Settings,
     route: "/(user_dashboard)/settings",
+  },
+    {
+    id: "test-chat",
+    label: "Test Chat",
+    icon: MessageCircle,
+    route: "/(user_dashboard)/test-chat",
   },
 ];
 
