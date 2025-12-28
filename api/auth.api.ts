@@ -30,31 +30,31 @@ export const authApi = baseApi.injectEndpoints({
         body: data,
       }),
     }),
-      googleSignin: builder.mutation({
-        query: (data) => ({
-          url: "/auth/google/login/",
-          method: "POST",
-          body: data,
-        }),
-      }),
-      refresh: builder.mutation({
-        query: ({ refreshToken, accessToken }) => ({
-          url: "/validate-token/",
-          method: "POST",
-          body: {
-            refresh: refreshToken,
-            access: accessToken
-          },
-        }),
+    googleSignin: builder.mutation({
+      query: (data) => ({
+        url: "/auth/google/login/",
+        method: "POST",
+        body: data,
       }),
     }),
-  });
+    refresh: builder.mutation({
+      query: ({ refreshToken, accessToken }) => ({
+        url: "/validate-token/",
+        method: "POST",
+        body: {
+          refresh: refreshToken,
+          access: accessToken,
+        },
+      }),
+    }),
+  }),
+});
 
-  export const {
-     useLoginMutation,
-     useSignupMutation,
-     useGetOtpMutation,
-     useVerifyOtpMutation,
-     useGoogleSigninMutation,
-     useRefreshMutation
-  } = authApi;
+export const {
+  useLoginMutation,
+  useSignupMutation,
+  useGetOtpMutation,
+  useVerifyOtpMutation,
+  useGoogleSigninMutation,
+  useRefreshMutation,
+} = authApi;

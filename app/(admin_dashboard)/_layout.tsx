@@ -120,6 +120,15 @@ export default function DashboardLayout() {
                     drawerIcon: ({ color, size }) => <Wallet color={color} size={size} />,
                 }}
             />
+
+            <Drawer.Screen
+                name="subscription-requests"
+                options={{
+                    drawerLabel: "Subscription Requests",
+                    title: "Subscription Requests",
+                    drawerItemStyle: { display: "none" },
+                }}
+            />
         </Drawer>
     );
 }

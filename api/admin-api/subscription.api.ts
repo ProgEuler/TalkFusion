@@ -1,5 +1,4 @@
 import { baseApi } from "../baseApi";
-
 export interface SubscriptionPlan {
   id: number;
   name: string;
@@ -32,6 +31,35 @@ export const subscriptionApi = baseApi.injectEndpoints({
         body,
       }),
     }),
+
+    getSubscriptionRequest: builder.query({
+      query: () => "/admin/user-plan-requests/"
+    }),
+
+   //  only users should hit
+    subscriptionRequest: builder.mutation({
+      query: (body) => ({
+         url: "/admin/request-custom-plan/",
+         method: 'POST',
+         body
+      })
+    }),
+
+    approveSubscriptionRequest: builder.mutation({
+      query: (id) => ({
+        url: "/admin/approve-user-plan-request/",
+        method: "POST",
+        body: { id },
+      }),
+    }),
+
+    rejectSubscriptionRequest: builder.mutation({
+      query: (id) => ({
+        url: "/admin/reject-user-plan-request/",
+        method: "POST",
+        body: { id },
+      }),
+    }),
   }),
 });
 
@@ -39,4 +67,8 @@ export const {
   useGetSubscriptionsQuery,
   useUpdateSubscriptionsMutation,
   useCreateCustomeSubscriptionMutation,
+  useGetSubscriptionRequestQuery,
+  useSubscriptionRequestMutation,
+  useApproveSubscriptionRequestMutation,
+  useRejectSubscriptionRequestMutation,
 } = subscriptionApi;
