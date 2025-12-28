@@ -4,7 +4,7 @@
     "slug": "verse-ai",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/logo.png",
+    "icon": "./assets/images/icon.png",
     "scheme": "verseai",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
@@ -48,20 +48,17 @@
           }
         }
       ],
-      [
-        "expo-notifications",
-        {
-          "icon": "./local/assets/logo.png",
-          "color": "#ffffff",
-          "defaultChannel": "default",
-          "enableBackgroundRemoteNotifications": false
-        }
-      ],
       "expo-secure-store"
     ],
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "6ef59f6d-04cd-4962-80a8-41c247d01c2d"
+      }
     }
   }
 }
