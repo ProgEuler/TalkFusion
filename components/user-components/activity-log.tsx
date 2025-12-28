@@ -52,6 +52,7 @@ export default function ActivityLog() {
               timestamp={timeAgo(item.timestamp)}
             />
           )}
+          ListEmptyComponent={<Text style={{ color: colors.dark.textSecondary, textAlign: "center" }}>No activity log</Text>}
         />
       </View>
     </View>

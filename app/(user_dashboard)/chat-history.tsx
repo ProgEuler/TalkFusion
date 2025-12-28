@@ -1,27 +1,28 @@
 import Facebook from "@/assets/svgs/facebook.svg";
 import WhatsApp from "@/assets/svgs/whatsapp.svg";
 import { Layout } from "@/components/layout/Layout";
+import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
 import colors from "@/constants/colors";
 import { selectCurrentToken } from "@/store/authSlice";
 import {
-    addMessage,
-    selectAllRooms,
-    setRooms,
-    updateRoomLastMessage
+   addMessage,
+   selectAllRooms,
+   setRooms,
+   updateRoomLastMessage
 } from "@/store/chat.slice";
 import {
-    ChevronDown,
-    Instagram,
-    MessageCircle,
-    Search,
+   ChevronDown,
+   Instagram,
+   MessageCircle,
+   Search,
 } from "lucide-react-native";
 import React, { useEffect, useState } from "react";
 import {
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
+   StyleSheet,
+   Text,
+   TextInput,
+   TouchableOpacity,
+   View,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useDispatch, useSelector } from "react-redux";
@@ -48,6 +49,7 @@ export default function ChatHistoryScreen() {
   const [selectedChannel, setSelectedChannel] = useState<
     "all" | "facebook" | "whatsapp" | "instagram" | "chat"
   >("all");
+  const [isLoading, setIsLoading] = useState(true);
 
   const dispatch = useDispatch();
   const allRooms = useSelector(selectAllRooms);
@@ -69,22 +71,23 @@ export default function ChatHistoryScreen() {
       if (data.type === "connection_established") {
         // Initial connection - set profiles and rooms
         // Combine all rooms from all profiles
-const combinedRooms = data.profiles.flatMap((profile: any) =>
-  profile.room.map((room: any) => ({
-    room_id: room.room_id.toString(),           // Ensure string
-    client_id: room.client_id,
-    lastMessage: room.last_msg || "No messages yet",
-    last_msg: room.last_msg || "No messages yet",  // Keep both if needed
-    timestamp: room.timestamp,
-    message_type: room.type,                    // "outgoing" or "incoming"
-    channel: profile.platform as "facebook" | "whatsapp" | "instagram" | "chat",
-    profile_name: profile.profile_name,
-    profile_id: profile.profile_id,
-    unreadCount: room.unread_count ?? 0,         // Use actual unread if available later
-    isRead: (room.unread_count ?? 0) === 0,
-  }))
-);
+        const combinedRooms = data.profiles.flatMap((profile: any) =>
+          profile.room.map((room: any) => ({
+            room_id: room.room_id.toString(),           // Ensure string
+            client_id: room.client_id,
+            lastMessage: room.last_msg || "No messages yet",
+            last_msg: room.last_msg || "No messages yet",  // Keep both if needed
+            timestamp: room.timestamp,
+            message_type: room.type,                    // "outgoing" or "incoming"
+            channel: profile.platform as "facebook" | "whatsapp" | "instagram" | "chat",
+            profile_name: profile.profile_name,
+            profile_id: profile.profile_id,
+            unreadCount: room.unread_count ?? 0,         // Use actual unread if available later
+            isRead: (room.unread_count ?? 0) === 0,
+          }))
+        );
         dispatch(setRooms(combinedRooms));
+        setIsLoading(false);
       } else if (data.type === "new_message") {
         // Handle new message - update the relevant room
         dispatch(
@@ -115,6 +118,7 @@ const combinedRooms = data.profiles.flatMap((profile: any) =>
 
     socket.onerror = (error) => {
       console.log("WebSocket error:", error);
+      setIsLoading(false);
     };
 
     socket.onclose = () => {
@@ -262,7 +266,15 @@ const combinedRooms = data.profiles.flatMap((profile: any) =>
         </View>
 
         {/* Chat List */}
-        <ChatList rooms={sortedRooms} messages={[]} />
+        {isLoading ? (
+          <LoadingSpinner />
+        ) : sortedRooms.length === 0 ? (
+          <View style={styles.emptyContainer}>
+            <Text style={styles.emptyText}>No chats are found.</Text>
+          </View>
+        ) : (
+          <ChatList rooms={sortedRooms} messages={[]} />
+        )}
       </Layout>
     </View>
   );
@@ -469,5 +481,16 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: "600",
     color: colors.dark.text,
+  },
+  emptyContainer: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: 40,
+  },
+  emptyText: {
+    color: colors.dark.textSecondary,
+    fontSize: 14,
+    fontWeight: "500",
   },
 });

@@ -1,7 +1,9 @@
 import { useGetMeQuery } from "@/api/admin-api/users.api";
+import ErrorScreen from "@/components/ErrorScreen";
 import { Layout } from "@/components/layout/Layout";
 import Sessions from "@/components/sesstions";
 import { Button } from "@/components/ui/Button";
+import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
 import { ModalView } from "@/components/ui/modal-view";
 import colors from "@/constants/colors";
 import { Trash2, TriangleAlert } from "lucide-react-native";
@@ -12,7 +14,10 @@ export default function Settings() {
   const [twoFactorEnabled, setTwoFactorEnabled] = useState(true);
   const [deleteAcc, setDeleteAcc] = useState(false);
 
-  const {data: user, isLoading} = useGetMeQuery(undefined)
+  const {data: user, isLoading, isError, refetch} = useGetMeQuery(undefined)
+
+  if(isLoading) return <LoadingSpinner />
+  if(isError) return <ErrorScreen onRetry={refetch} />
 
   return (
     <Layout>
@@ -57,11 +62,9 @@ export default function Settings() {
           </View>
           <View style={styles.profileInfo}>
             <Text style={styles.profileName}>{user.name || "User"}</Text>
-            {user.company && (
               <Text style={styles.profileCompany}>
-                {user.company.name || user.company}
+                {user.company.name || "N/A"}
               </Text>
-            )}
             <Text style={styles.profileEmail}>{user.email}</Text>
           </View>
         </View>

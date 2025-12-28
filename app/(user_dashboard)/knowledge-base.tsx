@@ -1,42 +1,70 @@
+import { useGetKnowledgeBaseQuery } from "@/api/user-api/company.api";
 import CompanyInfo from "@/components/company-info";
+import ErrorScreen from "@/components/ErrorScreen";
 import { Layout } from "@/components/layout/Layout";
 import OpeningHourList from "@/components/opening-hour-list";
 import Services from "@/components/servics";
+import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
 import ActivityLog from "@/components/user-components/activity-log";
 import colors from "@/constants/colors";
 import React from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { RefreshControl, StyleSheet, Text, View } from "react-native";
 
 export default function KnowledgeBaseScreen() {
+   const { data, isLoading, isError, refetch } = useGetKnowledgeBaseQuery(undefined)
+
+   if(isLoading) return <LoadingSpinner />
+   if(isError) return <ErrorScreen onRetry={refetch} />
+
+  console.log(data);
+
+  const getHealthColor = (score: number) => {
+    if (score >= 75) return colors.dark.success;
+    if (score >= 50) return colors.dark.warning;
+    return colors.dark.danger;
+  };
+
+  const healthColor = getHealthColor(data.heath.dataHealth.score);
+
   return (
-    <Layout>
+    <Layout
+      refreshControl={
+        <RefreshControl refreshing={isLoading} onRefresh={refetch} />
+      }
+    >
       <View style={styles.section}>
         <View style={styles.healthHeader}>
           <View>
             <Text style={styles.healthTitle}>Knowledge Base Health</Text>
             <Text style={styles.healthSubtitle}>
-              Your AI knowledge is 70% complete. Add missing information for
-              better results.
+              {data.heath.dataHealth.summary}
             </Text>
           </View>
         </View>
 
         <View style={styles.healthPercentageContainer}>
-          <View style={styles.percentageCircle}>
-            <Text style={styles.percentageText}>70%</Text>
+          <View
+            style={[
+              styles.percentageCircle,
+              {
+                borderColor: healthColor,
+                backgroundColor: `${healthColor}33`, // Adding 20% opacity (33 in hex)
+              },
+            ]}
+          >
+            <Text style={styles.percentageText}>{data.heath.dataHealth.score}%</Text>
           </View>
         </View>
 
         <View style={styles.statusTags}>
           <View style={[styles.statusTag, styles.statusTagDanger]}>
-            <Text style={styles.statusTagText}>missing items</Text>
+            <Text style={styles.statusTagText}>Missing</Text>
           </View>
-          <View style={[styles.statusTag, styles.statusTagDanger]}>
-            <Text style={styles.statusTagText}>incomplete</Text>
-          </View>
-          <View style={[styles.statusTag, styles.statusTagDanger]}>
-            <Text style={styles.statusTagText}>needs update</Text>
-          </View>
+          {data.heath.missingOrSuggestedData.map((item: string) => (
+            <View key={item} style={[styles.statusTag, styles.statusTagDanger]}>
+              <Text style={styles.statusTagText}>{item}</Text>
+            </View>
+          ))}
         </View>
       </View>
 
@@ -97,9 +125,7 @@ const styles = StyleSheet.create({
     width: 80,
     height: 80,
     borderRadius: 40,
-    backgroundColor: "rgba(239, 68, 68, 0.2)",
     borderWidth: 3,
-    borderColor: colors.dark.danger,
     alignItems: "center",
     justifyContent: "center",
   },
@@ -112,6 +138,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     gap: 8,
     flexWrap: "wrap" as const,
+    justifyContent: "center",
+    alignItems: "center",
   },
   statusTag: {
     paddingHorizontal: 12,

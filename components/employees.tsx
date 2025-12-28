@@ -27,6 +27,7 @@ function Employees({
   onEmployeePress?: (employee: Employee) => void;
 }) {
   const { data, isLoading, isError, refetch } = useGetEmployeesQuery(undefined);
+  console.log(data)
 
   if (isLoading) {
     return (

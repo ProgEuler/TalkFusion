@@ -2,6 +2,7 @@ import { useGetQuerriesDataQuery } from "@/api/user-api/analytics.api";
 import ErrorScreen from "@/components/ErrorScreen";
 import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
 import colors from "@/constants/colors";
+import { FlashList } from "@shopify/flash-list";
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 
@@ -11,7 +12,6 @@ export default function TopQuestions() {
 
   if (isLoading) return <LoadingSpinner />;
   if (error) return <ErrorScreen onRetry={refetch} />;
-  //   console.log("Top Questions Data:", data);
 
   return (
     <View style={styles.section}>
@@ -23,20 +23,26 @@ export default function TopQuestions() {
       </View>
 
       <View style={styles.questionsList}>
-        {data?.map((item, index) => (
-          <View
-            key={index}
-            style={[
-              styles.questionItem,
-              index === data.length - 1 && styles.questionItemLast,
-            ]}
-          >
-            <View style={styles.questionContent}>
-              <Text style={styles.questionText}>{item.text}</Text>
-              <Text style={styles.questionCount}>Asked {item.count} times</Text>
-            </View>
-          </View>
-        ))}
+
+         <FlashList
+            data={data}
+            renderItem={({ item } : {item: any} ) => (
+              <View
+                style={[
+                  styles.questionItem,
+                  item === data.length - 1 && styles.questionItemLast,
+                ]}
+              >
+                <View style={styles.questionContent}>
+                  <Text style={styles.questionText}>{item.text}</Text>
+                  <Text style={styles.questionCount}>Asked {item.count} times</Text>
+                </View>
+              </View>
+            )}
+            keyExtractor={(item) => item.id}
+            ListEmptyComponent={<Text style={{color: colors.dark.textSecondary, textAlign: "center", paddingVertical: 20, fontSize: 14, fontWeight: "500"}}>No data available</Text>}
+         />
+
       </View>
     </View>
   );

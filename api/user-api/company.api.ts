@@ -43,7 +43,8 @@ export const companyApi = baseApi.injectEndpoints({
       query: () => "ai-training-files/",
       providesTags: ["UploadedFiles"],
     }),
-    getActivity: builder.query({ query: () => "/log/" })
+    getActivity: builder.query({ query: () => "/log/" }),
+    getKnowledgeBase: builder.query({ query: () => "/knowledge-category/" })
   }),
 });
 
@@ -56,5 +57,6 @@ export const {
   useAddServiceMutation,
   useUploadAiFilesMutation,
   useGetUploadedFilesQuery,
-  useGetActivityQuery
+  useGetActivityQuery,
+  useGetKnowledgeBaseQuery
 } = companyApi;
