@@ -27,7 +27,7 @@ export default function SignupScreen() {
   const [emailError, setEmailError] = useState<string | null>(null);
 
   const [signup, { isLoading }] = useSignupMutation(undefined);
-    const { signIn } = useSignIn();
+    const { signIn, loading: googleLoading } = useSignIn();
 
   const showToast = (message: string, type: "success" | "error") => {
     setToastMessage(message);
@@ -148,7 +148,13 @@ export default function SignupScreen() {
           </View>
 
           <View style={styles.socialButtons}>
-            <Button onPress={handleGoogleSignup} variant="outline">Continue with Google</Button>
+            <Button
+              onPress={handleGoogleSignup}
+              variant="outline"
+              isLoading={googleLoading}
+            >
+              Continue with Google
+            </Button>
             <Button onPress={() => signIn("signout")} variant="outline">Continue with Apple</Button>
           </View>
 

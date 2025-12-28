@@ -1,57 +1,89 @@
 import { useGoogleSigninMutation } from "@/api/auth.api";
-import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
+import { setCredentials } from "@/store/authSlice";
+import { saveAuthData } from "@/utils/storage";
 import {
-  GoogleSignin,
-  isErrorWithCode,
-  isSuccessResponse,
-  statusCodes,
+   GoogleSignin,
+   isErrorWithCode,
+   isSuccessResponse,
+   statusCodes,
 } from "@react-native-google-signin/google-signin";
+import { useRouter } from "expo-router";
 import { useState } from "react";
+import { useDispatch } from "react-redux";
+import { toast } from "sonner-native";
 
 export function useSignIn() {
+  const dispatch = useDispatch();
+  const router = useRouter();
   const [name, setName] = useState<string | null>(null);
-  const [GoogleLogin, {isLoading}] = useGoogleSigninMutation(undefined)
-
-  if(isLoading) return <LoadingSpinner />
+  const [inProgress, setInProgress] = useState(false);
+  const [GoogleLogin, { isLoading }] = useGoogleSigninMutation(undefined);
 
   const signIn = async (method: "signin" | "signout") => {
     try {
+      setInProgress(true);
       if (method === "signout") {
         await GoogleSignin.hasPlayServices();
-        const res = GoogleSignin.signOut();
+        await GoogleSignin.signOut();
         setName(null);
-      //   console.log(res);
         return;
       }
       await GoogleSignin.hasPlayServices();
       const response = await GoogleSignin.signIn();
-      const token = await GoogleSignin.getTokens();
-      // console.log(token);
-      GoogleLogin(token)
+      const { accessToken } = await GoogleSignin.getTokens();
+
+      console.log(accessToken)
+
+      const res = await GoogleLogin({ access_token: accessToken }).unwrap();
 
       if (isSuccessResponse(response)) {
-        console.log({ userInfo: response.data });
-        setName(response.data.user.name);
+        await dispatch(
+          setCredentials({
+            user: res.user,
+            token: res.access,
+            refreshToken: res.refresh,
+            session_id: res.session_id,
+          })
+        );
+
+        await saveAuthData({
+          accessToken: res.access,
+          refreshToken: res.refresh,
+          user: res.user,
+          sessionId: res.session_id,
+        });
+
+        toast.success("Login successful");
+        setName(res.user.name);
+
+        if (res.user.role === "admin") {
+          router.replace("/(admin_dashboard)/home");
+        } else {
+          router.replace("/(user_dashboard)/home");
+        }
       } else {
-        // sign in was cancelled by user
+        toast.error("Login failed");
       }
     } catch (error) {
+      console.error("Google Sign-In Error:", error);
       if (isErrorWithCode(error)) {
         switch (error.code) {
           case statusCodes.IN_PROGRESS:
-            // operation (eg. sign in) already in progress
+            console.error("Sign-In already in progress");
             break;
           case statusCodes.PLAY_SERVICES_NOT_AVAILABLE:
-            // Android only, play services not available or outdated
+            console.error("Play services not available or outdated");
             break;
           default:
-          // some other error happened
+            toast.error("Login failed");
         }
       } else {
-        // an error that's not related to google sign in occurred
+        toast.error("Login failed");
       }
+    } finally {
+      setInProgress(false);
     }
   };
 
-  return { name, signIn };
+  return { name, signIn, loading: isLoading || inProgress };
 }

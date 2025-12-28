@@ -1,6 +1,7 @@
 import { useLoginMutation } from "@/api/auth.api";
 import { Layout } from "@/components/layout/Layout";
 import { Button } from "@/components/ui/Button";
+import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
 import { ModalView } from "@/components/ui/modal-view";
 import { useSignIn } from "@/hooks/use-google-signin";
 import { setCredentials } from "@/store/authSlice";
@@ -11,12 +12,12 @@ import { useRouter } from "expo-router";
 import { Eye, EyeOff } from "lucide-react-native";
 import React, { useState } from "react";
 import {
-  Modal,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
+    Modal,
+    StyleSheet,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    View,
 } from "react-native";
 import { useDispatch } from "react-redux";
 import { toast } from "sonner-native";
@@ -31,7 +32,7 @@ GoogleSignin.configure({
 export default function LoginScreen() {
   const router = useRouter();
   const dispatch = useDispatch();
-  const { signIn } = useSignIn();
+  const { signIn, loading: googleLoading } = useSignIn();
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [showPassword, setShowPassword] = useState<boolean>(false);
@@ -94,6 +95,8 @@ export default function LoginScreen() {
   const handleGoogleLogin = () => {
     signIn("signin");
   };
+
+  if(loading) return <LoadingSpinner fullscreen />
 
   return (
     <Layout>
@@ -195,7 +198,11 @@ export default function LoginScreen() {
           </View>
 
           <View style={styles.socialButtons}>
-            <Button variant="outline" onPress={handleGoogleLogin}>
+            <Button
+              variant="outline"
+              onPress={handleGoogleLogin}
+              isLoading={googleLoading}
+            >
               Continue with Google
             </Button>
             <Button variant="outline">Continue with Apple</Button>
