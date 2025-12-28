@@ -163,6 +163,8 @@ export default function OverviewPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const { data, isLoading, isError, refetch } = useGetOverviewQuery();
 
+  console.log(data)
+
   if (isLoading) return <LoadingSpinner />;
   if (isError) return <ErrorScreen onRetry={refetch} />;
   if (!data) return null;

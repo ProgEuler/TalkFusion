@@ -6,32 +6,31 @@ import { clearAuthData } from "@/utils/storage";
 import { LinearGradient } from "expo-linear-gradient";
 import { usePathname, useRouter } from "expo-router";
 import {
-    BarChart3,
-    BookOpen,
-    Bot,
-    Brain,
-    Building,
-    Calendar,
-    CreditCard,
-    FileText,
-    Grid,
-    HelpCircle,
-    LayoutDashboard,
-    LogOut,
-    MessageSquare,
-    Plug,
-    Settings,
-    User,
-    Users,
-    Wallet
+  BarChart3,
+  BookOpen,
+  Bot,
+  Brain,
+  Building,
+  Calendar,
+  CreditCard,
+  FileText,
+  Grid,
+  HelpCircle,
+  LayoutDashboard,
+  LogOut,
+  MessageSquare,
+  Plug,
+  Settings,
+  User,
+  Users,
 } from "lucide-react-native";
 import React from "react";
 import {
-    ScrollView,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -160,12 +159,12 @@ const adminMenuItems: MenuItem[] = [
     icon: FileText,
     route: "/(admin_dashboard)/overview",
   },
-//   {
-//     id: "payment",
-//     label: "Payment & Report",
-//     icon: Wallet,
-//     route: "/(admin_dashboard)/payment",
-//   },
+  //   {
+  //     id: "payment",
+  //     label: "Payment & Report",
+  //     icon: Wallet,
+  //     route: "/(admin_dashboard)/payment",
+  //   },
   {
     id: "settings",
     label: "Settings",
@@ -187,27 +186,27 @@ export default function CustomDrawerContent(props: any) {
   };
 
   const handleLogout = async () => {
-    signIn("signout")
+    signIn("signout");
     dispatch(logOut());
     await clearAuthData();
     router.replace("/(auth)/login");
   };
 
-    const isRouteActive = (route: string) => {
-        // Exact match
-        if (pathname === route) return true;
+  const isRouteActive = (route: string) => {
+    // Exact match
+    if (pathname === route) return true;
 
-        // Check if pathname matches the route without the group
-        // e.g. route = "/(admin_dashboard)/users", pathname = "/users"
-        const routeWithoutGroup = route.replace(/\/\([^)]+\)/, "");
-        if (pathname === routeWithoutGroup) return true;
+    // Check if pathname matches the route without the group
+    // e.g. route = "/(admin_dashboard)/users", pathname = "/users"
+    const routeWithoutGroup = route.replace(/\/\([^)]+\)/, "");
+    if (pathname === routeWithoutGroup) return true;
 
-        // Check for sub-routes
-        if (pathname.startsWith(route + "/")) return true;
-        if (pathname.startsWith(routeWithoutGroup + "/")) return true;
+    // Check for sub-routes
+    if (pathname.startsWith(route + "/")) return true;
+    if (pathname.startsWith(routeWithoutGroup + "/")) return true;
 
-        return false;
-    };
+    return false;
+  };
 
   return (
     <View style={styles.container}>
@@ -216,7 +215,7 @@ export default function CustomDrawerContent(props: any) {
           <View style={styles.logoCircle}>
             <Logo width={32} height={32} />
           </View>
-          <Text style={styles.logoText}>Verse AI</Text>
+          <Text style={styles.logoText}>TalkFusion AI</Text>
         </View>
       </View>
 
@@ -236,9 +235,7 @@ export default function CustomDrawerContent(props: any) {
                 onPress={() => handleNavigation(item.route)}
               >
                 <Icon
-                  color={
-                    isActive ? 'white' : colors.dark.textSecondary
-                  }
+                  color={isActive ? "white" : colors.dark.textSecondary}
                   size={20}
                 />
                 <Text
