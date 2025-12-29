@@ -15,6 +15,12 @@ export const integrationsApi = baseApi.injectEndpoints({
         method: "Get",
       }),
     }),
+    getWpUrl: builder.query({
+      query: () => ({
+        url: "/connect/wa/?from=app",
+        method: "Get",
+      }),
+    }),
     getIgUrl: builder.query({
       query: () => "/connect/ig/",
     }),
@@ -37,6 +43,7 @@ export const integrationsApi = baseApi.injectEndpoints({
 export const {
   useGetCalendarUrlMutation,
   useGetFbUrlQuery,
+  useGetWpUrlQuery,
   useGetIgUrlQuery,
   useDisConnectMutation,
   useBotActiveQuery,

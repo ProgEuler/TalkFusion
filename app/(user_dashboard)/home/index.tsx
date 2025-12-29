@@ -428,7 +428,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   channelName: {
-    fontSize: 15,
+    fontSize: 12,
     color: colors.dark.text,
     fontWeight: "600" as const,
     marginBottom: 4,

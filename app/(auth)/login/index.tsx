@@ -96,7 +96,7 @@ export default function LoginScreen() {
     signIn("signin");
   };
 
-  if(loading) return <LoadingSpinner fullscreen />
+//   if(loading) return <LoadingSpinner />
 
   return (
     <Layout>

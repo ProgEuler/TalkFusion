@@ -3,6 +3,7 @@ import {
   useDisConnectMutation,
   useGetFbUrlQuery,
   useGetIgUrlQuery,
+  useGetWpUrlQuery,
 } from "@/api/user-api/integrations.api";
 import Fb from "@/assets/svgs/facebook.svg";
 import Ig from "@/assets/svgs/instagram.svg";
@@ -45,6 +46,14 @@ export default function IntegrationsScreen() {
     isFetching,
   } = useGetFbUrlQuery(undefined);
   const {
+    data: wpUrl,
+    isLoading: wpUrlLoading,
+    error: wpError,
+    refetch: refetchWp,
+    isFetching: isFetchingWp,
+  } = useGetWpUrlQuery(undefined);
+
+  const {
     data: igUrl,
     isLoading: igUrlLoading,
     error: igError,
@@ -67,12 +76,13 @@ export default function IntegrationsScreen() {
 
   const [disconnectBot, { isLoading }] = useDisConnectMutation();
 
-  if (fbUrlLoading || igUrlLoading) return <LoadingSpinner />;
-  if (fbError || igError)
+  if (fbUrlLoading || igUrlLoading || wpUrlLoading) return <LoadingSpinner />;
+  if (fbError || igError || wpError)
     return (
       <ErrorScreen
         onRetry={() => {
           refetchFb();
+          refetchWp()
           refetchIg();
         }}
       />
@@ -94,7 +104,7 @@ export default function IntegrationsScreen() {
       description: "Connect for ultimate reach",
       icon: <Wp color={colors.dark.primary} />,
       connected: channel.whatsapp,
-      url: fbUrl.redirect_url,
+      url: wpUrl.redirect_url,
       bot: botStatus.whatsapp,
     },
     {
@@ -176,6 +186,8 @@ export default function IntegrationsScreen() {
             </View>
 
             <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+               {
+                  integration.id !== "calendar" ?
               <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
                 <Text style={{ color: "#fff" }}>Bot status</Text>
                 <Switch
@@ -187,7 +199,8 @@ export default function IntegrationsScreen() {
                   thumbColor="#FFFFFF"
                   // disabled={!integration.connected}
                 />
-              </View>
+              </View> : <View></View>
+               }
               <Button
                 size="sm"
                 style={{ height: 36 }}
