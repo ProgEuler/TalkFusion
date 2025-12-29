@@ -93,7 +93,7 @@ export default function DashboardScreen() {
             <DollarSign color="#10B981" size={24} />
           </View>
           <Text style={styles.statValue}>
-            {data?.today_payments.list.length}
+            {data?.today_payments.list.length || 0}
           </Text>
           <Text style={styles.statLabel}>Payments Today</Text>
         </View>

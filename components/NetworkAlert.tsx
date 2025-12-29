@@ -1,12 +1,10 @@
 import { baseApi } from '@/api/baseApi';
 import NetInfo from '@react-native-community/netinfo';
-import { useQueryClient } from '@tanstack/react-query';
 import { useEffect, useRef } from 'react';
 import { useDispatch } from 'react-redux';
 import { Toast } from 'toastify-react-native';
 
 const NetworkAlert = () => {
-  const queryClient = useQueryClient();
   const dispatch = useDispatch();
   const wasOffline = useRef<boolean>(false);
 
@@ -16,11 +14,8 @@ const NetworkAlert = () => {
         if (wasOffline.current) {
           Toast.success('online back', 'bottom');
 
-          // Refetch all TanStack queries
-          queryClient.refetchQueries();
-
-          // Refetch all RTK Query queries by invalidating all tags
-          dispatch(baseApi.util.invalidateTags(['Topics', 'Company', 'UploadedFiles']));
+          // Forcefully invalidate Chat tags just in case setupListeners didn't catch it
+          dispatch(baseApi.util.invalidateTags(['Topics', 'Company', 'UploadedFiles', 'Chat']));
 
           wasOffline.current = false;
         }
@@ -33,7 +28,7 @@ const NetworkAlert = () => {
     return () => {
       unsubscribe();
     };
-  }, [queryClient, dispatch]);
+  }, [dispatch]);
 
   return null;
 };

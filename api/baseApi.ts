@@ -63,6 +63,7 @@ const baseQueryWithReauth: BaseQueryFn<
 export const baseApi = createApi({
   reducerPath: "api",
   baseQuery: baseQueryWithReauth,
-  tagTypes: ["Topics", "Company", "UploadedFiles"],
+  refetchOnReconnect: true,
+  tagTypes: ["Topics", "Company", "UploadedFiles", "Chat"],
   endpoints: () => ({}),
 });

@@ -14,6 +14,8 @@ import { Provider, useDispatch } from "react-redux";
 import { Toaster } from 'sonner-native';
 import ToastManager from 'toastify-react-native';
 
+import NetworkAlert from "@/components/NetworkAlert";
+
 SplashScreen.preventAutoHideAsync();
 
 const queryClient = new QueryClient();
@@ -96,6 +98,7 @@ export default function RootLayout() {
                 barStyle="light-content"
               />
               <RootLayoutNav />
+              <NetworkAlert />
               <Toaster
                  position="bottom-center"
                  swipeToDismissDirection="left"

@@ -6,6 +6,12 @@ import "../global.css"
 import { LogBox } from "react-native";
 import { Platform } from "react-native";
 import * as Notifications from "expo-notifications";
+import NetInfo from '@react-native-community/netinfo';
+
+NetInfo.fetch().then(state => {
+  console.log('Connection type', state.type);
+  console.log('Is connected?', state.isConnected);
+});
 
 LogBox.ignoreAllLogs();
 
