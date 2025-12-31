@@ -18,14 +18,17 @@ import { useEffect } from "react";
 import { RefreshControl, StyleSheet, Text, View } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { AppointmentsList } from "./appointments-list";
-import { selectCurrentUser } from "@/store/authSlice";
+import { selectCurrentPlan, selectCurrentUser } from "@/store/authSlice";
 
 export default function DashboardScreen() {
+
+   //   const plan = useSelector(selectCurrentPlan);
+   //   console.log("Has a plan --> ", plan)
   const { data, isLoading, refetch, isFetching, isError } =
     useGetDashboardDataQuery(undefined);
 
-      const user = useSelector(selectCurrentUser);
-      console.log(user)
+      // const user = useSelector(selectCurrentUser);
+      // console.log(user)
 
   const dispatch = useDispatch();
 

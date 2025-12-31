@@ -48,6 +48,7 @@ function RootLayoutNav() {
         if (authData) {
           dispatch(hydrate({
             user: authData.user,
+            plan: authData.plan,
             token: authData.accessToken,
             refreshToken: authData.refreshToken,
             session_id: authData.sessionId,

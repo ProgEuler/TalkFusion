@@ -15,6 +15,7 @@ interface AuthState {
   refreshToken: string | null;
   session_id: number | null;
   isHydrated: boolean;
+  plan?: boolean | null;
 }
 
 const initialState: AuthState = {
@@ -31,19 +32,21 @@ const authSlice = createSlice({
   reducers: {
     setCredentials: (
       state,
-      action: PayloadAction<{ user: User; token: string; refreshToken?: string; session_id: number }>
+      action: PayloadAction<{ user: User; plan: boolean; token: string; refreshToken?: string; session_id: number }>
     ) => {
-      const { user, token, refreshToken, session_id } = action.payload;
+      const { user, plan, token, refreshToken, session_id } = action.payload;
       state.user = user;
+      state.plan = plan;
       state.token = token;
       if (refreshToken) {
         state.refreshToken = refreshToken;
       }
       state.session_id = session_id;
     },
-    hydrate: (state, action: PayloadAction<{ user: any; token: string | null; refreshToken: string | null; session_id: number | null }>) => {
-      const { user, token, refreshToken, session_id } = action.payload;
+    hydrate: (state, action: PayloadAction<{ user: any; plan: boolean; token: string | null; refreshToken: string | null; session_id: number | null }>) => {
+      const { user, plan, token, refreshToken, session_id } = action.payload;
       state.user = user;
+      state.plan = plan;
       state.token = token;
       state.refreshToken = refreshToken;
       state.session_id = session_id;
@@ -54,6 +57,7 @@ const authSlice = createSlice({
     },
     logOut: (state) => {
       state.user = null;
+      state.plan = null;
       state.token = null;
       state.refreshToken = null;
       state.session_id = null;
@@ -64,6 +68,7 @@ const authSlice = createSlice({
 export const { setCredentials, hydrate, setToken, logOut } = authSlice.actions;
 
 export const selectCurrentUser = (state: RootState) => state.auth.user;
+export const selectCurrentPlan = (state: RootState) => state.auth.plan;
 export const selectCurrentToken = (state: RootState) => state.auth.token;
 export const selectRefreshToken = (state: RootState) => state.auth.refreshToken;
 export const selectSessionId = (state: RootState) => state.auth.session_id;

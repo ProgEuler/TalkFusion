@@ -7,12 +7,12 @@ import { setCredentials } from "@/store/authSlice";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import React, { useState } from "react";
 import {
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView,
-  StyleSheet,
-  Text,
-  View,
+    KeyboardAvoidingView,
+    Platform,
+    ScrollView,
+    StyleSheet,
+    Text,
+    View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useDispatch } from "react-redux";
@@ -68,7 +68,15 @@ export default function OtpVerificationScreen() {
     console.log(otp);
     try {
       const res = await verifyOtp({ email, otp }).unwrap();
-      dispatch(setCredentials({ user: res.user, token: res.token }));
+      dispatch(
+        setCredentials({
+          user: res.user,
+          plan: res.plan,
+          token: res.access,
+          refreshToken: res.refresh,
+          session_id: res.session_id,
+        })
+      );
       showToast("OTP Verified Successfully!", "success");
       setTimeout(() => {
         router.replace("/(auth)/login");

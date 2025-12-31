@@ -1,7 +1,6 @@
 import { useLoginMutation } from "@/api/auth.api";
 import { Layout } from "@/components/layout/Layout";
 import { Button } from "@/components/ui/Button";
-import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
 import { ModalView } from "@/components/ui/modal-view";
 import { useSignIn } from "@/hooks/use-google-signin";
 import { setCredentials } from "@/store/authSlice";
@@ -58,6 +57,7 @@ export default function LoginScreen() {
       dispatch(
         setCredentials({
           user: res.user,
+          plan: res.plan,
           token: res.access,
           refreshToken: res.refresh,
           session_id: res.session_id,
@@ -68,6 +68,7 @@ export default function LoginScreen() {
         refreshToken: res.refresh,
         user: res.user,
         sessionId: res.session_id,
+        plan: res.plan,
       });
       toast.success("Login successful!");
       if (res.user.role === "admin") {

@@ -2,10 +2,10 @@ import { useGoogleSigninMutation } from "@/api/auth.api";
 import { setCredentials } from "@/store/authSlice";
 import { saveAuthData } from "@/utils/storage";
 import {
-   GoogleSignin,
-   isErrorWithCode,
-   isSuccessResponse,
-   statusCodes,
+    GoogleSignin,
+    isErrorWithCode,
+    isSuccessResponse,
+    statusCodes,
 } from "@react-native-google-signin/google-signin";
 import { useRouter } from "expo-router";
 import { useState } from "react";
@@ -40,6 +40,7 @@ export function useSignIn() {
         await dispatch(
           setCredentials({
             user: res.user,
+            plan: res.plan,
             token: res.access,
             refreshToken: res.refresh,
             session_id: res.session_id,
@@ -51,6 +52,7 @@ export function useSignIn() {
           refreshToken: res.refresh,
           user: res.user,
           sessionId: res.session_id,
+          plan: res.plan,
         });
 
         toast.success("Login successful");
