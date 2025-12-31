@@ -14,7 +14,6 @@ const NetworkAlert = () => {
         if (wasOffline.current) {
           Toast.success('online back', 'bottom');
 
-          // Forcefully invalidate Chat tags just in case setupListeners didn't catch it
           dispatch(baseApi.util.invalidateTags(['Topics', 'Company', 'UploadedFiles', 'Chat']));
 
           wasOffline.current = false;

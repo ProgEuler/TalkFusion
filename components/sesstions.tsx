@@ -192,6 +192,7 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     color: "#ffffff",
     marginBottom: 4,
+    width: "90%"
   },
   currentBadge: {
     backgroundColor: "#1e4d2b",

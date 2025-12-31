@@ -46,17 +46,17 @@ export const subscriptionApi = baseApi.injectEndpoints({
     }),
 
     approveSubscriptionRequest: builder.mutation({
-      query: (id) => ({
-        url: "/admin/approve-user-plan-request/",
+      query: (body) => ({
+        url: "/admin/approve-user-plan/",
         method: "POST",
-        body: { id },
+        body: body,
       }),
     }),
 
     rejectSubscriptionRequest: builder.mutation({
       query: (id) => ({
-        url: "/admin/reject-user-plan-request/",
-        method: "POST",
+        url: "/admin/approve-user-plan/",
+        method: "DELETE",
         body: { id },
       }),
     }),
