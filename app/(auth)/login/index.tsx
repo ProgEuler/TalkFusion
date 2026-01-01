@@ -73,8 +73,10 @@ export default function LoginScreen() {
       toast.success("Login successful!");
       if (res.user.role === "admin") {
         router.replace("/(admin_dashboard)/home");
-      } else {
+      } else if (res.plan) {
         router.replace("/(user_dashboard)/home");
+      } else {
+        router.replace("/(auth)/welcome");
       }
     } catch (error: any) {
       console.error("Login Error:", error);

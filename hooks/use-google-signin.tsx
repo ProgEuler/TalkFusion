@@ -2,10 +2,10 @@ import { useGoogleSigninMutation } from "@/api/auth.api";
 import { setCredentials } from "@/store/authSlice";
 import { saveAuthData } from "@/utils/storage";
 import {
-    GoogleSignin,
-    isErrorWithCode,
-    isSuccessResponse,
-    statusCodes,
+   GoogleSignin,
+   isErrorWithCode,
+   isSuccessResponse,
+   statusCodes,
 } from "@react-native-google-signin/google-signin";
 import { useRouter } from "expo-router";
 import { useState } from "react";
@@ -60,8 +60,10 @@ export function useSignIn() {
 
         if (res.user.role === "admin") {
           router.replace("/(admin_dashboard)/home");
-        } else {
+        } else if (res.plan) {
           router.replace("/(user_dashboard)/home");
+        } else {
+          router.replace("/(auth)/welcome");
         }
       } else {
         toast.error("Login failed");

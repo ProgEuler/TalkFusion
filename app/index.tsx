@@ -1,12 +1,11 @@
 import { selectCurrentPlan, selectCurrentUser } from "@/store/authSlice";
+import NetInfo from '@react-native-community/netinfo';
+import * as Notifications from "expo-notifications";
 import { Redirect } from "expo-router";
 import React from "react";
+import { LogBox, Platform } from "react-native";
 import { useSelector } from "react-redux";
-import "../global.css"
-import { LogBox } from "react-native";
-import { Platform } from "react-native";
-import * as Notifications from "expo-notifications";
-import NetInfo from '@react-native-community/netinfo';
+import "../global.css";
 
 NetInfo.fetch().then(state => {
   console.log('Connection type', state.type);
@@ -27,6 +26,7 @@ if (Platform.OS === "android") {
 
 export default function IndexScreen() {
   const user = useSelector(selectCurrentUser);
+  const plan = useSelector(selectCurrentPlan);
 
   return (
     <Redirect
@@ -34,7 +34,9 @@ export default function IndexScreen() {
         user?.role
           ? user.role === "admin"
             ? "/(admin_dashboard)/home"
-            : "/(user_dashboard)/home"
+            : plan
+            ? "/(user_dashboard)/home"
+            : "/(auth)/welcome"
           : "/(auth)/login"
       }
     />

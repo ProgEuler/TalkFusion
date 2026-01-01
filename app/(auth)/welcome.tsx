@@ -1,3 +1,4 @@
+import { useGetSubscriptionsQuery } from "@/api/admin-api/subscription.api";
 import { Layout } from "@/components/layout/Layout";
 import colors from "@/constants/colors";
 import { useRouter } from "expo-router";
@@ -106,6 +107,10 @@ const PricingCard = ({
 };
 
 function WelcomeScreen() {
+   const {data, isError, error} = useGetSubscriptionsQuery(undefined)
+   console.log(data)
+   if(isError) console.log(error)
+      
   const router = useRouter();
 
   const handleGetStarted = () => {
@@ -117,7 +122,6 @@ function WelcomeScreen() {
 
   return (
     <Layout>
-      <View style={styles.scrollContent}>
         <View style={styles.header}>
           <Text style={styles.welcomeTitle}>
             Welcome to the Future of AI Automation!
@@ -142,7 +146,6 @@ function WelcomeScreen() {
             <PricingCard item={item} onGetStarted={handleGetStarted} />
           )}
         />
-      </View>
     </Layout>
   );
 }
@@ -150,16 +153,6 @@ function WelcomeScreen() {
 export default WelcomeScreen;
 
 const styles = StyleSheet.create({
-  scrollContent: {
-    flexGrow: 1,
-    paddingHorizontal: 12,
-    paddingTop: Platform.OS === 'android' ? 0 : 80,
-    paddingBottom: 0,
-  },
-  container: {
-    flex: 1,
-    backgroundColor: "#000",
-  },
   header: {
     paddingHorizontal: 20,
     paddingTop: 40,
