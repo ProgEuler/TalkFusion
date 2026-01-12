@@ -1,9 +1,9 @@
 import {
-  useBotActiveQuery,
-  useDisConnectMutation,
-  useGetFbUrlQuery,
-  useGetIgUrlQuery,
-  useGetWpUrlQuery,
+    useBotActiveQuery,
+    useDisConnectMutation,
+    useGetFbUrlQuery,
+    useGetIgUrlQuery,
+    useGetWpUrlQuery,
 } from "@/api/user-api/integrations.api";
 import Fb from "@/assets/svgs/facebook.svg";
 import Ig from "@/assets/svgs/instagram.svg";
@@ -14,15 +14,16 @@ import { Button } from "@/components/ui/Button";
 import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
 import colors from "@/constants/colors";
 import { selectChannelStatus } from "@/store/channelSlice";
+import { useRouter } from "expo-router";
 import { Calendar } from "lucide-react-native";
 import { useEffect, useState } from "react";
 import {
-  Linking,
-  RefreshControl,
-  StyleSheet,
-  Switch,
-  Text,
-  View,
+    Linking,
+    RefreshControl,
+    StyleSheet,
+    Switch,
+    Text,
+    View,
 } from "react-native";
 import { useSelector } from "react-redux";
 import { toast } from "sonner-native";
@@ -37,6 +38,7 @@ interface Integration {
 }
 
 export default function IntegrationsScreen() {
+  const router = useRouter();
   const channel = useSelector(selectChannelStatus);
   const {
     data: fbUrl,
@@ -212,6 +214,16 @@ export default function IntegrationsScreen() {
                 {integration.connected ? "connected" : "Connect"}
               </Button>
             </View>
+            {integration.id === "facebook" && (
+                <Button
+                    size="sm"
+                    variant="outline"
+                    onPress={() => router.push("/(user_dashboard)/facebook-pages")}
+                    style={{ marginTop: 8 }}
+                >
+                    Manage Pages
+                </Button>
+            )}
           </View>
         ))}
       </View>

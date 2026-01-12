@@ -2,6 +2,7 @@
   "expo": {
     "name": "Taskfusion Ai",
     "slug": "verse-ai",
+   //  "author": "github.com/progeuler",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -10,7 +11,7 @@
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
-      "bundleIndentifier": "com.betopia.jvai.verseai"
+      "bundleIdentifier": "com.betopia.jvai.verseai"
     },
     "android": {
       "adaptiveIcon": {
