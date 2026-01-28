@@ -1,7 +1,6 @@
 import { useGetOtpMutation, useVerifyOtpMutation } from "@/api/auth.api";
 import { Button } from "@/components/ui/Button";
 import { OTPFields } from "@/components/ui/otp-input";
-import { Toast } from "@/components/ui/Toast";
 import colors from "@/constants/colors";
 import { setCredentials } from "@/store/authSlice";
 import { useLocalSearchParams, useRouter } from "expo-router";
@@ -16,6 +15,7 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useDispatch } from "react-redux";
+import { toast } from "sonner-native";
 
 export default function OtpVerificationScreen() {
   const router = useRouter();
@@ -25,10 +25,6 @@ export default function OtpVerificationScreen() {
   const [verifyOtp, { isLoading: verifyingOTP }] =
     useVerifyOtpMutation(undefined);
   const [resendOtp, { isLoading: resending }] = useGetOtpMutation(undefined);
-
-  const [toastVisible, setToastVisible] = useState<boolean>(false);
-  const [toastMessage, setToastMessage] = useState<string>("");
-  const [toastType, setToastType] = useState<"success" | "error">("success");
 
   const [timer, setTimer] = useState<number>(180);
   const [canResend, setCanResend] = useState<boolean>(false);
@@ -58,14 +54,7 @@ export default function OtpVerificationScreen() {
       .padStart(2, "0")}`;
   };
 
-  const showToast = (message: string, type: "success" | "error") => {
-    setToastMessage(message);
-    setToastType(type);
-    setToastVisible(true);
-  };
-
   const handleVerifyOtp = async () => {
-    console.log(otp);
     try {
       const res = await verifyOtp({ email, otp }).unwrap();
       dispatch(
@@ -77,9 +66,8 @@ export default function OtpVerificationScreen() {
           session_id: res.session_id,
         })
       );
-      showToast("OTP Verified Successfully!", "success");
+      toast.success("OTP Verified Successfully!")
       setTimeout(() => {
-        router.replace("/(auth)/login");
         router.replace("/(auth)/login");
       }, 1000);
       // Navigate to next screen or dashboard
@@ -87,7 +75,7 @@ export default function OtpVerificationScreen() {
     } catch (error: any) {
       console.log(error);
       const message = error?.data?.message || "Invalid OTP. Please try again.";
-      showToast(message, "error");
+      toast.error(message)
     }
   };
 
@@ -95,25 +83,19 @@ export default function OtpVerificationScreen() {
     if (!canResend) return;
     try {
       await resendOtp(email).unwrap();
-      showToast("OTP Resent Successfully!", "success");
+      toast.success("OTP Resent Successful!")
       setTimer(180);
       setCanResend(false);
     } catch (error: any) {
       console.log(error);
       const message = error?.data?.message || "Failed to resend OTP.";
-      showToast(message, "error");
+      toast.error(message)
     }
   };
 
   return (
     <View style={styles.background}>
       <SafeAreaView style={styles.container}>
-        <Toast
-          visible={toastVisible}
-          message={toastMessage}
-          type={toastType}
-          onHide={() => setToastVisible(false)}
-        />
         <KeyboardAvoidingView
           behavior={Platform.OS === "ios" ? "padding" : "height"}
           style={styles.keyboardView}

@@ -47,7 +47,7 @@ function WelcomeScreen() {
     router.replace("/(auth)/login");
 
     Linking.openURL(
-      `https://ape-in-eft.ngrok-free.app/api/finance/create-checkout/${planId}/1/`,
+      `https://wahejan.vercel.app/`,
     );
   };
 

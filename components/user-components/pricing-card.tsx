@@ -20,8 +20,7 @@ export default function PricingCard({
 
   return (
     <View style={styles.cardContainer}>
-      <LinearGradient
-        colors={isPremium ? ["#1E293B", "#0F172A"] : ["#141824", "#141824"]}
+      <View
         style={[styles.card, isPremium && styles.premiumCard]}
       >
         {isPremium && (
@@ -81,7 +80,7 @@ export default function PricingCard({
             </Text>
           </LinearGradient>
         </TouchableOpacity>
-      </LinearGradient>
+      </View>
     </View>
   );
 }

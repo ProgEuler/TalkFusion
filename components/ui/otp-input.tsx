@@ -44,6 +44,7 @@ export const OTPFields = ({
             </RNText>
 
             <OtpInput
+                type="numeric"
                 numberOfDigits={numberOfDigits}
                 onTextChange={onChange}
                 theme={{

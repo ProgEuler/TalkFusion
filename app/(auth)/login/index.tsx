@@ -3,7 +3,7 @@ import { Layout } from "@/components/layout/Layout";
 import { Button } from "@/components/ui/Button";
 import { ModalView } from "@/components/ui/modal-view";
 import { useSignIn } from "@/hooks/use-google-signin";
-import { setCredentials } from "@/store/authSlice";
+import { selectCurrentUser, selectRefreshToken, setCredentials } from "@/store/authSlice";
 import { saveAuthData } from "@/utils/storage";
 import { isValidEmail } from "@/utils/validation";
 import { GoogleSignin } from "@react-native-google-signin/google-signin";
@@ -11,14 +11,13 @@ import { useRouter } from "expo-router";
 import { Eye, EyeOff } from "lucide-react-native";
 import React, { useState } from "react";
 import {
-    Modal,
     StyleSheet,
     Text,
     TextInput,
     TouchableOpacity,
-    View,
+    View
 } from "react-native";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { toast } from "sonner-native";
 
 GoogleSignin.configure({
@@ -103,32 +102,23 @@ export default function LoginScreen() {
 
   return (
     <Layout>
-      <Modal
-        animationType="slide"
-        transparent={true}
+      <ModalView
         visible={showActiveModal}
-        onRequestClose={() => {
-          setShowActiveModal(!showActiveModal);
+        onClose={() => {
+          setShowActiveModal(false);
+          router.push({
+            pathname: "/(auth)/signup/otp-verification",
+            params: { email },
+          });
         }}
+        title={"Account inactive"}
+        buttonLabel="Active"
+        buttonVariant={"primary"}
       >
-        <ModalView
-          visible={showActiveModal}
-          onClose={() => {
-            setShowActiveModal(false);
-            router.push({
-              pathname: "/(auth)/signup/otp-verification",
-              params: { email },
-            });
-          }}
-          title={"Account inactive"}
-          buttonLabel="Active"
-          buttonVariant={"primary"}
-        >
-          <Text style={{ color: "white" }}>
-            Active your Account to login {"\n"}
-          </Text>
-        </ModalView>
-      </Modal>
+        <Text style={{ color: "white" }}>
+          Active your Account to login {"\n"}
+        </Text>
+      </ModalView>
       <View style={styles.scrollContent}>
         <Text style={styles.title}>Welcome Back!</Text>
 
@@ -208,7 +198,7 @@ export default function LoginScreen() {
             >
               Continue with Google
             </Button>
-            <Button variant="outline">Continue with Apple</Button>
+            {/* <Button variant="outline">Continue with Apple</Button> */}
           </View>
         </View>
       </View>
