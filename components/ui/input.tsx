@@ -1,6 +1,6 @@
 import colors, { COLORS } from "@/constants/colors";
 import Entypo from "@expo/vector-icons/Entypo";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
     LayoutChangeEvent,
     TextInput,
@@ -46,6 +46,13 @@ export function RNInput({
             props.onChangeText(text);
         }
     };
+
+    useEffect(() => {
+        if (props.value !== undefined) {
+            setValue(props.value);
+            labelPosition.value = props.value ? 1 : 0;
+        }
+    }, [props.value]);
 
     const labelPosition = useSharedValue(value ? 1 : 0);
 

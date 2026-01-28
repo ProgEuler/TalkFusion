@@ -36,6 +36,12 @@
           "iCloudContainerEnvironment": "Production"
         }
       ],
+      [
+        "@react-native-google-signin/google-signin",
+        {
+          "iosUrlScheme": "com.googleusercontent.apps.1034323410828-j8ps84s08n6410l70h82r8rtfbd095cv"
+        }
+      ],
       "expo-router",
       [
         "expo-splash-screen",

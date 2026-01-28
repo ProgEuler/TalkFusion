@@ -1,8 +1,8 @@
 import { RNInput } from "@/components/ui/input";
-import colors, { COLORS } from "@/constants/colors";
+import colors from "@/constants/colors";
 import { Calendar, Clock } from "lucide-react-native";
 import { useState } from "react";
-import { Pressable, TouchableOpacity } from "react-native";
+import { Pressable } from "react-native";
 import DateTimePicker from "react-native-modal-datetime-picker";
 
 type Props = {
@@ -86,18 +86,15 @@ export function RNDatePicker({ label, onChangeDate, value, mode, error }: Props)
                 }}
                 date={value ?? new Date()}
                 pickerContainerStyleIOS={{
-                    backgroundColor: COLORS.background,
+                    backgroundColor: colors.dark.cardBackground,
                     borderRadius: 20,
-                    width: 500,
                 }}
                 pickerStyleIOS={{
                     width: "100%",
-                    paddingHorizontal: 85,
                 }}
                 confirmTextIOS="OK"
                 cancelTextIOS="Cancel"
-                buttonTextColorIOS={COLORS.primary}
-                customCancelButtonIOS={() => <TouchableOpacity></TouchableOpacity>}
+                buttonTextColorIOS={colors.dark.primary}
             />
         </>
     );
