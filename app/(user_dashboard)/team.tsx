@@ -4,6 +4,7 @@ import { Layout } from "@/components/layout/Layout";
 import React, { useState } from "react";
 import { View } from "react-native";
 import RBACTable from "./rbac-table";
+import AddEmployee from "@/components/user-components/add-employee";
 
 const TeamPermissionsPage = () => {
    const [modalVisible, setModalVisible] = useState(false);
@@ -17,6 +18,7 @@ const TeamPermissionsPage = () => {
   return (
     <Layout>
       <View>
+         <AddEmployee />
          <UpdateRoleModal
             visible={modalVisible}
             onClose={() => setModalVisible(false)}

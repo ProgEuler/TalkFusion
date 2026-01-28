@@ -11,8 +11,15 @@ export const teamApi = baseApi.injectEndpoints({
          method: "POST",
          body
       })
+    }),
+    addEmployee: builder.mutation({
+      query: (body) => ({
+         url: "/auth/company/employee/",
+         method: "POST",
+         body
+      })
     })
   }),
 });
 
-export const { useGetEmployeesQuery, useUpdateEmployeeRolesMutation } = teamApi;
+export const { useGetEmployeesQuery, useUpdateEmployeeRolesMutation, useAddEmployeeMutation } = teamApi;

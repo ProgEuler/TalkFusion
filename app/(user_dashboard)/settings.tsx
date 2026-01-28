@@ -73,7 +73,7 @@ export default function Settings() {
       <Text style={styles.sectionTitle}>Security</Text>
 
       {/* Change Password */}
-      <View style={styles.card}>
+      {/* <View style={styles.card}>
         <View style={styles.cardContent}>
           <View>
             <Text style={styles.cardTitle}>Change Password</Text>
@@ -83,10 +83,10 @@ export default function Settings() {
           </View>
           <Button size="sm">Change</Button>
         </View>
-      </View>
+      </View> */}
 
       {/* Two-Factor Authentication */}
-      <View style={styles.card}>
+      {/* <View style={styles.card}>
         <View style={styles.cardContent}>
           <View>
             <Text style={styles.cardTitle}>Two-Factor Authentication</Text>
@@ -101,7 +101,7 @@ export default function Settings() {
             thumbColor="#ffffff"
           />
         </View>
-      </View>
+      </View> */}
 
       {/* Active Sessions */}
       <Sessions />
@@ -302,6 +302,7 @@ const styles = StyleSheet.create({
   cardSubtitle: {
     fontSize: 13,
     color: "#8e8e93",
+    width: "90%"
   },
   primaryButton: {
     backgroundColor: "#007AFF",

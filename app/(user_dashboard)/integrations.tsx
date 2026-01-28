@@ -157,8 +157,13 @@ export default function IntegrationsScreen() {
       toast.success(
         `Bot ${!currentStatus ? "activated" : "deactivated"} for ${integrationId}`
       );
-    } catch (error) {
-      toast.error(`Failed to update bot status for ${integrationId}`);
+    } catch (error: any) {
+      console.log("Toggle bot error:", error);
+      const errorMessage = Array.isArray(error?.data)
+        ? error.data[0]
+        : error?.data?.message || `Failed to update bot status for ${integrationId}`;
+
+      toast.error(errorMessage);
     }
   };
 
