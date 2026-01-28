@@ -192,7 +192,7 @@ export default function CustomDrawerContent(props: any) {
     router.push(route as any);
   };
 
-  const handleLogout = async () => {
+ const handleLogout = async () => {
     signIn("signout");
     dispatch(logOut());
     await clearAuthData();

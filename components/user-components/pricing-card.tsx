@@ -111,6 +111,8 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 20,
     elevation: 8,
+    height: 480,
+    justifyContent: 'space-between'
   },
   premiumCard: {
     borderColor: colors.dark.primary,
@@ -174,15 +176,17 @@ const styles = StyleSheet.create({
   divider: {
     height: 1,
     backgroundColor: "#1E293B",
-    marginVertical: 20,
+    marginVertical: 10,
   },
   features: {
-    marginBottom: 32,
+    marginBottom: 20,
+    flex: 1,
+    justifyContent: 'center'
   },
   featureItem: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: 16,
+    marginBottom: 12,
   },
   iconContainer: {
     width: 32,

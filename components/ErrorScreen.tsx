@@ -52,7 +52,7 @@ export default function ErrorScreen({
                 onPress={onRetry}
               >
                 <RefreshCw size={14} color="#FFFFFF" />
-                Retry Connection
+                {"  "}Retry Connection
               </Button>
 
               {onOfflineMode && (
