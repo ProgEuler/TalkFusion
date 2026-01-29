@@ -47,6 +47,13 @@ export const authApi = baseApi.injectEndpoints({
         },
       }),
     }),
+    resetPass: builder.mutation({
+      query: (body) => ({
+        url: "/auth/reset-password/",
+        method: "POST",
+        body,
+      }),
+    }),
   }),
 });
 
@@ -57,4 +64,5 @@ export const {
   useVerifyOtpMutation,
   useGoogleSigninMutation,
   useRefreshMutation,
+  useResetPassMutation,
 } = authApi;

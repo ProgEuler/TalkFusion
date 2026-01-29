@@ -1,6 +1,7 @@
+import { useResetPassMutation } from "@/api/auth.api";
 import { Layout } from "@/components/layout/Layout";
 import { Button } from "@/components/ui/Button";
-import { useRouter } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import { Eye, EyeOff } from "lucide-react-native";
 import React, { useState } from "react";
 import {
@@ -10,17 +11,32 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { toast } from "sonner-native";
 
 export default function CreateNewPasswordScreen() {
   const router = useRouter();
   const [password, setPassword] = useState<string>("");
   const [confirmPassword, setConfirmPassword] = useState<string>("");
   const [showPassword, setShowPassword] = useState<boolean>(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState<boolean>(false);
+  const [showConfirmPassword, setShowConfirmPassword] =
+    useState<boolean>(false);
 
-  const handleResetPassword = () => {
-    console.log("Reset Password pressed", { password, confirmPassword });
-    router.replace("/(auth)/login");
+  const { email } = useLocalSearchParams();
+
+  const [reset, { isLoading }] = useResetPassMutation();
+
+  const handleResetPassword = async () => {
+    try {
+      await reset({
+        email,
+        new_password: confirmPassword,
+      });
+      toast.success("Pass reset successful");
+      router.replace("/(auth)/login");
+    } catch (error) {
+      console.log(error);
+      toast.error("Something went worng");
+    }
   };
 
   return (
@@ -79,7 +95,9 @@ export default function CreateNewPasswordScreen() {
             </View>
           </View>
 
-          <Button onPress={handleResetPassword}>Reset Password</Button>
+          <Button onPress={handleResetPassword} isLoading={isLoading}>
+            {"Reset Password"}
+          </Button>
         </View>
       </View>
     </Layout>

@@ -1,18 +1,20 @@
 import { Layout } from "@/components/layout/Layout";
 import { Button } from "@/components/ui/Button";
 import colors from "@/constants/colors";
-import { useRouter } from "expo-router";
+import { usePathname, useRouter } from "expo-router";
 import React, { useState } from "react";
 import { StyleSheet, Text, TextInput, View } from "react-native";
 
 export default function ForgotPasswordScreen() {
   const router = useRouter();
+  const location = usePathname()
   const [email, setEmail] = useState<string>("");
 
   const handleSendOtp = () => {
-    console.log("Send OTP pressed for email:", email);
-    // In a real app, you would send an OTP to the email and then navigate to OTP verification
-    router.push("/(auth)/reset/create-new-password");
+    router.push({
+      pathname: "/(auth)/signup/otp-verification",
+      params: { email, from: location },
+    });
   };
 
   return (

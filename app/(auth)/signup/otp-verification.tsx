@@ -4,7 +4,7 @@ import { OTPFields } from "@/components/ui/otp-input";
 import colors from "@/constants/colors";
 import { setCredentials } from "@/store/authSlice";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
     KeyboardAvoidingView,
     Platform,
@@ -20,7 +20,7 @@ import { toast } from "sonner-native";
 export default function OtpVerificationScreen() {
   const router = useRouter();
   const dispatch = useDispatch();
-  const { email } = useLocalSearchParams<{ email: string }>();
+  const { email, from } = useLocalSearchParams<{ email: string }>();
   const [otp, setOtp] = useState("");
   const [verifyOtp, { isLoading: verifyingOTP }] =
     useVerifyOtpMutation(undefined);
@@ -30,11 +30,11 @@ export default function OtpVerificationScreen() {
   const [canResend, setCanResend] = useState<boolean>(false);
   const [getOtp, { isLoading: sendingOTP }] = useGetOtpMutation(undefined);
 
-  React.useEffect(() => {
+  useEffect(() => {
     getOtp({ email });
   }, [email]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     let interval: NodeJS.Timeout;
     if (timer > 0) {
       interval = setInterval(() => {
@@ -67,11 +67,17 @@ export default function OtpVerificationScreen() {
         })
       );
       toast.success("OTP Verified Successfully!")
+
+      if(from === '/reset/forgot-password'){
+         router.push({
+            pathname: "/(auth)/reset/create-new-password",
+            params: { email }
+         });
+         return;
+      }
       setTimeout(() => {
         router.replace("/(auth)/login");
       }, 1000);
-      // Navigate to next screen or dashboard
-      // router.push("/(auth)/create-new-password");
     } catch (error: any) {
       console.log(error);
       const message = error?.data?.message || "Invalid OTP. Please try again.";
