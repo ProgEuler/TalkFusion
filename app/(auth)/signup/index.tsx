@@ -14,6 +14,7 @@ import {
     TouchableOpacity,
     View,
 } from "react-native";
+import { toast } from "sonner-native";
 
 export default function SignupScreen() {
   const router = useRouter();
@@ -29,12 +30,6 @@ export default function SignupScreen() {
   const [signup, { isLoading }] = useSignupMutation(undefined);
     const { signIn, loading: googleLoading } = useSignIn();
 
-  const showToast = (message: string, type: "success" | "error") => {
-    setToastMessage(message);
-    setToastType(type);
-    setToastVisible(true);
-  };
-
   const handleSignup = async () => {
     console.log("Signup pressed", { name, email, password });
 
@@ -45,7 +40,13 @@ export default function SignupScreen() {
     setEmailError(null);
     try {
       const res = await signup({ name, email, password });
-      console.log(res);
+      // console.log(res.error.data.email[0]);
+
+      if(res?.error && 'status' in res.error && res.error.status === 400) {
+         toast.error((res.error?.data as any)?.email[0])
+         return;
+      }
+      // console.log(res.error.status)
       // showToast("Singup successful!", "success");
 
       setTimeout(() => {
@@ -55,9 +56,10 @@ export default function SignupScreen() {
         });
       }, 1000);
     } catch (error) {
-      console.error("Error:", error);
+      // console.error("Error:", error);
       const message = (error as any)?.data;
-      showToast(message, "error");
+      // showToast(message, "error");
+      console.log(message)
     }
   };
 
@@ -155,7 +157,7 @@ export default function SignupScreen() {
             >
               Continue with Google
             </Button>
-            <Button onPress={() => signIn("signout")} variant="outline">Continue with Apple</Button>
+            {/* <Button onPress={() => signIn("signout")} variant="outline">Continue with Apple</Button> */}
           </View>
 
         </View>
