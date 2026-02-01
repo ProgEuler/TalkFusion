@@ -65,11 +65,6 @@ export default function ChangePasswordBottomSheet({
       return false;
     }
 
-    if (newPassword.length < 8) {
-      toast.error("New password must be at least 8 characters long");
-      return false;
-    }
-
     if (newPassword !== confirmPassword) {
       toast.error("New passwords do not match");
       return false;
@@ -88,8 +83,8 @@ export default function ChangePasswordBottomSheet({
 
     try {
       await changePassword({
-        current_password: currentPassword,
-        new_password: newPassword,
+        old_password: currentPassword,
+        password: newPassword,
       }).unwrap();
       toast.success("Password changed successfully");
       handleDismissModal();

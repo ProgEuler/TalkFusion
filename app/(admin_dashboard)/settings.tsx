@@ -71,7 +71,7 @@ export default function Settings() {
       </View>
 
       {/* Two-Factor Authentication */}
-      <View style={styles.card}>
+      {/* <View style={styles.card}>
         <View style={styles.cardContent}>
           <View>
             <Text style={styles.cardTitle}>Two-Factor Authentication</Text>
@@ -86,7 +86,7 @@ export default function Settings() {
             thumbColor="#ffffff"
           />
         </View>
-      </View>
+      </View> */}
 
       <Sessions />
 

@@ -1,31 +1,28 @@
 import colors from "@/constants/colors";
+import { useSafeAreaKeyboard } from "@/hooks/use-safe-area-keyboard";
 import { selectCurrentToken } from "@/store/authSlice";
 import { Send as SendIcon } from "lucide-react-native";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Platform, StyleSheet, View } from "react-native";
 import {
-   Bubble,
-   Composer,
-   GiftedChat,
-   IMessage,
-   InputToolbar,
-   Send,
-   SystemMessage,
+    Bubble,
+    Composer,
+    GiftedChat,
+    IMessage,
+    InputToolbar,
+    Send,
+    SystemMessage,
 } from "react-native-gifted-chat";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useSelector } from "react-redux";
 
 export default function TestChat() {
   const [messages, setMessages] = useState<IMessage[]>([]);
   const [isTyping, setIsTyping] = useState(false);
-  const insets = useSafeAreaInsets();
+  const { getKeyboardVerticalOffset, getKeyboardBehavior, getInputToolbarPadding, getSafeBottomPadding } = useSafeAreaKeyboard();
   const token = useSelector(selectCurrentToken);
   const socketRef = useRef<WebSocket | null>(null);
 
-  const tabbarHeight = 75;
-  const keyboardTopToolbarHeight = Platform.select({ ios: 44, default: 0 });
-  const keyboardVerticalOffset =
-    insets.bottom + tabbarHeight + keyboardTopToolbarHeight;
+  const keyboardVerticalOffset = getKeyboardVerticalOffset();
 
   useEffect(() => {
     if (!token) return;
@@ -160,11 +157,15 @@ export default function TestChat() {
   };
 
   const renderInputToolbar = (props: any) => {
+    const toolbarPadding = getInputToolbarPadding();
     return (
       <InputToolbar
         {...props}
-        containerStyle={styles.inputToolbar}
-        primaryStyle={{ alignItems: "center", paddingBottom: 8 }}
+        containerStyle={[
+          styles.inputToolbar,
+          toolbarPadding,
+        ]}
+        primaryStyle={{ alignItems: "center" }}
       />
     );
   };
@@ -190,14 +191,17 @@ export default function TestChat() {
   };
 
   return (
-    <View style={{ flex: 1, backgroundColor: colors.dark.background }}>
+    <View style={[styles.container, { paddingBottom: Platform.OS === 'android' ? 0 : getSafeBottomPadding(0) }]}>
       <GiftedChat
         messages={messages}
         onSend={(messages) => onSend(messages)}
         user={{
           _id: 1,
         }}
-        keyboardAvoidingViewProps={{ keyboardVerticalOffset }}
+        keyboardAvoidingViewProps={{
+          keyboardVerticalOffset,
+          behavior: getKeyboardBehavior(),
+        }}
         renderBubble={renderBubble}
         renderSystemMessage={renderSystemMessage}
         renderInputToolbar={renderInputToolbar}
@@ -222,12 +226,17 @@ export default function TestChat() {
 }
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: colors.dark.background,
+  },
   inputToolbar: {
     backgroundColor: colors.dark.background,
     borderTopWidth: 1,
     borderTopColor: colors.dark.border,
     paddingHorizontal: 8,
-    paddingVertical: 4,
+    paddingTop: 8,
+    minHeight: 60,
   },
   composer: {
     backgroundColor: colors.dark.background,
@@ -240,12 +249,14 @@ const styles = StyleSheet.create({
     color: "#FFFFFF", // Explicitly white
     fontSize: 15,
     lineHeight: 20,
+    minHeight: 40,
   },
   sendContainer: {
     justifyContent: "center",
     alignItems: "center",
     alignSelf: "center",
     marginRight: 8,
+    marginBottom: 8,
   },
   sendButton: {
     width: 36,
