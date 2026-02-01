@@ -54,6 +54,13 @@ export const authApi = baseApi.injectEndpoints({
         body,
       }),
     }),
+    chnagePass: builder.mutation({
+      query: (body) => ({
+         url: "/auth/change-password/",
+         method: "PATCH",
+         body
+      })
+    })
   }),
 });
 
@@ -65,4 +72,5 @@ export const {
   useGoogleSigninMutation,
   useRefreshMutation,
   useResetPassMutation,
+  useChnagePassMutation
 } = authApi;

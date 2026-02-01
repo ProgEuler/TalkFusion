@@ -1,4 +1,5 @@
 import { useGetMeQuery } from "@/api/admin-api/users.api";
+import ChangePasswordBottomSheet from "@/components/change-password-bottom-sheet";
 import ErrorScreen from "@/components/ErrorScreen";
 import { Layout } from "@/components/layout/Layout";
 import Sessions from "@/components/sesstions";
@@ -6,15 +7,21 @@ import { Button } from "@/components/ui/Button";
 import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
 import { ModalView } from "@/components/ui/modal-view";
 import colors from "@/constants/colors";
+import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { Trash2, TriangleAlert } from "lucide-react-native";
-import React, { useState } from "react";
-import { Image, Modal, StyleSheet, Switch, Text, View } from "react-native";
+import React, { useCallback, useRef, useState } from "react";
+import { Image, Modal, StyleSheet, Text, View } from "react-native";
 
 export default function Settings() {
   const [twoFactorEnabled, setTwoFactorEnabled] = useState(true);
   const [deleteAcc, setDeleteAcc] = useState(false);
+  const changePasswordBottomSheetRef = useRef<BottomSheetModal>(null);
 
   const {data: user, isLoading, isError, refetch} = useGetMeQuery(undefined)
+
+  const handlePresentChangePasswordModal = useCallback(() => {
+    changePasswordBottomSheetRef.current?.present();
+  }, []);
 
   if(isLoading) return <LoadingSpinner />
   if(isError) return <ErrorScreen onRetry={refetch} />
@@ -48,7 +55,7 @@ export default function Settings() {
           <View style={styles.profileAvatar}>
             {user.image ? (
               <Image
-                src={`https://ape-in-eft.ngrok-free.app` + user.image}
+                src={`${process.env.EXPO_PUBLIC_API_MEDIA_URL}` + user.image}
                 height={60}
                 width={60}
               />
@@ -73,7 +80,7 @@ export default function Settings() {
       <Text style={styles.sectionTitle}>Security</Text>
 
       {/* Change Password */}
-      {/* <View style={styles.card}>
+      <View style={styles.card}>
         <View style={styles.cardContent}>
           <View>
             <Text style={styles.cardTitle}>Change Password</Text>
@@ -81,9 +88,9 @@ export default function Settings() {
               Update your account password
             </Text>
           </View>
-          <Button size="sm">Change</Button>
+          <Button size="sm" onPress={handlePresentChangePasswordModal}>Change</Button>
         </View>
-      </View> */}
+      </View>
 
       {/* Two-Factor Authentication */}
       {/* <View style={styles.card}>
@@ -157,6 +164,8 @@ export default function Settings() {
           </Button>
         </View>
       </View>
+
+      <ChangePasswordBottomSheet bottomSheetRef={changePasswordBottomSheetRef} />
     </Layout>
   );
 }

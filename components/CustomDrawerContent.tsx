@@ -97,12 +97,12 @@ const userMenuItems: MenuItem[] = [
     icon: HelpCircle,
     route: "/(user_dashboard)/support",
   },
-  {
-    id: "team",
-    label: "Team",
-    icon: Users,
-    route: "/(user_dashboard)/team",
-  },
+//   {
+//     id: "team",
+//     label: "Team",
+//     icon: Users,
+//     route: "/(user_dashboard)/team",
+//   },
   {
     id: "settings",
     label: "Settings",
