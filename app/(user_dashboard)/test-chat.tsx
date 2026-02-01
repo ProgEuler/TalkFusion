@@ -1,15 +1,14 @@
+import { SafeGiftedChat } from "@/components/chat/SafeGiftedChat";
 import colors from "@/constants/colors";
-import { useSafeAreaKeyboard } from "@/hooks/use-safe-area-keyboard";
 import { selectCurrentToken } from "@/store/authSlice";
 import { Send as SendIcon } from "lucide-react-native";
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { Platform, StyleSheet, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import {
     Bubble,
     Composer,
     GiftedChat,
     IMessage,
-    InputToolbar,
     Send,
     SystemMessage,
 } from "react-native-gifted-chat";
@@ -18,11 +17,8 @@ import { useSelector } from "react-redux";
 export default function TestChat() {
   const [messages, setMessages] = useState<IMessage[]>([]);
   const [isTyping, setIsTyping] = useState(false);
-  const { getKeyboardVerticalOffset, getKeyboardBehavior, getInputToolbarPadding, getSafeBottomPadding } = useSafeAreaKeyboard();
   const token = useSelector(selectCurrentToken);
   const socketRef = useRef<WebSocket | null>(null);
-
-  const keyboardVerticalOffset = getKeyboardVerticalOffset();
 
   useEffect(() => {
     if (!token) return;
@@ -156,20 +152,6 @@ export default function TestChat() {
     );
   };
 
-  const renderInputToolbar = (props: any) => {
-    const toolbarPadding = getInputToolbarPadding();
-    return (
-      <InputToolbar
-        {...props}
-        containerStyle={[
-          styles.inputToolbar,
-          toolbarPadding,
-        ]}
-        primaryStyle={{ alignItems: "center" }}
-      />
-    );
-  };
-
   const renderComposer = (props: any) => {
     return (
       <Composer
@@ -191,62 +173,42 @@ export default function TestChat() {
   };
 
   return (
-    <View style={[styles.container, { paddingBottom: Platform.OS === 'android' ? 0 : getSafeBottomPadding(0) }]}>
-      <GiftedChat
-        messages={messages}
-        onSend={(messages) => onSend(messages)}
-        user={{
-          _id: 1,
-        }}
-        keyboardAvoidingViewProps={{
-          keyboardVerticalOffset,
-          behavior: getKeyboardBehavior(),
-        }}
-        renderBubble={renderBubble}
-        renderSystemMessage={renderSystemMessage}
-        renderInputToolbar={renderInputToolbar}
-        renderComposer={renderComposer}
-        renderSend={renderSend}
+    <SafeGiftedChat
+      messages={messages}
+      onSend={(messages) => onSend(messages)}
+      user={{
+        _id: 1,
+      }}
+      renderBubble={renderBubble}
+      renderSystemMessage={renderSystemMessage}
+      renderComposer={renderComposer}
+      renderSend={renderSend}
+      // @ts-ignore
+      alwaysShowSend
+      textInputStyle={{ color: colors.dark.text }}
+      isTyping={isTyping}
+      typingIndicatorStyle={{
+        backgroundColor: colors.dark.primary,
+      }}
+      textInputProps={{
+        placeholderTextColor: colors.dark.textSecondary,
         // @ts-ignore
-        alwaysShowSend
-        minInputToolbarHeight={60}
-        textInputStyle={{ color: colors.dark.text }}
-        isTyping={isTyping}
-        typingIndicatorStyle={{
-          backgroundColor: colors.dark.primary,
-        }}
-        textInputProps={{
-          placeholderTextColor: colors.dark.textSecondary,
-          // @ts-ignore
-          color: colors.dark.text,
-        }}
-      />
-    </View>
+        color: colors.dark.text,
+      }}
+    />
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.dark.background,
-  },
-  inputToolbar: {
-    backgroundColor: colors.dark.background,
-    borderTopWidth: 1,
-    borderTopColor: colors.dark.border,
-    paddingHorizontal: 8,
-    paddingTop: 8,
-    minHeight: 60,
-  },
   composer: {
-    backgroundColor: colors.dark.background,
+    backgroundColor: colors.dark.cardBackground,
     borderRadius: 20,
     borderWidth: 1,
     borderColor: colors.dark.border,
     paddingHorizontal: 12,
     marginTop: 8,
     marginBottom: 8,
-    color: "#FFFFFF", // Explicitly white
+    color: colors.dark.text,
     fontSize: 15,
     lineHeight: 20,
     minHeight: 40,

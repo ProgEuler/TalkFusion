@@ -1,28 +1,28 @@
 import { useGetOldChatQuery } from "@/api/user-api/chat.api";
 import ErrorScreen from "@/components/ErrorScreen";
-import { Layout } from "@/components/layout/Layout";
 import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
 import colors from "@/constants/colors";
+import { useSafeAreaWithKeyboard } from "@/hooks/use-safe-area-keyboard";
 import { selectRoomMessages } from "@/store/chat.slice";
 import { timeAgo } from "@/utils/helpers";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { ArrowLeft } from "lucide-react-native";
 import React, { useEffect, useRef } from "react";
-import { RefreshControl } from "react-native";
 import {
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
+    Platform,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View,
 } from "react-native";
+import { KeyboardAvoidingView } from "react-native-keyboard-controller";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useSelector } from "react-redux";
 
 export default function ChatDetailScreen() {
   const insets = useSafeAreaInsets();
+  const { buttonContainerPaddingBottom } = useSafeAreaWithKeyboard();
   const router = useRouter();
   const params = useLocalSearchParams<{ roomId: string; channel?: string; clientId: string }>();
 
@@ -59,6 +59,12 @@ export default function ChatDetailScreen() {
 
   const chatName = params.clientId || "Unknown";
 
+  // Calculate proper keyboard offset
+  const keyboardVerticalOffset = Platform.select({
+    ios: insets.top + 60, // Header height + status bar
+    android: 0,
+  }) || 0;
+
   useEffect(() => {
     // Scroll to bottom when messages change
     setTimeout(() => {
@@ -70,14 +76,10 @@ export default function ChatDetailScreen() {
   if(isError) return <ErrorScreen />
 
   return (
-   //  <Layout
-   //        refreshControl={
-   //       <RefreshControl refreshing={isFetching} onRefresh={refetch} />
-   //     }>
     <KeyboardAvoidingView
       style={styles.container}
       behavior={Platform.OS === "ios" ? "padding" : "height"}
-      keyboardVerticalOffset={Platform.OS === "ios" ? 90 : 0}
+      keyboardVerticalOffset={keyboardVerticalOffset}
     >
       {/* Header */}
       <View
@@ -202,7 +204,6 @@ export default function ChatDetailScreen() {
                 </TouchableOpacity>
             </View> */}
     </KeyboardAvoidingView>
-//  </Layout>
   );
 }
 
