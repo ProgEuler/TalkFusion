@@ -1,10 +1,11 @@
 import colors from "@/constants/colors";
+import { useSafeAreaWithKeyboard } from "@/hooks/use-safe-area-keyboard";
 import { ReactNode } from "react";
+import { Platform } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
 import {
-   SafeAreaView,
-   SafeAreaViewProps,
-   useSafeAreaInsets,
+  SafeAreaView,
+  SafeAreaViewProps,
 } from "react-native-safe-area-context";
 
 type Props = {
@@ -15,7 +16,8 @@ type Props = {
 
 export function Layout({ children, style, refreshControl, ...props }: Props) {
   const padding = 12;
-  const { bottom } = useSafeAreaInsets()
+  const { contentPaddingBottom } = useSafeAreaWithKeyboard();
+
   return (
     <SafeAreaView
       edges={props.edges || []}
@@ -31,14 +33,14 @@ export function Layout({ children, style, refreshControl, ...props }: Props) {
         showsVerticalScrollIndicator={false}
         showsHorizontalScrollIndicator={false}
         keyboardDismissMode="interactive"
-        bottomOffset={20}
+        bottomOffset={Platform.OS === 'android' ? 40 : 20}
         refreshControl={refreshControl}
         contentContainerStyle={[
           {
             flexGrow: 1,
             gap: 8,
-            paddingBottom: bottom,
-            paddingVertical: padding,
+            paddingBottom: contentPaddingBottom,
+            paddingTop: padding,
           },
           style,
         ]}

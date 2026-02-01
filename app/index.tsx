@@ -1,32 +1,29 @@
 import { selectCurrentPlan, selectCurrentUser } from "@/store/authSlice";
-import NetInfo from '@react-native-community/netinfo';
-import * as Notifications from "expo-notifications";
+import NetInfo from "@react-native-community/netinfo";
+import * as NavigationBar from "expo-navigation-bar";
 import { Redirect } from "expo-router";
-import React from "react";
-import { LogBox, Platform } from "react-native";
+import React, { useEffect } from "react";
+import { LogBox } from "react-native";
 import { useSelector } from "react-redux";
 import "../global.css";
 
-NetInfo.fetch().then(state => {
-  console.log('Connection type', state.type);
-  console.log('Is connected?', state.isConnected);
+NavigationBar.setButtonStyleAsync('light');
+
+NetInfo.fetch().then((state) => {
+  console.log("Connection type", state.type);
+  console.log("Is connected?", state.isConnected);
 });
 
 LogBox.ignoreAllLogs();
-
-if (Platform.OS === "android") {
-  Notifications.setNotificationChannelAsync("default", {
-    name: "default",
-    importance: Notifications.AndroidImportance.MAX,
-    vibrationPattern: [0, 250, 250, 250],
-    lightColor: "#FF231F7C",
-    //  sound: true,
-  });
-}
-
 export default function IndexScreen() {
   const user = useSelector(selectCurrentUser);
   const plan = useSelector(selectCurrentPlan);
+
+//   useEffect(() => {
+//    //  NavigationBar.setBackgroundColorAsync("transparent");
+//     NavigationBar.setButtonStyleAsync("dark"); // 'light' | 'dark'
+//     NavigationBar.setPositionAsync("absolute");
+//   }, []);
 
   return (
     <Redirect
@@ -35,8 +32,8 @@ export default function IndexScreen() {
           ? user.role === "admin"
             ? "/(admin_dashboard)/home"
             : plan
-            ? "/(user_dashboard)/home"
-            : "/(auth)/welcome"
+              ? "/(user_dashboard)/home"
+              : "/(auth)/welcome"
           : "/(auth)/login"
       }
     />

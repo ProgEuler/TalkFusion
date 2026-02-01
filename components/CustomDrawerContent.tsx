@@ -1,37 +1,38 @@
 import Logo from "@/assets/svgs/logo.svg";
 import colors from "@/constants/colors";
 import { useSignIn } from "@/hooks/use-google-signin";
+import { useSafeAreaWithKeyboard } from "@/hooks/use-safe-area-keyboard";
 import { logOut, selectCurrentUser } from "@/store/authSlice";
 import { clearAuthData } from "@/utils/storage";
 import { LinearGradient } from "expo-linear-gradient";
 import { usePathname, useRouter } from "expo-router";
 import {
-  BarChart3,
-  BookOpen,
-  Bot,
-  Brain,
-  Building,
-  Calendar,
-  CreditCard,
-  FileText,
-  Grid,
-  HelpCircle,
-  LayoutDashboard,
-  LogOut,
-  MessageCircle,
-  MessageSquare,
-  Plug,
-  Settings,
-  User,
-  Users,
+    BarChart3,
+    BookOpen,
+    Bot,
+    Brain,
+    Building,
+    Calendar,
+    CreditCard,
+    FileText,
+    Grid,
+    HelpCircle,
+    LayoutDashboard,
+    LogOut,
+    MessageCircle,
+    MessageSquare,
+    Plug,
+    Settings,
+    User,
+    Users,
 } from "lucide-react-native";
 import React from "react";
 import {
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View,
 } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -186,6 +187,7 @@ export default function CustomDrawerContent(props: any) {
   const { signIn, name } = useSignIn();
   const pathname = usePathname();
   const user = useSelector(selectCurrentUser);
+  const { contentPaddingBottom } = useSafeAreaWithKeyboard();
   const menuItems = user?.role === "admin" ? adminMenuItems : userMenuItems;
 
   const handleNavigation = (route: string) => {
@@ -256,7 +258,7 @@ export default function CustomDrawerContent(props: any) {
         </View>
       </ScrollView>
 
-      <View style={styles.footer}>
+      <View style={[styles.footer, { paddingBottom: contentPaddingBottom }]}>
         <TouchableOpacity onPress={handleLogout}>
           <LinearGradient
             colors={[colors.dark.gradientStart, colors.dark.gradientEnd]}
@@ -348,7 +350,8 @@ const styles = StyleSheet.create({
     marginHorizontal: 20,
   },
   footer: {
-    padding: 16,
+    paddingHorizontal: 16,
+    paddingTop: 16,
     borderTopWidth: 1,
     borderTopColor: colors.dark.border,
   },

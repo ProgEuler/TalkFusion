@@ -200,10 +200,10 @@ export default function AnalyticsScreen() {
         <View style={styles.statCard}>
           <View>
             <MessageCircle color={colors.dark.primary} size={24} />
+          </View>
             <Text style={styles.metricValue}>
               {data?.message_count?.total || 0}
             </Text>
-          </View>
           <Text style={styles.metricLabel}>Messages Received</Text>
         </View>
 
@@ -333,6 +333,7 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     color: colors.dark.text,
     marginBottom: 4,
+    marginTop: 12
   },
   metricLabel: {
     fontSize: 12,
