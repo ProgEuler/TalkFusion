@@ -153,6 +153,7 @@ export default function Notifications() {
               !notification.is_read && styles.unreadNotification
             ]}
             // onPress={() => handleNotificationPress(notification)}
+            // onPress={(() => router.push("/(user_dashboard)/notifications"))}
           >
             <View style={styles.notificationIcon}>
               {getNotificationIcon(notification.type)}

@@ -386,7 +386,7 @@ export default function AddAppointmentScreen() {
                   value={value}
                   onChangeText={onChange}
                   multiline
-                  numberOfLines={4}
+                  numberOfLines={2}
                   textAlignVertical="top"
                 />
               )}

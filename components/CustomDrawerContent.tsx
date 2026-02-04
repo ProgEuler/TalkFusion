@@ -1,3 +1,4 @@
+import { baseApi } from "@/api/baseApi";
 import Logo from "@/assets/svgs/logo.svg";
 import colors from "@/constants/colors";
 import { useSignIn } from "@/hooks/use-google-signin";
@@ -197,6 +198,8 @@ export default function CustomDrawerContent(props: any) {
  const handleLogout = async () => {
     signIn("signout");
     dispatch(logOut());
+    // Clear all RTK Query cache
+    dispatch(baseApi.util.resetApiState());
     await clearAuthData();
     router.replace("/(auth)/login");
   };
