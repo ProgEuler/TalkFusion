@@ -56,7 +56,10 @@ export const usersApi = baseApi.injectEndpoints({
         return currentArg !== previousArg;
       },
     }),
-    getMe: builder.query({ query: () => "/auth/me/"}),
+    getMe: builder.query({ 
+      query: () => "/auth/me/",
+      providesTags: ["User"],
+    }),
   }),
 });
 

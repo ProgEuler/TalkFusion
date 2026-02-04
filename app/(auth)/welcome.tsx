@@ -1,4 +1,5 @@
 import { SubscriptionPlan } from "@/api/admin-api/subscription.api";
+import { baseApi } from "@/api/baseApi";
 import { Layout } from "@/components/layout/Layout";
 import PricingCard from "@/components/user-components/pricing-card";
 import { useSignIn } from "@/hooks/use-google-signin";
@@ -43,6 +44,8 @@ function WelcomeScreen() {
   const handleGetStarted = (planId: number) => async () => {
     signIn("signout");
     dispatch(logOut());
+    // Clear all RTK Query cache
+    dispatch(baseApi.util.resetApiState());
     await clearAuthData();
     router.replace("/(auth)/login");
 

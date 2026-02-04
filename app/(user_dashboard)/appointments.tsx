@@ -117,7 +117,7 @@ export default function AppointmentsScreen() {
         </Button>
 
         <Button
-          onPress={() => router.push("/add-appointment")}
+          onPress={() => router.push("/other/add-appointment")}
           variant="small"
           size="sm"
           style={{ marginLeft: 0 }}

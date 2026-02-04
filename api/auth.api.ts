@@ -8,6 +8,7 @@ export const authApi = baseApi.injectEndpoints({
         method: "POST",
         body: credentials,
       }),
+      invalidatesTags: ["User"],
     }),
     signup: builder.mutation({
       query: (credentials) => ({
@@ -36,6 +37,7 @@ export const authApi = baseApi.injectEndpoints({
         method: "POST",
         body: data,
       }),
+      invalidatesTags: ["User"],
     }),
     refresh: builder.mutation({
       query: ({ refreshToken, accessToken }) => ({
@@ -60,7 +62,24 @@ export const authApi = baseApi.injectEndpoints({
          method: "PATCH",
          body
       })
-    })
+    }),
+    uploadImage: builder.mutation({
+      query: (formData) => ({
+        url: "/auth/users/me/",
+        method: "PATCH",
+        body: formData,
+        formData: true,
+      }),
+      invalidatesTags: ["User"],
+    }),
+    removeImage: builder.mutation({
+      query: () => ({
+        url: "/auth/users/me/",
+        method: "PATCH",
+        body: { image: null },
+      }),
+      invalidatesTags: ["User"],
+    }),
   }),
 });
 
@@ -72,5 +91,7 @@ export const {
   useGoogleSigninMutation,
   useRefreshMutation,
   useResetPassMutation,
-  useChnagePassMutation
+  useChnagePassMutation,
+  useUploadImageMutation,
+  useRemoveImageMutation,
 } = authApi;
