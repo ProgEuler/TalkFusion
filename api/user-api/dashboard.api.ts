@@ -5,7 +5,10 @@ export const dashboardApi = baseApi.injectEndpoints({
     getDashboardData: builder.query({
       query: () => "/dashboard/?timezone=Asia/Dhaka",
     }),
+    getNotifications: builder.query({
+      query: () => "/alerts/"
+    })
   }),
 });
 
-export const { useGetDashboardDataQuery } = dashboardApi;
+export const { useGetDashboardDataQuery, useGetNotificationsQuery } = dashboardApi;

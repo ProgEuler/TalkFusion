@@ -19,6 +19,7 @@ import { RefreshControl, StyleSheet, Text, View } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { AppointmentsList } from "./appointments-list";
 import { selectCurrentPlan, selectCurrentUser } from "@/store/authSlice";
+import Notifications from "./notification";
 
 export default function DashboardScreen() {
 
@@ -230,26 +231,7 @@ export default function DashboardScreen() {
       </View>
 
       {/* notifications */}
-      <View style={styles.card}>
-        <View style={styles.cardHeader}>
-          <Text style={styles.cardTitle}>Notifications/Alerts</Text>
-          <Text
-            style={[
-              styles.cardBadge,
-              { backgroundColor: colors.dark.success + "20" },
-            ]}
-          >
-            All systems normal
-          </Text>
-        </View>
-        <View style={styles.alertContainer}>
-          <CheckCircle color={colors.dark.success} size={48} />
-          <Text style={styles.alertTitle}>No issues detected</Text>
-          <Text style={styles.alertSubtitle}>
-            All systems are running smoothly
-          </Text>
-        </View>
-      </View>
+      <Notifications />
     </Layout>
   );
 }
@@ -435,20 +417,5 @@ const styles = StyleSheet.create({
     color: colors.dark.text,
     fontWeight: "600" as const,
     marginBottom: 4,
-  },
-  alertContainer: {
-    alignItems: "center",
-    paddingVertical: 24,
-  },
-  alertTitle: {
-    fontSize: 16,
-    color: colors.dark.text,
-    fontWeight: "600" as const,
-    marginTop: 12,
-    marginBottom: 4,
-  },
-  alertSubtitle: {
-    fontSize: 14,
-    color: colors.dark.textSecondary,
-  },
+  }
 });
