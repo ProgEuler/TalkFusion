@@ -3,78 +3,53 @@ import ChangePasswordBottomSheet from "@/components/change-password-bottom-sheet
 import ErrorScreen from "@/components/ErrorScreen";
 import { Layout } from "@/components/layout/Layout";
 import Sessions from "@/components/sesstions";
+import { Avatar } from "@/components/shared/avatar";
 import { Button } from "@/components/ui/Button";
 import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
-import { ModalView } from "@/components/ui/modal-view";
 import colors from "@/constants/colors";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
-import { Trash2, TriangleAlert } from "lucide-react-native";
+import { useFocusEffect } from "@react-navigation/native";
 import React, { useCallback, useRef, useState } from "react";
-import { Image, Modal, StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 
 export default function Settings() {
-  const [twoFactorEnabled, setTwoFactorEnabled] = useState(true);
   const [deleteAcc, setDeleteAcc] = useState(false);
   const changePasswordBottomSheetRef = useRef<BottomSheetModal>(null);
 
-  const {data: user, isLoading, isError, refetch} = useGetMeQuery(undefined)
+  const { data: user, isLoading, isError, refetch } = useGetMeQuery(undefined);
+
+  // Refetch user data when screen comes into focus
+  useFocusEffect(
+    useCallback(() => {
+      refetch();
+    }, [refetch])
+  );
 
   const handlePresentChangePasswordModal = useCallback(() => {
     changePasswordBottomSheetRef.current?.present();
   }, []);
 
-  if(isLoading) return <LoadingSpinner />
-  if(isError) return <ErrorScreen onRetry={refetch} />
+  if (isLoading) return <LoadingSpinner />;
+  if (isError) return <ErrorScreen onRetry={refetch} />;
 
   return (
     <Layout>
-      <Modal
-        animationType="slide"
-        transparent={true}
-        visible={deleteAcc}
-        onRequestClose={() => {
-          setDeleteAcc(!deleteAcc);
-        }}
-      >
-        <ModalView
-          visible={deleteAcc}
-          onClose={() => setDeleteAcc(false)}
-          title={"Delete Account?"}
-          buttonLabel="Close"
-          buttonVariant={"destructive"}
-        >
-          <Text style={styles.modalText}>
-            Are you sure you want to delete your account? {"\n"}
-            This action cannot be undone.
-          </Text>
-        </ModalView>
-      </Modal>
 
       {/* Profile Section */}
-        <View style={styles.profileCard}>
-          <View style={styles.profileAvatar}>
-            {user.image ? (
-              <Image
-                src={`${process.env.EXPO_PUBLIC_API_MEDIA_URL}` + user.image}
-                height={60}
-                width={60}
-              />
-            ) : (
-              <Text style={styles.profileAvatarText}>
-                {user.name
-                  ? user.name.charAt(0).toUpperCase()
-                  : user.email.charAt(0).toUpperCase()}
-              </Text>
-            )}
-          </View>
-          <View style={styles.profileInfo}>
-            <Text style={styles.profileName}>{user.name || "User"}</Text>
-              <Text style={styles.profileCompany}>
-                {user.company.name || "N/A"}
-              </Text>
-            <Text style={styles.profileEmail}>{user.email}</Text>
-          </View>
+      <View style={styles.profileCard}>
+        <Avatar
+          defaultValue={user?.image}
+          size={80}
+          editable={true}
+        />
+        <View style={styles.profileInfo}>
+          <Text style={styles.profileName}>{user?.name || "User"}</Text>
+          <Text style={styles.profileCompany}>
+            {user?.company?.name || "N/A"}
+          </Text>
+          <Text style={styles.profileEmail}>{user?.email}</Text>
         </View>
+      </View>
 
       {/* Security Section */}
       <Text style={styles.sectionTitle}>Security</Text>
@@ -88,7 +63,9 @@ export default function Settings() {
               Update your account password
             </Text>
           </View>
-          <Button size="sm" onPress={handlePresentChangePasswordModal}>Change</Button>
+          <Button size="sm" onPress={handlePresentChangePasswordModal}>
+            Change
+          </Button>
         </View>
       </View>
 
@@ -141,31 +118,9 @@ export default function Settings() {
         </View>
       </View> */}
 
-      {/* Delete Account */}
-      <View style={styles.card}>
-        <View style={styles.cardContent}>
-          <View style={styles.deleteTextContainer}>
-            <TriangleAlert color={colors.dark.danger} />
-            <View style={{ flex: 1 }}>
-              <Text style={styles.cardTitle}>Delete Account</Text>
-              <Text style={styles.cardSubtitle}>
-                Permanently delete your account and all data
-              </Text>
-            </View>
-          </View>
-          <Button
-            variant="destructive"
-            size="sm"
-            onPress={() => setDeleteAcc(true)}
-            style={{ flexDirection: "row", gap: 6 }}
-          >
-            <Trash2 size={16} color={"white"} />
-            <Text style={{ color: "white", fontWeight: "600" }}>Delete</Text>
-          </Button>
-        </View>
-      </View>
-
-      <ChangePasswordBottomSheet bottomSheetRef={changePasswordBottomSheetRef} />
+      <ChangePasswordBottomSheet
+        bottomSheetRef={changePasswordBottomSheetRef}
+      />
     </Layout>
   );
 }
@@ -226,7 +181,7 @@ const styles = StyleSheet.create({
   profileAvatar: {
     width: 64,
     height: 64,
-   //  borderRadius: 32,
+    //  borderRadius: 32,
     backgroundColor: colors.dark.primary,
     alignItems: "center",
     justifyContent: "center",
@@ -311,7 +266,7 @@ const styles = StyleSheet.create({
   cardSubtitle: {
     fontSize: 13,
     color: "#8e8e93",
-    width: "90%"
+    width: "90%",
   },
   primaryButton: {
     backgroundColor: "#007AFF",
