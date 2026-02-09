@@ -14,7 +14,7 @@ export default function AIAssistantScreen() {
   };
 
   return (
-    <Layout edges={["bottom"]}>
+    <Layout>
       <CompanyUpdateForm
         onSuccess={handleSuccess}
         defaultValues={company}

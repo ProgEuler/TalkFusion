@@ -80,6 +80,14 @@ export const authApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ["User"],
     }),
+    changeName: builder.mutation({
+      query: (body) => ({
+         url: "/auth/users/me/",
+         method: "PATCH",
+         body,
+      }),
+      invalidatesTags: ["User"]
+    })
   }),
 });
 
@@ -94,4 +102,5 @@ export const {
   useChnagePassMutation,
   useUploadImageMutation,
   useRemoveImageMutation,
+  useChangeNameMutation
 } = authApi;

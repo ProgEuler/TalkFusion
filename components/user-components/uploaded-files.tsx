@@ -1,7 +1,7 @@
-import { useGetUploadedFilesQuery } from "@/api/user-api/company.api";
+import { useDeleteUploadedFileMutation, useGetUploadedFilesQuery } from "@/api/user-api/company.api";
 import colors from "@/constants/colors";
 import { FlashList } from "@shopify/flash-list";
-import { Download, FileText } from "lucide-react-native";
+import { Download, FileText, Trash } from "lucide-react-native";
 import React from "react";
 import { Linking, Pressable, StyleSheet, Text, View } from "react-native";
 import { toast } from "sonner-native";
@@ -10,6 +10,7 @@ const API_URL = process.env.EXPO_PUBLIC_API_MEDIA_URL;
 
 export default function UploadedFiles() {
   const { data, refetch } = useGetUploadedFilesQuery(undefined);
+  const [deleteFileMutation, { isLoading }] = useDeleteUploadedFileMutation();
 
   const getFileName = (filePath: string) => {
     return filePath.split("/").pop() || "Unknown File";
@@ -21,6 +22,16 @@ export default function UploadedFiles() {
       await Linking.openURL(fullUrl);
     } catch (error) {
       toast.error("Failed to open URL");
+    }
+  };
+  const deleteFile = async (id: string) => {
+    try {
+      const res = await deleteFileMutation(id).unwrap();
+      toast.success(`Deleted file: ${getFileName(id)}`);
+      refetch();
+    } catch (error) {
+      toast.error("Failed to delete file");
+      console.log("Delete error:", error);
     }
   };
 
@@ -45,6 +56,12 @@ export default function UploadedFiles() {
         onPress={() => downloadFile(item.file)}
       >
         <Download size={20} color={colors.dark.textSecondary} />
+      </Pressable>
+      <Pressable
+        style={styles.downloadButton}
+        onPress={() => deleteFile(item.id)}
+      >
+        <Trash size={20} color={colors.dark.danger} />
       </Pressable>
     </View>
   );
@@ -82,7 +99,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    backgroundColor: colors.dark.cardBackground,
+   //  backgroundColor: colors.dark.cardBackground,
     padding: 12,
     borderRadius: 8,
     marginBottom: 8,

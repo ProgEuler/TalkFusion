@@ -20,11 +20,13 @@ type Props = {
     prefix?: string;
     marginTop?: number;
     style?: ViewProps["style"];
+    inputStyle?: TextInputProps["style"];
     error?: boolean;
 } & TextInputProps;
 
 export function RNInput({
     style,
+    inputStyle,
     prefix,
     label,
     placeholder,
@@ -130,6 +132,7 @@ export function RNInput({
                             fontSize: 16,
                             backgroundColor: colors.dark.cardBackground,
                         },
+                        inputStyle
                     ]}
                 />
                 {props.secureTextEntry && (

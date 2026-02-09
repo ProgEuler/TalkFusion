@@ -7,12 +7,12 @@ import {
     StyleSheet,
     Switch,
     Text,
-    TextInput,
     TouchableOpacity,
-    View,
+    View
 } from 'react-native';
 import { Toast } from 'toastify-react-native';
 import OpeningHoursManager from './openning-hour';
+import { RNInput } from './ui/input';
 import { RNPicker } from './ui/picker';
 
 const INDUSTRIES = [
@@ -116,19 +116,18 @@ export default function CompanyUpdateForm({ defaultValues, onSuccess }: CompanyU
     <View style={styles.container}>
       {/* Company Name */}
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Company Name</Text>
         <Controller
           control={control}
           name="name"
           rules={{ required: 'Company name is required' }}
           render={({ field: { onChange, onBlur, value } }) => (
-            <TextInput
-              style={[styles.input, errors.name && styles.inputError]}
+            <RNInput
+              label="Company Name"
               placeholder="Company name here"
-              placeholderTextColor={colors.dark.textSecondary}
               value={value}
               onChangeText={onChange}
               onBlur={onBlur}
+              error={!!errors.name}
             />
           )}
         />
@@ -154,22 +153,21 @@ export default function CompanyUpdateForm({ defaultValues, onSuccess }: CompanyU
 
       {/* Description */}
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Description</Text>
         <Controller
           control={control}
           name="description"
           rules={{ required: 'Description is required' }}
           render={({ field: { onChange, onBlur, value } }) => (
-            <TextInput
-              style={[styles.input, styles.textArea, errors.description && styles.inputError]}
+            <RNInput
+              label="Description"
               placeholder="What does your company do?"
-              placeholderTextColor={colors.dark.textSecondary}
               value={value}
               onChangeText={onChange}
               onBlur={onBlur}
               multiline
               numberOfLines={4}
-              textAlignVertical="top"
+              error={!!errors.description}
+              inputStyle={{ minHeight: 100, textAlignVertical: 'top' }}
             />
           )}
         />
@@ -221,74 +219,59 @@ export default function CompanyUpdateForm({ defaultValues, onSuccess }: CompanyU
       </View>
 
       {/* Location */}
-      <View style={styles.section}>
-
-        <View style={styles.subsection}>
-          <Text style={styles.subsectionTitle}>Address</Text>
+      <View style={[styles.section, { gap: 16 }]}>
           <Controller
             control={control}
             name="address"
             render={({ field: { onChange, onBlur, value } }) => (
-              <TextInput
-                style={styles.input}
+              <RNInput
+                label="Address"
                 placeholder="Street address"
-                placeholderTextColor={colors.dark.textSecondary}
                 value={value || ''}
                 onChangeText={onChange}
                 onBlur={onBlur}
               />
             )}
           />
-        </View>
 
-        <View style={styles.subsection}>
-          <Text style={styles.subsectionTitle}>City</Text>
           <Controller
             control={control}
             name="city"
             render={({ field: { onChange, onBlur, value } }) => (
-              <TextInput
-                style={styles.input}
+              <RNInput
+                label="City"
                 placeholder="City"
-                placeholderTextColor={colors.dark.textSecondary}
                 value={value || ''}
                 onChangeText={onChange}
                 onBlur={onBlur}
               />
             )}
           />
-        </View>
 
-        <View style={styles.subsection}>
-          <Text style={styles.subsectionTitle}>Country</Text>
           <Controller
             control={control}
             name="country"
             render={({ field: { onChange, onBlur, value } }) => (
-              <TextInput
-                style={styles.input}
+              <RNInput
+                label="Country"
                 placeholder="Country"
-                placeholderTextColor={colors.dark.textSecondary}
                 value={value || ''}
                 onChangeText={onChange}
                 onBlur={onBlur}
               />
             )}
           />
-        </View>
       </View>
 
       {/* Website */}
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Website</Text>
         <Controller
           control={control}
           name="website"
           render={({ field: { onChange, onBlur, value } }) => (
-            <TextInput
-              style={styles.input}
+            <RNInput
+              label="Website"
               placeholder="https://example.com"
-              placeholderTextColor={colors.dark.textSecondary}
               value={value || ''}
               onChangeText={onChange}
               onBlur={onBlur}
@@ -328,73 +311,10 @@ const styles = StyleSheet.create({
     color: colors.dark.text,
     marginBottom: 12,
   },
-  subsection: {
-    marginBottom: 16,
-  },
-  subsectionTitle: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: colors.dark.text,
-    marginBottom: 8,
-  },
-  input: {
-    backgroundColor: colors.dark.cardBackground,
-    borderRadius: 8,
-    padding: 14,
-    fontSize: 15,
-    color: colors.dark.text,
-    borderWidth: 1,
-    borderColor: '#1F2937',
-  },
-  inputError: {
-    borderColor: colors.dark.danger,
-  },
-  textArea: {
-    minHeight: 100,
-    paddingTop: 14,
-  },
   errorText: {
     color: colors.dark.danger,
     fontSize: 13,
     marginTop: 4,
-  },
-  dropdown: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    backgroundColor: colors.dark.cardBackground,
-    borderRadius: 8,
-    padding: 14,
-    borderWidth: 1,
-    borderColor: '#1F2937',
-  },
-  dropdownText: {
-    fontSize: 15,
-    color: colors.dark.text,
-  },
-  placeholderText: {
-    color: colors.dark.textSecondary,
-  },
-  pickerContainer: {
-    backgroundColor: colors.dark.cardBackground,
-    borderRadius: 8,
-    marginTop: 8,
-    borderWidth: 1,
-    borderColor: '#1F2937',
-    maxHeight: 200,
-  },
-  pickerItem: {
-    padding: 14,
-    borderBottomWidth: 1,
-    borderBottomColor: '#1F2937',
-  },
-  pickerItemText: {
-    fontSize: 15,
-    color: colors.dark.textSecondary,
-  },
-  pickerItemTextSelected: {
-    color: colors.dark.primary,
-    fontWeight: '600',
   },
   toggleRow: {
     flexDirection: 'row',

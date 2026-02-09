@@ -9,11 +9,13 @@ import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
 import colors from "@/constants/colors";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { useFocusEffect } from "@react-navigation/native";
+import { Edit } from "lucide-react-native";
 import React, { useCallback, useRef, useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
+import { EditProfile } from "./edit-profile";
 
 export default function Settings() {
-  const [deleteAcc, setDeleteAcc] = useState(false);
+  const [showEdit, setShowEdit] = useState(false);
   const changePasswordBottomSheetRef = useRef<BottomSheetModal>(null);
 
   const { data: user, isLoading, isError, refetch } = useGetMeQuery(undefined);
@@ -43,7 +45,10 @@ export default function Settings() {
           editable={true}
         />
         <View style={styles.profileInfo}>
+         <View style={{ flexDirection: "row", justifyContent: "space-between"}}>
           <Text style={styles.profileName}>{user?.name || "User"}</Text>
+          <Edit color={"#fff"} onPress={() => setShowEdit(true)} />
+         </View>
           <Text style={styles.profileCompany}>
             {user?.company?.name || "N/A"}
           </Text>
@@ -117,6 +122,11 @@ export default function Settings() {
           </View>
         </View>
       </View> */}
+
+            <EditProfile
+              visible={showEdit}
+              onClose={() => setShowEdit(false)}
+            />
 
       <ChangePasswordBottomSheet
         bottomSheetRef={changePasswordBottomSheetRef}

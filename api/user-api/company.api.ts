@@ -33,9 +33,9 @@ export const companyApi = baseApi.injectEndpoints({
     getOpeningHours: builder.query({ query: () => "/opening-hours/" }),
     uploadAiFiles: builder.mutation({
       query: (file) => ({
-         url: "/ai-training-files/",
-         method: 'POST',
-         body: file
+        url: "/ai-training-files/",
+        method: "POST",
+        body: file,
       }),
       invalidatesTags: ["UploadedFiles"],
     }),
@@ -43,8 +43,16 @@ export const companyApi = baseApi.injectEndpoints({
       query: () => "ai-training-files/",
       providesTags: ["UploadedFiles"],
     }),
+    deleteUploadedFile: builder.mutation({
+      query: (id: string) => ({
+        url: `/ai-training-files/`,
+        method: "DELETE",
+        body: { file_id: id },
+      }),
+      invalidatesTags: ["UploadedFiles"],
+    }),
     getActivity: builder.query({ query: () => "/log/" }),
-    getKnowledgeBase: builder.query({ query: () => "/knowledge-category/" })
+    getKnowledgeBase: builder.query({ query: () => "/knowledge-category/" }),
   }),
 });
 
@@ -58,5 +66,6 @@ export const {
   useUploadAiFilesMutation,
   useGetUploadedFilesQuery,
   useGetActivityQuery,
-  useGetKnowledgeBaseQuery
+  useGetKnowledgeBaseQuery,
+  useDeleteUploadedFileMutation
 } = companyApi;
