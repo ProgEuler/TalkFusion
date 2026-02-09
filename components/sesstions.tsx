@@ -1,25 +1,28 @@
 import {
-  useGetSessionsQuery,
-  useLogOutAllMutation,
-  useLogOutOtherDeviceMutation,
+    useGetSessionsQuery,
+    useLogOutAllMutation,
+    useLogOutOtherDeviceMutation,
 } from "@/api/user-api/sessions.api";
 import colors from "@/constants/colors";
-import { selectSessionId } from "@/store/authSlice";
+import { logOut, selectSessionId } from "@/store/authSlice";
 import { timeAgo } from "@/utils/helpers";
 import { FlashList } from "@shopify/flash-list";
 import { RefreshCw } from "lucide-react-native";
 import React from "react";
 import {
-  ActivityIndicator,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
+    ActivityIndicator,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View,
 } from "react-native";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { toast } from "sonner-native";
 import ErrorScreen from "./ErrorScreen";
 import { Button } from "./ui/Button";
+import { useRouter } from "expo-router";
+import { clearAuthData } from "@/utils/storage";
+import { baseApi } from "@/api/baseApi";
 
 type Session = {
   session_id: number;
@@ -31,6 +34,8 @@ type Session = {
 };
 
 export default function Sessions() {
+  const dispatch = useDispatch();
+  const router = useRouter();
   const {
     data: sessions = [],
     isLoading,
@@ -78,11 +83,15 @@ export default function Sessions() {
 
   const logoutAll = async () => {
     try {
-      await logOutAll("");
-      toast.success("Logged out from all device");
+      await logOutAll("").unwrap();
+      // Clear auth data and navigate to login
+      await clearAuthData();
+      dispatch(logOut());
+      dispatch(baseApi.util.resetApiState());
+      router.replace("/(auth)/login");
+      toast.success("Logged out from all devices");
     } catch (error) {
-      // console.log(error)
-      toast.error("Failed to logout from all device");
+      toast.error("Failed to logout from all devices");
     }
   };
 

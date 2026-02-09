@@ -3,9 +3,11 @@ import { Button } from "@/components/ui/Button";
 import { RNInput } from "@/components/ui/input";
 import { RNText } from "@/components/ui/text";
 import colors from "@/constants/colors";
+import { selectCurrentUser } from "@/store/authSlice";
 import { X } from "lucide-react-native";
 import React, { useState } from "react";
 import { Modal, Pressable, StyleSheet, Text, View } from "react-native";
+import { useSelector } from "react-redux";
 import { toast } from "sonner-native";
 
 type Props = {
@@ -15,18 +17,17 @@ type Props = {
 
 export function EditProfile({ visible, onClose }: Props) {
    const [name, setName] = useState("")
-   const [close, setClose] = useState(false);
    const [change, {isLoading, isError, error: err} ] = useChangeNameMutation()
+   const user = useSelector(selectCurrentUser)
 
    const handleChange = async () => {
       try {
-         await change({ name });
+         await change({ name }).unwrap();
          toast.success("Name changed successfully");
-         setClose(true)
+         onClose(); // Close the modal on success
       } catch (error) {
-         console.log(err)
-         toast.error("Failed to change name")
-         setClose(true)
+         console.log(err);
+         toast.error("Failed to change name");
       }
    }
   return (
@@ -34,7 +35,7 @@ export function EditProfile({ visible, onClose }: Props) {
       visible={visible}
       transparent
       animationType="fade"
-      onRequestClose={onClose || close}
+      onRequestClose={onClose}
     >
       <View style={styles.overlay}>
         <View style={styles.modal}>
@@ -47,7 +48,7 @@ export function EditProfile({ visible, onClose }: Props) {
 
           <View style={styles.options}>
             <RNText>Full Name</RNText>
-            <RNInput placeholder="Full Name" onChangeText={(e) => setName(e)} />
+            <RNInput placeholder="Full Name" onChangeText={(e) => setName(e)} defaultValue={user?.name} value={user?.name} />
           <Button onPress={handleChange} isLoading={isLoading}>Update</Button>
           </View>
         </View>

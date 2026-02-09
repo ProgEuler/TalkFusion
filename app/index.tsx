@@ -9,10 +9,10 @@ import "../global.css";
 
 NavigationBar.setButtonStyleAsync('light');
 
-NetInfo.fetch().then((state) => {
-  console.log("Connection type", state.type);
-  console.log("Is connected?", state.isConnected);
-});
+// NetInfo.fetch().then((state) => {
+//   console.log("Connection type", state.type);
+//   console.log("Is connected?", state.isConnected);
+// });
 
 LogBox.ignoreAllLogs();
 export default function IndexScreen() {

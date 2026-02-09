@@ -19,7 +19,6 @@ export default function AIAssistantScreen() {
         onSuccess={handleSuccess}
         defaultValues={company}
       />
-
       <AddServices />
 
       <ImportAiFiles />

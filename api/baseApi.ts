@@ -2,7 +2,7 @@ import { BaseQueryFn, createApi, FetchArgs, fetchBaseQuery, FetchBaseQueryError 
 import * as Device from "expo-device";
 import { Platform } from "react-native";
 import { logOut, setToken } from "../store/authSlice";
-import { updateAccessToken } from "../utils/storage";
+import { clearAuthData, updateAccessToken } from "../utils/storage";
 
 const baseQuery = fetchBaseQuery({
   baseUrl: process.env.EXPO_PUBLIC_API_URL,
@@ -51,9 +51,17 @@ const baseQueryWithReauth: BaseQueryFn<
         // retry the initial query
         result = await baseQuery(args, api, extraOptions);
       } else {
-        api.dispatch(logOut());
+        // Only logout if the refresh attempt specifically failed with a client error
+        // indicating the token is invalid (401, 403, or 400).
+        // If it's a network error (FETCH_ERROR or 5xx), don't logout.
+        const errorStatus = refreshResult.error?.status;
+        if (errorStatus === 401 || errorStatus === 403 || errorStatus === 400) {
+          await clearAuthData();
+          api.dispatch(logOut());
+        }
       }
     } else {
+      await clearAuthData();
       api.dispatch(logOut());
     }
   }

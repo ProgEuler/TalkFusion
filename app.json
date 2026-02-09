@@ -59,9 +59,9 @@
       [
         "expo-navigation-bar",
         {
-          "backgroundColor": "transparent",
+         //  "backgroundColor": "#0000",
           "barStyle": "light-content",
-          "borderColor": "transparent",
+         //  "borderColor": "#0000",
           "visibility": "hidden-navigation",
           "behavior": "overlay-swipe",
           "position": "absolute"

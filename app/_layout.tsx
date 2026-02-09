@@ -1,20 +1,43 @@
 import colors from "@/constants/colors";
-import { hydrate } from "@/store/authSlice";
+import { hydrate, selectCurrentToken } from "@/store/authSlice";
 import { store } from "@/store/store";
 import { getAuthData } from "@/utils/storage";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { Stack } from "expo-router";
+import { Stack, useRouter, useSegments } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import React, { useEffect, useState } from "react";
 import { StatusBar, Text, View } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { KeyboardProvider } from "react-native-keyboard-controller";
-import { Provider, useDispatch } from "react-redux";
+import { Provider, useDispatch, useSelector } from "react-redux";
 import { Toaster } from 'sonner-native';
 import ToastManager from 'toastify-react-native';
 
+import { ErrorBoundary } from "@/components/ErrorBoundary";
 import NetworkAlert from "@/components/NetworkAlert";
+
+// Global Error Handling
+if (!__DEV__) {
+  // Global JS error handler
+  const defaultHandler = ErrorUtils.getGlobalHandler();
+  ErrorUtils.setGlobalHandler((error, isFatal) => {
+    console.error('Global Error:', error, isFatal);
+    // You could send this to a logging service here
+    if (defaultHandler) {
+      defaultHandler(error, isFatal);
+    }
+  });
+
+  // Unhandled Promise rejection tracker
+  require('promise/lib/rejection-tracking').enable({
+    all: true,
+    onUnhandled: (id: string, error: any) => {
+      console.error('Unhandled Promise Rejection:', id, error);
+    },
+  });
+}
+
 
 SplashScreen.preventAutoHideAsync();
 
@@ -39,6 +62,9 @@ const toastConfig = {
 
 function RootLayoutNav() {
   const dispatch = useDispatch();
+  const router = useRouter();
+  const segments = useSegments();
+  const token = useSelector(selectCurrentToken);
   const [appIsReady, setAppIsReady] = useState(false);
 
   useEffect(() => {
@@ -53,6 +79,14 @@ function RootLayoutNav() {
             refreshToken: authData.refreshToken,
             session_id: authData.sessionId,
           }));
+        } else {
+          dispatch(hydrate({
+            user: null,
+            plan: null,
+            token: null,
+            refreshToken: null,
+            session_id: null,
+          }));
         }
       } catch (e) {
         console.warn(e);
@@ -63,6 +97,18 @@ function RootLayoutNav() {
 
     prepare();
   }, [dispatch]);
+
+  // Handle navigation when user logs out
+  useEffect(() => {
+    if (!appIsReady) return;
+
+    const inAuthGroup = segments[0] === '(auth)';
+    
+    // If token is null and not in auth group, navigate to login
+    if (!token && !inAuthGroup) {
+      router.replace('/(auth)/login');
+    }
+  }, [token, segments, appIsReady]);
 
   useEffect(() => {
     if (appIsReady) {
@@ -98,7 +144,9 @@ export default function RootLayout() {
                 backgroundColor={colors.dark.background}
                 barStyle="light-content"
               />
-              <RootLayoutNav />
+              <ErrorBoundary>
+                <RootLayoutNav />
+              </ErrorBoundary>
               <NetworkAlert />
               <Toaster
                  position="bottom-center"

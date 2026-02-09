@@ -3,6 +3,7 @@ import { AlertTriangle, Info, RefreshCw, WifiOff } from "lucide-react-native";
 import React from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { Button } from "./ui/Button";
+import { router } from "expo-router";
 
 interface ErrorProps {
   title?: string;
@@ -54,6 +55,8 @@ export default function ErrorScreen({
                 <RefreshCw size={14} color="#FFFFFF" />
                 {"  "}Retry Connection
               </Button>
+
+              <Button onPress={() => router.push('/(auth)/login')}>Try to Login to access</Button>
 
               {onOfflineMode && (
                 <TouchableOpacity
