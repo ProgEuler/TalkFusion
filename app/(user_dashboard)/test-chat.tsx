@@ -24,17 +24,17 @@ export default function TestChat() {
     if (!token) return;
 
     const socket = new WebSocket(
-      `wss://ape-in-eft.ngrok-free.app/ws/testchat/?token=${token}`
+      `wss://${process.env.EXPO_PUBLIC_API_SOCKET_URL}/ws/testchat/?token=${token}`
     );
     socketRef.current = socket;
 
-    socket.onopen = () => {
-      console.log("AI WebSocket connected");
-    };
+   //  socket.onopen = () => {
+   //    console.log("AI WebSocket connected");
+   //  };
 
     socket.onmessage = (e) => {
       const data = JSON.parse(e.data);
-      console.log("AI WebSocket message:", data);
+      // console.log("AI WebSocket message:", data);
 
       if (data.message && !data.sender) {
         // Welcome message or system message
@@ -70,12 +70,12 @@ export default function TestChat() {
       }
     };
 
-    socket.onerror = (error) => {
-      console.log("AI WebSocket error:", error);
-    };
+   //  socket.onerror = (error) => {
+   //    console.log("AI WebSocket error:", error);
+   //  };
 
     socket.onclose = () => {
-      console.log("AI WebSocket disconnected");
+      // console.log("AI WebSocket disconnected");
       socketRef.current = null;
     };
 
