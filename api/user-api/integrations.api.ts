@@ -22,7 +22,7 @@ export const integrationsApi = baseApi.injectEndpoints({
       }),
     }),
     getIgUrl: builder.query({
-      query: () => "/connect/ig/",
+      query: () => "/connect/ig/?from=app",
     }),
     disConnect: builder.mutation({
       query: (body) => ({

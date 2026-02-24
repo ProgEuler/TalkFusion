@@ -64,6 +64,7 @@ export default function IntegrationsScreen() {
 
   const { data: fbBot } = useBotActiveQuery({ platform: "facebook" });
   const { data: wpBot } = useBotActiveQuery({ platform: "whatsapp" });
+  const { data: igBot } = useBotActiveQuery({ platform: "instagram" });
 
   const [botStatus, setBotStatus] = useState<Record<string, boolean>>({});
 
@@ -72,9 +73,10 @@ export default function IntegrationsScreen() {
       setBotStatus({
         facebook: fbBot?.bot_active ?? false,
         whatsapp: wpBot?.bot_active ?? false,
+        instagram: igBot?.bot_active ?? false
       });
     }
-  }, [fbBot, wpBot]);
+  }, [fbBot, wpBot, igBot]);
 
   const [disconnectBot, { isLoading }] = useDisConnectMutation();
 
@@ -116,7 +118,7 @@ export default function IntegrationsScreen() {
       icon: <Ig color={colors.dark.primary} />,
       connected: channel.instagram,
       url: igUrl.redirect_url,
-      bot: false,
+      bot: botStatus.instagram,
     },
     {
       id: "calendar",
@@ -198,13 +200,14 @@ export default function IntegrationsScreen() {
               <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
                 <Text style={{ color: "#fff" }}>Bot status</Text>
                 <Switch
+                  style={{ transform: [{ scale: 0.8 }] }}
                   value={integration.bot}
                   onValueChange={() =>
                     handleToggleBot(integration.id, integration.bot ?? false)
                   }
                   trackColor={{ false: "#374151", true: colors.dark.primary }}
                   thumbColor="#FFFFFF"
-                  // disabled={!integration.connected}
+                  disabled={!integration.connected}
                 />
               </View> : <View></View>
                }
