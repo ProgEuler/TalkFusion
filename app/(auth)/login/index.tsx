@@ -3,7 +3,7 @@ import { Layout } from "@/components/layout/Layout";
 import { Button } from "@/components/ui/Button";
 import { ModalView } from "@/components/ui/modal-view";
 import { useSignIn } from "@/hooks/use-google-signin";
-import { selectCurrentUser, selectRefreshToken, setCredentials } from "@/store/authSlice";
+import { setCredentials } from "@/store/authSlice";
 import { saveAuthData } from "@/utils/storage";
 import { isValidEmail } from "@/utils/validation";
 import { GoogleSignin } from "@react-native-google-signin/google-signin";
@@ -17,7 +17,7 @@ import {
     TouchableOpacity,
     View
 } from "react-native";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { toast } from "sonner-native";
 
 GoogleSignin.configure({
@@ -52,10 +52,24 @@ export default function LoginScreen() {
         email: email.toLowerCase(),
         password,
       }).unwrap();
-      // console.log("Login response:", res);
+      
+      // Debug: Check what we're receiving from backend
+      console.log("=== LOGIN RESPONSE DEBUG ===");
+      console.log("Full login response:", JSON.stringify(res, null, 2));
+      console.log("User object:", JSON.stringify(res.user, null, 2));
+      console.log("Permissions from response root:", res.permissions);
+      console.log("User permissions:", res.user?.permissions);
+      console.log("===========================");
+      
+      // Merge permissions into user object if they're at root level
+      const userWithPermissions = {
+        ...res.user,
+        permissions: res.permissions || res.user?.permissions || []
+      };
+      
       dispatch(
         setCredentials({
-          user: res.user,
+          user: userWithPermissions,
           plan: res.plan,
           token: res.access,
           refreshToken: res.refresh,
@@ -65,7 +79,7 @@ export default function LoginScreen() {
       await saveAuthData({
         accessToken: res.access,
         refreshToken: res.refresh,
-        user: res.user,
+        user: userWithPermissions,
         sessionId: res.session_id,
         plan: res.plan,
       });

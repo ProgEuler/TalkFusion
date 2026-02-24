@@ -1,22 +1,22 @@
 import { useAddEmployeeMutation } from '@/api/user-api/team.api'
 import colors from '@/constants/colors'
+import { isValidEmail } from '@/utils/validation'
 import {
-   BottomSheetBackdrop,
-   BottomSheetModal,
-   BottomSheetView,
+    BottomSheetBackdrop,
+    BottomSheetModal,
+    BottomSheetView,
 } from "@gorhom/bottom-sheet"
 import { ChevronDown, Users } from 'lucide-react-native'
 import React, { useCallback, useMemo, useRef, useState } from 'react'
 import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
 import { toast } from 'sonner-native'
 import { Button } from '../ui/Button'
-import { isValidEmail } from '@/utils/validation'
 
 const AVAILABLE_ROLES = ["owner", "finance", "support", "analyst", "read_only"];
 
 const AddEmployee = () => {
    const [email, setEmail] = useState("");
-   const [selectedRoles, setSelectedRoles] = useState<string[]>([]);
+   const [selectedRole, setSelectedRole] = useState<string>("");
    const bottomSheetModalRef = useRef<BottomSheetModal>(null);
    const snapPoints = useMemo(() => ["50%"], []);
 
@@ -30,10 +30,8 @@ const AddEmployee = () => {
      bottomSheetModalRef.current?.dismiss();
    }, []);
 
-   const toggleRole = (role: string) => {
-     setSelectedRoles((prev) =>
-       prev.includes(role) ? prev.filter((r) => r !== role) : [...prev, role]
-     );
+   const selectRole = (role: string) => {
+     setSelectedRole(role);
    };
 
    const renderBackdrop = useCallback(
@@ -53,19 +51,19 @@ const AddEmployee = () => {
          toast.error("Please enter a valid email");
          return;
       }
-      if (selectedRoles.length === 0) {
-         toast.error("Please select at least one role");
+      if (!selectedRole) {
+         toast.error("Please select a role");
          return;
       }
 
       try {
          await addEmployee({
             email: email.trim(),
-            roles: selectedRoles
+            roles: [selectedRole]
          }).unwrap();
          toast.success("Employee invited successfully!");
          setEmail("");
-         setSelectedRoles([]);
+         setSelectedRole("");
       } catch (error: any) {
          const message = error?.data?.error || "Failed to invite employee";
          toast.error(message);
@@ -101,11 +99,11 @@ const AddEmployee = () => {
           <Users size={20} color={colors.dark.textSecondary} />
           <Text style={[
             styles.roleSelectorText,
-            selectedRoles.length > 0 && { color: colors.dark.text }
+            selectedRole && { color: colors.dark.text }
           ]}>
-            {selectedRoles.length > 0
-              ? `${selectedRoles.length} role${selectedRoles.length > 1 ? 's' : ''} selected`
-              : 'Select roles'
+            {selectedRole
+              ? selectedRole.charAt(0).toUpperCase() + selectedRole.slice(1).replace('_', ' ')
+              : 'Select role'
             }
           </Text>
         </View>
@@ -115,8 +113,7 @@ const AddEmployee = () => {
       <Button
         onPress={handleInvite}
         isLoading={isLoading}
-        disabled={!email.trim() || selectedRoles.length === 0
-         || !isValidEmail(email)}
+        disabled={!email.trim() || !selectedRole || !isValidEmail(email)}
       >
         Send Invite
       </Button>
@@ -129,8 +126,8 @@ const AddEmployee = () => {
         handleIndicatorStyle={styles.handleIndicator}
       >
         <BottomSheetView style={styles.modalContent}>
-          <Text style={styles.modalTitle}>Select Roles</Text>
-          <Text style={styles.modalSubtitle}>Assign one or more roles to this employee</Text>
+          <Text style={styles.modalTitle}>Select Role</Text>
+          <Text style={styles.modalSubtitle}>Assign a role to this employee</Text>
 
           <View style={styles.rolesGrid}>
             {AVAILABLE_ROLES.map((role) => (
@@ -138,17 +135,17 @@ const AddEmployee = () => {
                 key={role}
                 style={[
                   styles.roleChip,
-                  selectedRoles.includes(role) && styles.selectedRoleChip,
+                  selectedRole === role && styles.selectedRoleChip,
                 ]}
-                onPress={() => toggleRole(role)}
+                onPress={() => selectRole(role)}
               >
                 <Text
                   style={[
                     styles.roleChipText,
-                    selectedRoles.includes(role) && styles.selectedRoleChipText,
+                    selectedRole === role && styles.selectedRoleChipText,
                   ]}
                 >
-                  {role.charAt(0).toUpperCase() + role.slice(1)}
+                  {role.charAt(0).toUpperCase() + role.slice(1).replace('_', ' ')}
                 </Text>
               </TouchableOpacity>
             ))}

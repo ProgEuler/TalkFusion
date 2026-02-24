@@ -1,15 +1,16 @@
-import { useUpdateEmployeeRolesMutation } from '@/api/user-api/team.api';
+import { useDeleteEmployeeMutation, useUpdateEmployeeRolesMutation } from '@/api/user-api/team.api';
 import colors from '@/constants/colors';
 import { MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
-import { User } from 'lucide-react-native';
+import { Trash2, User } from 'lucide-react-native';
 import React, { useState } from 'react';
 import {
-   Image,
-   Modal,
-   StyleSheet,
-   Text,
-   TouchableOpacity,
-   View,
+   Alert,
+    Image,
+    Modal,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Toast } from 'toastify-react-native';
@@ -40,7 +41,8 @@ const roles = [
 
 const UpdateRoleModal = ({ visible = false, onClose, employee }) => {
   const [selectedRole, setSelectedRole] = useState('owner');
-  const [updateEmployeeRoles, { isLoading } ] = useUpdateEmployeeRolesMutation();
+  const [updateEmployeeRoles, { isLoading }] = useUpdateEmployeeRolesMutation();
+  const [deleteEmployee, { isLoading: isDeleting }] = useDeleteEmployeeMutation();
 
 //   console.log('Employee:', employee);
 
@@ -68,8 +70,37 @@ const UpdateRoleModal = ({ visible = false, onClose, employee }) => {
     }
   };
 
+  const handleDelete = () => {
+    if (!employee) return;
+
+    Alert.alert(
+      'Delete Employee',
+      `Are you sure you want to remove ${employee.name || employee.email} from your team?`,
+      [
+        {
+          text: 'Cancel',
+          style: 'cancel',
+        },
+        {
+          text: 'Delete',
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              await deleteEmployee(employee.id).unwrap();
+              Toast.success('Employee removed successfully');
+              onClose();
+            } catch (error: any) {
+              const message = error?.data?.error || 'Error removing employee';
+              Toast.error(message);
+            }
+          },
+        },
+      ]
+    );
+  };
+
   return (
-    <Modal visible={visible} transparent animationType="slide">
+    <Modal visible={visible} transparent animationType="fade">
       <SafeAreaView style={styles.modalContainer}>
         <View style={styles.modalContent}>
           {/* Header */}
@@ -131,6 +162,18 @@ const UpdateRoleModal = ({ visible = false, onClose, employee }) => {
             <Button style={{ width: "48%"}} variant='outline' onPress={onClose}>Close</Button>
             <Button style={{ width: "48%"}} isLoading={isLoading} onPress={handleSave}>{isLoading ? 'Updating...' : 'Update'}</Button>
           </View>
+
+          {/* Delete Button */}
+          <TouchableOpacity
+            style={styles.deleteButton}
+            onPress={handleDelete}
+            disabled={isDeleting}
+          >
+            <Trash2 size={18} color="#EF4444" />
+            <Text style={styles.deleteButtonText}>
+              {isDeleting ? 'Removing...' : 'Remove Employee'}
+            </Text>
+          </TouchableOpacity>
         </View>
       </SafeAreaView>
     </Modal>
@@ -254,6 +297,24 @@ const styles = StyleSheet.create({
   saveText: {
     fontSize: 17,
     color: '#fff',
+    fontWeight: '600',
+  },
+  deleteButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    paddingVertical: 14,
+    marginTop: 12,
+    marginHorizontal: 16,
+    borderRadius: 12,
+    backgroundColor: 'rgba(239, 68, 68, 0.1)',
+    borderWidth: 1,
+    borderColor: 'rgba(239, 68, 68, 0.3)',
+  },
+  deleteButtonText: {
+    fontSize: 16,
+    color: '#EF4444',
     fontWeight: '600',
   },
 });

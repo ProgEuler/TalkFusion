@@ -5,6 +5,7 @@ interface User {
   id: string;
   email: string;
   name: string;
+  permissions?: string[];
   [key: string]: any;
   company: any;
 }
@@ -73,5 +74,6 @@ export const selectCurrentToken = (state: RootState) => state.auth.token;
 export const selectRefreshToken = (state: RootState) => state.auth.refreshToken;
 export const selectSessionId = (state: RootState) => state.auth.session_id;
 export const selectIsHydrated = (state: RootState) => state.auth.isHydrated;
+export const selectUserPermissions = (state: RootState) => state.auth.user?.permissions || [];
 
 export default authSlice.reducer;

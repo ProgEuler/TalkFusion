@@ -1,7 +1,7 @@
 import { useGetEmployeesQuery } from "@/api/user-api/team.api";
 import colors from "@/constants/colors";
 import { FlashList } from "@shopify/flash-list";
-import { ChevronRight, User } from "lucide-react-native";
+import { ChevronRight, Trash, Trash2, User } from "lucide-react-native";
 import React from "react";
 import {
   ActivityIndicator,

@@ -39,6 +39,7 @@ const TONE_OPTIONS = [
 export interface CompanyFormData {
   name: string;
   industry: string | null;
+//   contact:
   description: string;
   open: string | null;
   close: string | null;
